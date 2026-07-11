@@ -1,254 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SOUTH WIND | Project Specifications</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <style>
-        :root {
-            --color-bg: #ffffff;
-            --color-text: #1a1a1a;
-            --color-text-muted: #666666;
-            --color-accent: #000000;
-            --color-primary: #1a1a1a;
-            --color-surface: #fcfcfc;
-            --color-surface-dark: #f2f2f2;
-            --color-border: #eeeeee;
-            --font-sans: 'Inter', sans-serif;
-            --font-serif: 'Playfair Display', serif;
-            --container-width: 1440px;
-        }
-
-        [data-theme="dark"] {
-            --color-bg: #0a0a0a;
-            --color-text: #ffffff;
-            --color-text-muted: #a0a0a0;
-            --color-accent: #ffffff;
-            --color-surface: #141414;
-            --color-surface-dark: #1f1f1f;
-            --color-border: #2a2a2a;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-sans); background-color: var(--color-bg); color: var(--color-text); line-height: 1.7; padding-bottom: 80px;}
-
-        /* Return Navigation */
-        .back-nav {
-            padding: 30px 5%;
-            max-width: var(--container-width);
-            margin: 0 auto;
-        }
-        .back-nav a {
-            text-decoration: none;
-            color: var(--color-text);
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Hero Specifications */
-        .project-hero {
-            max-width: 1000px;
-            margin: 0 auto;
-            text-align: center;
-            padding: 60px 20px;
-        }
-        .project-category {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            color: var(--color-text-muted);
-            display: block;
-            margin-bottom: 15px;
-        }
-        .project-title {
-            font-family: var(--font-serif);
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            margin-bottom: 30px;
-            line-height: 1.1;
-        }
-        .project-desc {
-            font-size: 1.1rem;
-            color: var(--color-text-muted);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* Media Container */
-        .page-container {
-            width: 90%;
-            max-width: var(--container-width);
-            margin: 0 auto;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            display: none;
-        }
-        .page-container.active { display: block; opacity: 1; }
-
-        .media-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-        @media (max-width: 768px) { .media-grid { grid-template-columns: 1fr; } }
-        
-        .media-asset { width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--color-border); }
-
-        /* Pagination Matrix */
-        .pagination-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-top: 60px;
-        }
-        .page-btn {
-            background: transparent;
-            border: 1px solid var(--color-border);
-            color: var(--color-text);
-            padding: 10px 20px;
-            cursor: pointer;
-            font-family: var(--font-sans);
-            font-weight: 600;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.8rem;
-        }
-        .page-btn.active, .page-btn:hover { background: var(--color-accent); color: var(--color-bg); }
-        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        
-        .page-title {
-            text-align: center; font-size: 1.5rem; margin-bottom: 40px; font-family: var(--font-serif);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="back-nav">
-        <a href="index.html#projects"><i class="fas fa-arrow-left"></i> Return to Studio</a>
-    </div>
-
-    <div class="project-hero">
-        <span class="project-category" id="render-category">System Querying...</span>
-        <h1 class="project-title" id="render-title">Loading Parameters</h1>
-        <p class="project-desc" id="render-desc"></p>
-    </div>
-
-    <div id="pages-wrapper"></div>
-    <div class="pagination-controls" id="pagination-wrapper"></div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const projectId = urlParams.get('project');
-            if (!projectId) {
-                document.getElementById('render-title').innerText = 'No Active Configuration Provided.';
-                return;
-            }
-
-            try {
-                const res = await fetch(`/api/projects/${projectId}/details`);
-                const proj = await res.json();
-                
-                document.getElementById('render-category').innerText = proj.category;
-                document.getElementById('render-title').innerText = proj.title;
-                document.getElementById('render-desc').innerText = proj.description || '';
-
-                const wrapper = document.getElementById('pages-wrapper');
-                const paginator = document.getElementById('pagination-wrapper');
-                const pages = proj.pages || [];
-
-                if (pages.length === 0) {
-                    wrapper.innerHTML = `<div style="text-align:center; color:var(--color-text-muted);">No deep specification modules available yet.</div>`;
-                    return;
-                }
-
-                // Render all pages silently
-                pages.forEach((page, idx) => {
-                    let mediaHTML = '';
-                    (page.media || []).forEach(m => {
-                        if (m.media_type === 'video') {
-                            mediaHTML += `<video class="media-asset" src="${m.media_path}" controls autoplay muted loop></video>`;
-                        } else {
-                            mediaHTML += `<img class="media-asset" src="${m.media_path}" alt="Project Segment Asset">`;
-                        }
-                    });
-
-                    wrapper.innerHTML += `
-                        <div class="page-container" id="page-node-${idx}">
-                            <h2 class="page-title">${page.title || ''}</h2>
-                            <div class="media-grid">${mediaHTML}</div>
-                        </div>
-                    `;
-                });
-
-                // Pagination Engine Logic
-                let currentPage = 0;
-                function switchPage(targetIndex) {
-                    document.querySelectorAll('.page-container').forEach(el => el.classList.remove('active'));
-                    document.getElementById(`page-node-${targetIndex}`).classList.add('active');
-                    renderControls(targetIndex);
-                }
-
-                function renderControls(currentIndex) {
-                    paginator.innerHTML = '';
-                    
-                    const prevBtn = document.createElement('button');
-                    prevBtn.className = 'page-btn'; prevBtn.innerText = 'Prev';
-                    prevBtn.disabled = currentIndex === 0;
-                    prevBtn.onclick = () => switchPage(currentIndex - 1);
-                    paginator.appendChild(prevBtn);
-
-                    pages.forEach((_, idx) => {
-                        const btn = document.createElement('button');
-                        btn.className = `page-btn ${idx === currentIndex ? 'active' : ''}`;
-                        btn.innerText = idx + 1;
-                        btn.onclick = () => switchPage(idx);
-                        paginator.appendChild(btn);
-                    });
-
-                    const nextBtn = document.createElement('button');
-                    nextBtn.className = 'page-btn'; nextBtn.innerText = 'Next';
-                    nextBtn.disabled = currentIndex === pages.length - 1;
-                    nextBtn.onclick = () => switchPage(currentIndex + 1);
-                    paginator.appendChild(nextBtn);
-                }
-
-                switchPage(0); // Initialize Node 0
-                
-                // Inherit Theme settings
-                const activeTheme = localStorage.getItem('sw_theme') || 'light';
-                document.documentElement.setAttribute('data-theme', activeTheme);
-
-            } catch (err) {
-                document.getElementById('render-title').innerText = 'Data Sync Timeout';
-            }
-        });
-    </script>
-</body>
-</html>
---- END OF FILE public/project-details.html ---
-```
-
-### 8. `public/admin/index.html`
-*(Original file seamlessly preserved. Script block cleanly attaches required backend logic and dynamically spawns modals).*
-
-```html
---- START OF FILE public/admin/index.html ---
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
     <title>SOUTH WIND | Enterprise Operations Console</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -264,8 +18,20 @@
             --danger: #ff3333;
             --success: #00cc66;
         }
+
+        /* Additive Light Mode Color Variables */
+        [data-theme="light"] {
+            --bg: #fcfcfc;
+            --surface: #ffffff;
+            --surface-accent: #f5f5f5;
+            --border: #dddddd;
+            --text: #1a1a1a;
+            --text-muted: #707070;
+            --accent: #1a1a1a;
+        }
+
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text); padding-bottom: 60px; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 60px; transition: background 0.3s, color 0.3s; }
         
         /* Auth Screen Styling footprint */
         #auth-gateway { position:fixed; inset:0; background:var(--bg); z-index:9999; display:flex; align-items:center; justify-content:center; }
@@ -273,7 +39,7 @@
         .auth-logo { font-size:1.5rem; font-weight:700; letter-spacing:3px; text-align:center; margin-bottom:30px; }
         
         /* Layout Blocks */
-        header { background: var(--surface); border-bottom:1px solid var(--border); padding:20px 40px; display:flex; justify-content:between; align-items:center; }
+        header { background: var(--surface); border-bottom:1px solid var(--border); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 15px;}
         .dashboard-container { width:90%; max-width:1440px; margin:40px auto; display:grid; grid-template-columns: 240px 1fr; gap:40px; }
         
         /* Nav Elements */
@@ -293,7 +59,7 @@
         input:focus, textarea:focus { outline:1px solid var(--accent); }
         
         /* Actions Execution Footprints */
-        .btn { background:var(--accent); color:var(--bg); border:none; padding:14px 30px; font-weight:600; text-transform:uppercase; font-size:0.8rem; letter-spacing:1.5px; cursor:pointer; border-radius:4px; transition:0.3s; }
+        .btn { background:var(--accent); color:var(--bg); border:none; padding:14px 30px; font-weight:600; text-transform:uppercase; font-size:0.8rem; letter-spacing:1.5px; cursor:pointer; border-radius:4px; transition:0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;}
         .btn:hover { opacity:0.9; }
         .btn-danger { background:var(--danger); color:white; }
         
@@ -303,15 +69,94 @@
         .metric-val { font-size:2.2rem; font-weight:700; margin-top:10px; }
         
         /* Data Interfaces Mapping */
-        table { width:100%; border-collapse:collapse; margin-top:20px; }
-        th, td { padding:15px; text-align:left; border-bottom:1px solid var(--border); font-size:0.9rem; }
+        table { width:100%; border-collapse:collapse; margin-top:20px; display: block; overflow-x: auto; }
+        th, td { padding:15px; text-align:left; border-bottom:1px solid var(--border); font-size:0.9rem; white-space: nowrap; }
         th { color:var(--text-muted); text-transform:uppercase; font-size:0.75rem; letter-spacing:1px; }
         
         /* Media Matrix Library Interface Block */
         .media-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:15px; margin-top:20px; }
-        .media-item { border:1px solid var(--border); position:relative; aspect-ratio:1; background:var(--bg); border-radius:4px; overflow:hidden; cursor:pointer; }
-        .media-item img { width:100%; height:100%; object-fit:cover; }
-        .media-item .delete-asset-btn { position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); color:white; border:none; width:24px; height:24px; border-radius:50%; cursor:pointer; }
+        .media-item { border:1px solid var(--border); position:relative; aspect-ratio:1; background:var(--bg); border-radius:4px; overflow:hidden; cursor:pointer; transition: transform 0.2s, border-color 0.2s; }
+        .media-item img { width:100%; height:100%; object-fit:cover; pointer-events: none;}
+        .media-item .delete-asset-btn { position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); color:white; border:none; width:24px; height:24px; border-radius:50%; cursor:pointer; z-index: 5; }
+
+        /* Media Selector Multi-select style states */
+        .media-item.multi-selected {
+            border-color: var(--success);
+            border-width: 3px;
+            transform: scale(0.95);
+        }
+        .media-item .chk-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: var(--success);
+            color: #000;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            z-index: 4;
+        }
+        .media-item.multi-selected .chk-badge {
+            display: flex;
+        }
+
+        /* --- ANDROID MOBILE RATIO SCALING & MENU STACKING --- */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+            .dashboard-container {
+                grid-template-columns: 1fr;
+                width: 95%;
+                margin: 10px auto;
+                gap: 20px;
+            }
+            .sidebar-menu {
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 10px;
+                border-bottom: 1px solid var(--border);
+                -webkit-overflow-scrolling: touch;
+                gap: 8px;
+            }
+            .menu-btn {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+                white-space: nowrap;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+            .menu-btn.active {
+                border-bottom-color: var(--accent);
+                background: transparent;
+                color: var(--text);
+            }
+            .panel {
+                padding: 20px;
+            }
+            input, textarea, select {
+                font-size: 16px; /* Prevents auto-zoom on Android */
+            }
+            #project-manage-modal, #media-modal-picker {
+                padding: 15px !important;
+            }
+            #project-manage-modal > div, #media-modal-picker > div {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 20px !important;
+                height: 96% !important;
+            }
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -336,9 +181,10 @@
 
     <header>
         <div style="font-weight:700; letter-spacing:2px;">SOUTH WIND CMS v1.0</div>
-        <div>
-            <span id="active-session-identity" style="margin-right:20px; color:var(--text-muted); font-size:0.85rem;"></span>
-            <button class="btn btn-danger" style="padding:8px 15px;" onclick="terminateSessionContext()">Logout</button>
+        <div style="display:flex; gap:10px; flex-wrap: wrap;">
+            <!-- Dark / Light Mode Toggle -->
+            <button class="btn" id="cms-theme-toggle" onclick="toggleCmsTheme()"><i class="fas fa-sun"></i> Theme Toggle</button>
+            <button class="btn btn-danger" onclick="terminateSessionContext()">Logout</button>
         </div>
     </header>
 
@@ -351,7 +197,7 @@
             <button class="menu-btn" onclick="switchControlView('projects-panel', this)"><i class="fas fa-images"></i> Portfolio</button>
             <button class="menu-btn" onclick="switchControlView('contact-panel', this)"><i class="fas fa-map-marked-alt"></i> Corporate Info</button>
             <button class="menu-btn" onclick="switchControlView('inbox-panel', this)"><i class="fas fa-envelope"></i> Communications</button>
-            <button class="menu-btn" onclick="switchControlView('media-panel', this)"><i class="fas fa-folder-open"></i> Media Node</button>
+            <button class="menu-btn" onclick="switchControlView('media-panel', this)"><i class="fas fa-folder-open"></i> Media Vault</button>
             <button class="menu-btn" onclick="switchControlView('security-panel', this)"><i class="fas fa-shield-alt"></i> Security Gate</button>
         </div>
 
@@ -392,6 +238,92 @@
                     <div class="form-row"><label>Body Core Paragraph Block 1</label><textarea id="set-about_p1" rows="4"></textarea></div>
                     <div class="form-row"><label>Body Core Paragraph Block 2</label><textarea id="set-about_p2" rows="4"></textarea></div>
                     <div class="form-row"><label>Active Corporate Leader Image Resource File Path</label><input type="text" id="set-about_director_image"><button type="button" class="btn" style="margin-top:10px; background:var(--surface-accent); color:white;" onclick="launchMediaPicker('set-about_director_image')">Browse Gallery Node</button></div>
+                    <button type="submit" class="btn">Deploy System Synchronization</button>
+                </form>
+            </div>
+
+            <div id="services-panel" class="panel">
+                <h2>Manage Engineering System Competencies</h2>
+                <button class="btn" onclick="openServiceForm()" style="margin-bottom:20px;">Register New Structural Competency Module</button>
+                <table id="services-data-table">
+                    <thead><tr><th>Icon Layout Badge</th><th>Structural Core Title</th><th>Operational Description Block</th><th>Sorting Weight Order</th><th>Actions Engine Matrix</th></tr></thead>
+                    <tbody id="services-table-body"></tbody>
+                </table>
+            </div>
+
+            <div id="projects-panel" class="panel">
+                <h2>Manage Architecture Signature Portfolio Matrix</h2>
+                
+                <div style="background: var(--surface-accent); border: 1px solid var(--border); padding: 30px; margin-bottom: 40px; border-radius: 4px;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 20px; letter-spacing: 1px; color: var(--text);">INDEX OR RE-ALIGN STRUCTURAL PROJECT</h3>
+                    <form id="advanced-portfolio-form">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Architectural Sector Category</label>
+                                <select id="proj-category" required>
+                                    <option value="Modern Facade">Modern Facade</option>
+                                    <option value="Residential Elite">Residential Elite</option>
+                                    <option value="Luxury Living">Luxury Living</option>
+                                    <option value="Commercial Infrastructure">Commercial Infrastructure</option>
+                                </select>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Signature System Title</label>
+                                <input type="text" id="proj-title" placeholder="e.g., Al-Noor Tower Complex" required>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Display Matrix Weight Order</label>
+                                <input type="number" id="proj-order" value="0" min="0" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <label>Structural Core Operational Description</label>
+                            <textarea id="proj-description" rows="3" placeholder="Enter deep technical details or design specifications..." required></textarea>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Primary Image Resource URL Target</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="proj-image-path" placeholder="media/uploads/facade_01.webp" required>
+                                    <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('proj-image-path')">Browse</button>
+                                </div>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Dynamic Video Core Target Path (Optional / YouTube / MP4 File)</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="proj-video-path" placeholder="media/uploads/drone_cinematic.mp4">
+                                    <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('proj-video-path')">Browse</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn" style="background: var(--success); color: black;">Deploy Portfolio Specifications Matrix</button>
+                    </form>
+                </div>
+
+                <table id="projects-data-table">
+                    <thead>
+                        <tr>
+                            <th>Order Weight</th>
+                            <th>Category Sector</th>
+                            <th>Project Signature Identity</th>
+                            <th>Media Asset Framework</th>
+                            <th>Action Nodes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projects-table-body"></tbody>
+                </table>
+            </div>
+
+            <div id="contact-panel" class="panel">
+                <h2>Manage Corporate Contact Specifications</h2>
+                <form id="contact-sync-form">
+                    <div class="form-row"><label>Physical Structural Address Matrix Layout</label><textarea id="set-contact_address" rows="3"></textarea></div>
+                    <div class="form-row"><label>Global Satellite Nav System Plus Code</label><input type="text" id="set-contact_plus_code"></div>
+                    <div class="form-row"><label>Primary Voice Communication Channel Phone Line 1</label><input type="text" id="set-contact_phone_1"></div>
+                    <div class="form-row"><label>Backup Voice Communication Channel Phone Line 2</label><input type="text" i><input type="text" id="set-about_director_image"><button type="button" class="btn" style="margin-top:10px; background:var(--surface-accent); color:white;" onclick="launchMediaPicker('set-about_director_image')">Browse Gallery Node</button></div>
                     <button type="submit" class="btn">Deploy System Synchronization</button>
                 </form>
             </div>
@@ -1199,4 +1131,4 @@
     </script>
     <!-- END APPENDED ENTERPRISE CMS PROJECT DETAILS UPGRADE & EMAIL MOD -->
 </body>
-</html
+</html>
