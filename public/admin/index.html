@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SOUTH WIND | Enterprise Operations Console</title>
+    
+    <!-- Mobile Debugger Console (Eruda) -->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -181,7 +186,9 @@
 
     <header>
         <div style="font-weight:700; letter-spacing:2px;">SOUTH WIND CMS v1.0</div>
+        <div id="active-session-identity" style="font-size:0.8rem; color:var(--text-muted);">Operator Node: Unauthenticated</div>
         <div style="display:flex; gap:10px; flex-wrap: wrap;">
+            <!-- Dark / Light Mode Toggle -->
             <button class="btn" id="cms-theme-toggle" onclick="toggleCmsTheme()"><i class="fas fa-sun"></i> Theme Toggle</button>
             <button class="btn btn-danger" onclick="terminateSessionContext()">Logout</button>
         </div>
@@ -194,6 +201,7 @@
             <button class="menu-btn" onclick="switchControlView('about-panel', this)"><i class="fas fa-user-tie"></i> Studio Leadership</button>
             <button class="menu-btn" onclick="switchControlView('services-panel', this)"><i class="fas fa-drafting-compass"></i> Competencies</button>
             
+            <!-- SEPARATE DIRECT PORTFOLIO CHANNELS FOR ANDROID MOBILE -->
             <div style="border-top: 1px solid var(--border); margin: 5px 0; padding-top: 5px;"></div>
             <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); padding: 5px 12px; display: block; text-transform: uppercase;">Direct Categories</span>
             <button class="menu-btn" onclick="switchControlView('facade-panel', this)"><i class="fas fa-building"></i> Modern Facade</button>
@@ -225,6 +233,7 @@
                 </div>
             </div>
 
+            <!-- ADDITIVE PORTFOLIO CHANNELS -->
             <div id="facade-panel" class="panel">
                 <h2>Modern Facade Portfolios</h2>
                 <div id="facade-container" style="margin-top:20px;"></div>
@@ -395,10 +404,12 @@
         </div>
     </div>
 
+    <!-- Modal Layout Multi-Selector Node Frame -->
     <div id="media-modal-picker" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10005; padding:60px;">
         <div style="background:var(--surface); border:1px solid var(--border); width:100%; max-width:800px; margin:0 auto; padding:40px; height:100%; overflow-y:auto; border-radius:4px;">
             <h3>Pick System Target Resource Route Matrix</h3>
             
+            <!-- Dynamic Action Bar for Multi-Select Imports -->
             <div id="modal-batch-action-bar" style="margin-top:15px; display:none; gap:10px; align-items:center; flex-wrap:wrap;">
                 <button class="btn" style="background:var(--success); color:black;" id="batch-add-confirm-btn" onclick="executeBatchMediaAttachment()">
                     Attach Selected (<span id="batch-count">0</span>)
@@ -597,9 +608,18 @@
 
         async function executeDeleteServiceNode(id) {
             if(confirm('Purge structural alignment record from processing framework?')) {
-                const res = await fetch(`/api/services/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` } });
-                if (!res.ok) { const data = await res.json().catch(()=>({})); alert('Deletion Blocked: ' + (data.error || 'Server error')); return; }
-                synchronizeCompetencyTable();
+                try {
+                    const res = await fetch(`/api/services/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` } });
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        alert('Competency removed.');
+                        synchronizeCompetencyTable();
+                    } else {
+                        alert(`Deletion block: ${data.error || res.statusText}`);
+                    }
+                } catch(e) {
+                    alert(`Network error: ${e.message}`);
+                }
             }
         }
 
@@ -664,10 +684,7 @@
 
             const result = await res.json();
             if(result.success || result.id) {
-                // Wait for core POST mapping success
                 alert('Structural project entity successfully mapped into runtime cluster.');
-                
-                // Clear variables dynamically without resetting settings states
                 document.getElementById('proj-title').value = '';
                 document.getElementById('proj-description').value = '';
                 document.getElementById('proj-image-path').value = '';
@@ -681,13 +698,22 @@
 
         async function executeDeleteProjectNode(id) {
             if(confirm('Terminate active portfolio project entry completely?')) {
-                const res = await fetch(`/api/projects/${id}`, { 
-                    method: 'DELETE', 
-                    headers: { 'Authorization': `Bearer ${operationalToken}` } 
-                });
-                if (!res.ok) { const data = await res.json().catch(()=>({})); alert('Deletion Blocked: ' + (data.error || 'Server error')); return; }
-                synchronizePortfolioTable();
-                pullAdminContextMetrics();
+                try {
+                    const res = await fetch(`/api/projects/${id}`, { 
+                        method: 'DELETE', 
+                        headers: { 'Authorization': `Bearer ${operationalToken}` } 
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        alert('Project terminated successfully.');
+                        synchronizePortfolioTable();
+                        pullAdminContextMetrics();
+                    } else {
+                        alert(`Deletion block: ${data.error || res.statusText}`);
+                    }
+                } catch(e) {
+                    alert(`Network error: ${e.message}`);
+                }
             }
         }
 
@@ -713,7 +739,6 @@
             });
         }
 
-        // View and read dispatch payload popup fix
         window.viewAndReadMessage = async function(id, name, email, phone, msg) {
             alert(`SENDER DETAILS:\\n-------------------------\\nName: ${name}\\nEmail: ${email}\\nPhone: ${phone}\\n\\nMESSAGE:\\n${msg.replace(/<br>/g, '\\n')}`);
             await fetch(`/api/messages/${id}/read`, { method: 'PATCH', headers: { 'Authorization': `Bearer ${operationalToken}` } });
@@ -729,10 +754,19 @@
 
         async function executeDeleteMessage(id) {
             if(confirm('Purge active client messaging layer file mapping index?')) {
-                const res = await fetch(`/api/messages/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` } });
-                if (!res.ok) { const data = await res.json().catch(()=>({})); alert('Deletion Blocked: ' + (data.error || 'Server error')); return; }
-                synchronizeInboxTable();
-                pullAdminContextMetrics();
+                try {
+                    const res = await fetch(`/api/messages/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` } });
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        alert('Message purged successfully.');
+                        synchronizeInboxTable();
+                        pullAdminContextMetrics();
+                    } else {
+                        alert(`Deletion block: ${data.error || res.statusText}`);
+                    }
+                } catch(e) {
+                    alert(`Network error: ${e.message}`);
+                }
             }
         }
 
@@ -752,7 +786,6 @@
             });
         }
 
-        // Updated Upload System allowing multiple uploads sequentially on Android
         async function executeServerUpload(inputNode) {
             if(inputNode.files.length === 0) return;
             let successCount = 0;
@@ -778,10 +811,19 @@
         async function executeDeleteAsset(id, event) {
             event.stopPropagation();
             if(confirm('Purge target resource asset entirely from storage configuration?')) {
-                const res = await fetch(`/api/media/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` } });
-                if (!res.ok) { const data = await res.json().catch(()=>({})); alert('Deletion Blocked: ' + (data.error || 'Server error')); return; }
-                synchronizeMediaGridEngine();
-                pullAdminContextMetrics();
+                try {
+                    const res = await fetch(`/api/media/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` } });
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        alert('Asset removed successfully.');
+                        synchronizeMediaGridEngine();
+                        pullAdminContextMetrics();
+                    } else {
+                        alert(`Deletion block: ${data.error || res.statusText}`);
+                    }
+                } catch(e) {
+                    alert(`Network error: ${e.message}`);
+                }
             }
         }
 
@@ -880,6 +922,7 @@
         verifyIdentityTokenPresence();
     </script>
     
+    <!-- BEGIN APPENDED ENTERPRISE CMS PROJECT DETAILS UPGRADE & EMAIL MOD -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // 1. Inject Change Email UI into Security Panel Seamlessly
@@ -1141,9 +1184,18 @@
 
         async function deleteProjectPage(pageId) {
             if(!confirm('Delete page module?')) return;
-            const res = await fetch(`/api/project-pages/${pageId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` }});
-            if (!res.ok) { const data = await res.json().catch(()=>({})); alert('Deletion Blocked: ' + (data.error || 'Server error')); return; }
-            openProjectManager(document.getElementById('edit-proj-id').value);
+            try {
+                const res = await fetch(`/api/project-pages/${pageId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` }});
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert('Page module removed.');
+                    openProjectManager(document.getElementById('edit-proj-id').value);
+                } else {
+                    alert(`Failed to remove page: ${data.error || res.statusText}`);
+                }
+            } catch(e) {
+                alert(`Network error: ${e.message}`);
+            }
         }
 
         function openPageMediaManager(pageId, mediaArray) {
@@ -1233,9 +1285,18 @@
 
         async function deleteMedia(mediaId) {
             if(!confirm('Purge asset track?')) return;
-            const res = await fetch(`/api/project-media/${mediaId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` }});
-            if (!res.ok) { const data = await res.json().catch(()=>({})); alert('Deletion Blocked: ' + (data.error || 'Server error')); return; }
-            openProjectManager(document.getElementById('edit-proj-id').value);
+            try {
+                const res = await fetch(`/api/project-media/${mediaId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` }});
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert('Asset track purged.');
+                    openProjectManager(document.getElementById('edit-proj-id').value);
+                } else {
+                    alert(`Failed to purge asset track: ${data.error || res.statusText}`);
+                }
+            } catch(e) {
+                alert(`Network error: ${e.message}`);
+            }
         }
         
         async function updateMediaOrder(inputNode, mediaId) {
@@ -1380,12 +1441,21 @@
 
         async function deleteCategoryPageNode(pageId, categoryName, containerId) {
             if (!confirm("Are you sure you want to delete this page and all its attached media?")) return;
-            const res = await fetch(`/api/project-pages/${pageId}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${operationalToken}` }
-            });
-            if (!res.ok) { const data = await res.json().catch(()=>({})); alert('Deletion Blocked: ' + (data.error || 'Server error')); return; }
-            loadCategoryPortfolio(categoryName, containerId); // Reload category view
+            try {
+                const res = await fetch(`/api/project-pages/${pageId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${operationalToken}` }
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert('Page deleted successfully!');
+                    loadCategoryPortfolio(categoryName, containerId); // Reload category view
+                } else {
+                    alert(`Failed to delete page: ${data.error || res.statusText}`);
+                }
+            } catch(e) {
+                alert(`Network error: ${e.message}`);
+            }
         }
 
         function openCategoryMediaPicker(pageId, containerId) {
@@ -1396,5 +1466,6 @@
             hydrateMediaPickerGrid();
         }
     </script>
-    </body>
+    <!-- END APPENDED ENTERPRISE CMS PROJECT DETAILS UPGRADE & EMAIL MOD -->
+</body>
 </html>
