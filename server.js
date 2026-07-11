@@ -125,13 +125,35 @@ app.use('/api/messages', require('./controllers/messageController'));
 app.use('/api/media', require('./controllers/mediaController'));
 
 // ==========================================
-// 5. THE FALLBACK (Served if no route matches)
+// EMERGENCY DATABASE INITIALIZER ROUTE
 // ==========================================
-
-// Access the dashboard via browser: yoursite.com/dashboard (optional shortcut)
-app.get('/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/admin/index.html'));
+app.get('/api/setup-db', async (req, res) => {
+    const fs = require('fs');
+    try {
+        const schemaPath = path.join(__dirname, 'schema.sql');
+        if (!fs.existsSync(schemaPath)) {
+            return res.status(404).send('Could not find schema.sql file in the root directory.');
+        }
+        
+        const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+        
+        // 1. Run the entire schema.sql file to create all tables
+        await pool.query(schemaSql);
+        
+        // 2. Safely seed the master admin account if it doesn't exist
+        const salt = await bcrypt.genSalt(12);
+        const hashed = await bcrypt.hash('ChangeMe123!', salt);
+        await pool.query(
+            'INSERT INTO users (email, password_hash, must_change_password) VALUES ($1, $2, true) ON CONFLICT (email) DO NOTHING',
+            ['admin@example.com', hashed]
+        );
+        
+        res.send('<h1>🎉 Database layout built and admin account verified successfully! Go back to /dashboard to log in.</h1>');
+    } catch (err) {
+        res.status(500).send(`<h1>❌ Database Setup Failed</h1><pre>${err.message}</pre>`);
+    }
 });
+
 
 // All other traffic goes to the main Landing Page
 app.get('*', (req, res) => {
