@@ -517,13 +517,12 @@
         .map-wrapper {
             height: 500px;
             width: 100%;
-            /* filter: grayscale(1);  <-- REMOVED */
             border: 1px solid var(--color-border);
-            border-radius: 4px; /* Maintaining the design language */
+            border-radius: 4px;
             overflow: hidden;
         }
 
-        /* Contact Form Layout Enhancement (Integrated without redesigning UI footprint) */
+        /* Contact Form Layout Enhancement */
         .form-wrapper {
             background: var(--color-bg);
             padding: 40px;
@@ -929,7 +928,6 @@
                 
                 <circle cx="1100" cy="70" r="15" fill="none" stroke="currentColor" stroke-width="0.75" opacity="0.25" />
                 <line x1="1100" y1="50" x2="1100" y2="90" stroke="currentColor" stroke-width="0.75" opacity="0.25" />
-                <line x1="1080" y1="70" x2="1120" y2="70" stroke="currentColor" stroke-width="0.75" opacity="0.25" />
                 <text x="1095" y="42" font-family="sans-serif" font-weight="bold" font-size="9" fill="currentColor" opacity="0.3">N</text>
             </svg>
         </div>
@@ -947,12 +945,8 @@
     </footer>
 
     <div class="floating-action">
-        <a href="https://wa.me/8801775202920" id="float-wa" class="float-btn f-whatsapp" title="WhatsApp">
-            <i class="fab fa-whatsapp"></i>
-        </a>
-        <a href="tel:+8801775202920" id="float-tel" class="float-btn f-phone" title="Call Us">
-            <i class="fas fa-phone"></i>
-        </a>
+        <a href="https://wa.me/8801775202920" id="float-wa" class="float-btn f-whatsapp" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="tel:+8801775202920" id="float-tel" class="float-btn f-phone" title="Call Us"><i class="fas fa-phone"></i></a>
     </div>
 
     <script>
@@ -1014,11 +1008,23 @@
                     if(settingsRes.social_instagram) document.getElementById('soc-ig').href = settingsRes.social_instagram;
                     if(settingsRes.social_linkedin) document.getElementById('soc-ln').href = settingsRes.social_linkedin;
 
+                    // Helper to safely extract arrays from various API formats (fixes Render wrapping issues)
+                    function getSafeArray(payload) {
+                        if (Array.isArray(payload)) return payload;
+                        if (payload && typeof payload === 'object') {
+                            return payload.projects || payload.services || payload.messages || payload.media || payload.data || [];
+                        }
+                        return [];
+                    }
+
+                    const safeServices = getSafeArray(servicesRes);
+                    const safeProjects = getSafeArray(projectsRes);
+
                     // Hydrate Competency Services Grid ONLY if backend data exists
-                    if(servicesRes && servicesRes.length > 0) {
+                    if(safeServices && safeServices.length > 0) {
                         const servicesContainer = document.getElementById('dyn-services-container');
                         servicesContainer.innerHTML = '';
-                        servicesRes.forEach(srv => {
+                        safeServices.forEach(srv => {
                             servicesContainer.innerHTML += `
                                 <div class="service-card">
                                     <i class="${srv.icon_class || 'fas fa-building'}"></i>
@@ -1030,13 +1036,13 @@
                     }
 
                     // Hydrate Structural Projects Grid Matrix ONLY if backend data exists
-                    if (projectsRes && projectsRes.length > 0) {
+                    if (safeProjects && safeProjects.length > 0) {
                         const galleryContainer = document.getElementById('dyn-gallery-container');
                         galleryContainer.innerHTML = '';
                         
                         // Layout pattern arrays to maintain structural design rhythm
                         const layouts = ['gi-1', 'gi-2', 'gi-3', 'gi-4', 'gi-5', 'gi-6', 'gi-7'];
-                        projectsRes.forEach((proj, idx) => {
+                        safeProjects.forEach((proj, idx) => {
                             const layoutClass = layouts[idx % layouts.length];
                             // Using the updated single image_path schema from our new CMS logic
                             const imgSource = proj.image_path ? proj.image_path : 'images/unnamed (1).jpg';
@@ -1170,39 +1176,49 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(async () => {
+                const isLocalPreview = window.location.protocol === 'file:';
+                let activeProjects = [];
+                
                 try {
                     const res = await fetch('/api/projects');
-                    const activeProjects = await res.json();
-                    const galleryItems = document.querySelectorAll('.gallery-item a');
+                    const payload = await res.json();
                     
-                    galleryItems.forEach((linkNode, idx) => {
-                        const targetProj = activeProjects[idx];
-                        if (!targetProj) return;
-
-                        let singleClickTimeout;
-
-                        // Safely override the click event to distinguish single vs double tap
-                        linkNode.addEventListener('click', (e) => {
-                            e.preventDefault();
-
-                            if (singleClickTimeout) {
-                                clearTimeout(singleClickTimeout);
-                                singleClickTimeout = null;
-                                // DOUBLE CLICK EXECUTED
-                                window.location.href = `project-details.html?project=${targetProj.id}`;
-                            } else {
-                                singleClickTimeout = setTimeout(() => {
-                                    singleClickTimeout = null;
-                                    // SINGLE CLICK EXECUTED (Original Behavior)
-                                    window.location.href = linkNode.getAttribute('href');
-                                }, 300);
-                            }
-                        });
-                    });
+                    // Safe array extractor [1]
+                    activeProjects = Array.isArray(payload) ? payload : (payload.projects || payload.data || []);
                 } catch(e) {
-                    console.error('Project interception node mapping failed:', e);
+                    console.warn('Offline mode enabled: Database synchronization bypassed.');
                 }
-            }, 2500); // Wait for master hydration to finalize
+                
+                const galleryItems = document.querySelectorAll('.gallery-item a');
+                
+                galleryItems.forEach((linkNode, idx) => {
+                    let singleClickTimeout;
+
+                    linkNode.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const staticHref = linkNode.getAttribute('href'); // e.g. project-details.html?category=...
+
+                        if (singleClickTimeout) {
+                            clearTimeout(singleClickTimeout);
+                            singleClickTimeout = null;
+                            
+                            // DOUBLE CLICK EXECUTED
+                            if (!isLocalPreview && activeProjects[idx]) {
+                                window.location.href = `project-details.html?project=${activeProjects[idx].id}`;
+                            } else {
+                                // Local Preview Fallback
+                                window.location.href = staticHref;
+                            }
+                        } else {
+                            singleClickTimeout = setTimeout(() => {
+                                singleClickTimeout = null;
+                                // SINGLE CLICK EXECUTED (Redirect to category)
+                                window.location.href = staticHref;
+                            }, 300);
+                        }
+                    });
+                });
+            }, 1000); 
         });
     </script>
     <!-- END APPENDED PROJECT DETAILS DOUBLE-CLICK INTERCEPT ENGINE -->
