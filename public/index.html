@@ -1,0 +1,1132 @@
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title id="seo-title">South Wind Engineering | Premier Civil Engineering & Architecture</title>
+    
+    <meta name="description" id="seo-desc" content="South Wind Engineering - House #9, Road #6, Block A, Mirpur 10, Dhaka North. Professional Civil Engineering, Architecture & Construction Services.">
+    
+    <meta property="og:title" id="og-title" content="South Wind Engineering">
+    <meta property="og:description" id="og-desc" content="Professional Civil Engineering Solutions">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & CORE SETUP
+           ========================================================================== */
+        :root {
+            --color-bg: #ffffff;
+            --color-text: #1a1a1a;
+            --color-text-muted: #666666;
+            --color-accent: #000000;
+            --color-primary: #1a1a1a;
+            --color-surface: #fcfcfc;
+            --color-surface-dark: #f2f2f2;
+            --color-border: #eeeeee;
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+            --transition-smooth: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: 0.3s ease;
+            --header-height: 90px;
+            --container-width: 1440px;
+        }
+
+        [data-theme="dark"] {
+            --color-bg: #0a0a0a;
+            --color-text: #ffffff;
+            --color-text-muted: #a0a0a0;
+            --color-accent: #ffffff;
+            --color-surface: #141414;
+            --color-surface-dark: #1f1f1f;
+            --color-border: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--color-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--color-text-muted); border-radius: 10px; }
+
+        /* ==========================================================================
+           2. PREMIUM LOADER
+           ========================================================================== */
+        #premium-loader {
+            position: fixed;
+            inset: 0;
+            background-color: var(--color-bg);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-logo {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .loader-logo span {
+            display: block;
+            transform: translateY(100%);
+            animation: revealUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes revealUp {
+            to { transform: translateY(0); }
+        }
+
+        .loader-bar-bg {
+            width: 200px;
+            height: 2px;
+            background: var(--color-border);
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-bar-fill {
+            position: absolute;
+            height: 100%;
+            width: 0;
+            background: var(--color-accent);
+            transition: width 0.4s ease;
+        }
+
+        /* ==========================================================================
+           3. CUSTOM CURSOR
+           ========================================================================== */
+        #cursor {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            mix-blend-mode: difference;
+            transition: transform 0.1s;
+        }
+
+        #cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--color-text-muted);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            transition: transform 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* ==========================================================================
+           4. NAVIGATION
+           ========================================================================== */
+        header {
+            position: fixed;
+            top: 0; width: 100%;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            background: transparent;
+        }
+
+        header.scrolled {
+            background: var(--color-bg);
+            height: 70px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .nav-inner {
+            width: 90%;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--color-text);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 0;
+            width: 0; height: 1.5px;
+            background: var(--color-accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after { width: 100%; }
+
+        .theme-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--color-text);
+            font-size: 1.1rem;
+            padding: 5px;
+        }
+
+        /* ==========================================================================
+           5. HERO SECTION
+           ========================================================================== */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .hero-video-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        /* Using unnamed (6).jpg as the hero background */
+        .hero-img-fallback {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8)), 
+                        url('images/unnamed6.jpg') center/cover no-repeat;
+            z-index: 1;
+            transform: scale(1.1);
+            animation: heroZoom 20s infinite alternate;
+        }
+
+        @keyframes heroZoom {
+            to { transform: scale(1); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: #fff;
+            max-width: 1000px;
+            padding: 0 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            display: block;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 7vw, 6.5rem);
+            line-height: 1.1;
+            margin-bottom: 30px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.8);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 18px 45px;
+            background: #fff;
+            color: #000;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            border: 1px solid #fff;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: #fff;
+        }
+
+        /* ==========================================================================
+           6. LEADERSHIP (BOSS SECTION)
+           ========================================================================== */
+        .section-padding { padding: 140px 0; }
+        
+        .container {
+            width: 90%;
+            max-width: var(--container-width);
+            margin: 0 auto;
+        }
+
+        .leadership-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .boss-image-container {
+            position: relative;
+        }
+
+        .boss-image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 30px 30px 0 var(--color-surface-dark);
+        }
+
+        .boss-info h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .boss-info .designation {
+            display: block;
+            font-size: 1.2rem;
+            color: var(--color-text-muted);
+            margin-bottom: 30px;
+            font-family: var(--font-sans);
+            font-weight: 500;
+        }
+
+        .boss-quote {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            padding-left: 20px;
+            border-left: 3px solid var(--color-text);
+        }
+
+        /* ==========================================================================
+           7. SERVICES SECTION
+           ========================================================================== */
+        .services-section {
+            background: var(--color-surface);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-header span {
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .section-header h3 {
+            font-size: 3rem;
+            margin-top: 10px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: var(--color-bg);
+            padding: 50px;
+            border: 1px solid var(--color-border);
+            transition: all 0.4s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--color-text);
+        }
+
+        .service-card i {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        .service-card h4 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-family: var(--font-serif);
+        }
+
+        /* ==========================================================================
+           8. PROJECT GALLERY
+           ========================================================================== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            background: #eee;
+            border-radius: 4px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .gallery-item:hover img { transform: scale(1.05); }
+
+        /* Masonry-like layout */
+        .gi-1 { grid-column: span 8; height: 500px; }
+        .gi-2 { grid-column: span 4; height: 500px; }
+        .gi-3 { grid-column: span 4; height: 400px; }
+        .gi-4 { grid-column: span 4; height: 400px; }
+        .gi-5 { grid-column: span 4; height: 400px; }
+        .gi-6 { grid-column: span 6; height: 500px; }
+        .gi-7 { grid-column: span 6; height: 500px; }
+
+        .item-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .gallery-item:hover .item-overlay { opacity: 1; }
+
+        .item-overlay span {
+            color: #fff;
+            padding: 10px 25px;
+            border: 1px solid #fff;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        /* ==========================================================================
+           9. CONTACT & MAP
+           ========================================================================== */
+        .contact-section {
+            background: var(--color-surface-dark);
+        }
+
+        .contact-flex {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .contact-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .info-box h5 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            color: var(--color-text-muted);
+        }
+
+        .info-box p, .info-box a {
+            font-size: 1.2rem;
+            text-decoration: none;
+            color: var(--color-text);
+            display: block;
+        }
+
+        .map-wrapper {
+            height: 500px;
+            width: 100%;
+            /* filter: grayscale(1);  <-- REMOVED */
+            border: 1px solid var(--color-border);
+            border-radius: 4px; /* Maintaining the design language */
+            overflow: hidden;
+        }
+
+        /* Contact Form Layout Enhancement (Integrated without redesigning UI footprint) */
+        .form-wrapper {
+            background: var(--color-bg);
+            padding: 40px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            margin-top: -20px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+        }
+        .form-control:focus { outline: 1px solid var(--color-text); }
+        .btn-submit {
+            background: var(--color-text);
+            color: var(--color-bg);
+            border: none;
+            padding: 15px 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .btn-submit:hover { opacity: 0.9; }
+
+        /* ==========================================================================
+           10. FOOTER
+           ========================================================================== */
+        footer {
+            padding: 80px 0;
+            border-top: 1px solid var(--color-border);
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .social-links a {
+            color: var(--color-text);
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .social-links a:hover { transform: translateY(-5px); }
+
+        .copyright {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* ==========================================================================
+           11. FLOATING CONTROLS
+           ========================================================================== */
+        .floating-action {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 999;
+        }
+
+        .float-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.4rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+        }
+
+        .f-whatsapp { background: #25D366; }
+        .f-phone { background: #000; }
+        [data-theme="dark"] .f-phone { background: #fff; color: #000; }
+
+        .float-btn:hover { transform: scale(1.1); }
+
+        /* ==========================================================================
+           12. RESPONSIVE
+           ========================================================================== */
+        @media (max-width: 992px) {
+            .leadership-grid { grid-template-columns: 1fr; }
+            .boss-image-container { order: 2; }
+            .boss-info { order: 1; text-align: center; }
+            .boss-quote { border-left: none; border-top: 3px solid var(--color-text); padding: 20px 0; }
+            .nav-links { display: none; }
+            .hero h1 { font-size: 3.5rem; }
+            .gi-1, .gi-2, .gi-3, .gi-4, .gi-5, .gi-6, .gi-7 { grid-column: span 12; height: 350px; }
+        }
+
+        /* Animation classes */
+        .reveal { opacity: 1 !important; transform: translateY(0) !important; transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
+    </style>
+</head>
+<body>
+
+    <div id="premium-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <span>SOUTH WIND</span>
+            </div>
+            <div class="loader-bar-bg">
+                <div class="loader-bar-fill" id="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <header id="main-header">
+        <div class="nav-inner">
+            <a href="#" class="logo">SOUTH WIND</a>
+            <nav class="nav-links">
+                <a href="#about">The Studio</a>
+                <a href="#services">Services</a>
+                <a href="#projects">Portfolio</a>
+                <a href="#contact">Contact</a>
+                <button class="theme-btn" id="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-img-fallback" id="hero-bg-layer"></div>
+        <div class="hero-content">
+            <span class="hero-subtitle" id="dyn-hero-subtitle">Engineering the Future of Dhaka</span>
+            <h1 id="dyn-hero-title">Architectural Excellence. Structural Integrity.</h1>
+            <p id="dyn-hero-desc">From luxury residences to commercial landmarks, we bring world-class civil engineering and innovative design to Mirpur and beyond.</p>
+            <a href="#contact" class="btn-primary">Start a Consultation</a>
+        </div>
+    </section>
+
+    <section id="about" class="section-padding">
+        <div class="container">
+            <div class="leadership-grid">
+                <div class="boss-image-container">
+                    <img id="dyn-about-img" src="images/unnamed8.jpg" alt="Managing Director - South Wind Engineering">
+                </div>
+                <div class="boss-info">
+                    <span id="dyn-about-meta">A Message From Leadership</span>
+                    <h2 id="dyn-about-title">Visionary Leadership</h2>
+                    <span class="designation" id="dyn-about-desig">Managing Director, South Wind Engineering</span>
+                    <div class="boss-quote" id="dyn-about-quote">
+                        "We don't just build houses; we construct legacies that stand the test of time and weather."
+                    </div>
+                    <p id="dyn-about-p1">South Wind Engineering has been at the forefront of Dhaka’s urban transformation. Our approach combines rigorous civil engineering standards with aesthetic brilliance. We specialize in RAJUK-compliant designs, ensuring every project is legally sound and structurally superior.</p>
+                    <p style="margin-top: 20px;" id="dyn-about-p2">Located in the heart of Mirpur 10, our studio serves as a hub for innovation where architects and engineers collaborate to turn your blueprints into reality.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="section-padding services-section">
+        <div class="container">
+            <div class="section-header">
+                <span>Core Competencies</span>
+                <h3>Our Expertise</h3>
+            </div>
+            <div class="services-grid" id="dyn-services-container">
+                <div class="service-card">
+                    <i class="fas fa-drafting-compass"></i>
+                    <h4>Architectural Design</h4>
+                    <p>Custom residential and commercial plans that maximize space, light, and modern functionality.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-building"></i>
+                    <h4>Structural Engineering</h4>
+                    <p>Advanced structural analysis ensuring safety and longevity using the latest construction tech.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-file-signature"></i>
+                    <h4>RAJUK Approvals</h4>
+                    <p>Expert navigation of building codes and legal documentation for seamless project approval.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-couch"></i>
+                    <h4>Interior Design</h4>
+                    <p>Luxury interior solutions that reflect your personality while maintaining practical elegance.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-hard-hat"></i>
+                    <h4>Construction Mgmt.</h4>
+                    <p>End-to-end site supervision ensuring materials and workmanship meet our elite standards.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-city"></i>
+                    <h4>Urban Planning</h4>
+                    <p>Sustainable development strategies for modern urban environments in Bangladesh.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section-padding">
+        <div class="container">
+            <div class="section-header">
+                <span>Our Work</span>
+                <h3>Signature Portfolio</h3>
+            </div>
+            <div class="gallery-grid" id="dyn-gallery-container">
+                <div class="gallery-item gi-1">
+                    <a href="project-details.html?category=Residential%20Elite" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+                        <img src="images/unnamed1.jpg" alt="South Wind Project">
+                        <div class="item-overlay"><span>Residential Elite</span></div>
+                    </a>
+                </div>
+                <div class="gallery-item gi-2">
+                    <a href="project-details.html?category=Modern%20Facade" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+                        <img src="images/unnamed2.jpg" alt="South Wind Project">
+                        <div class="item-overlay"><span>Modern Facade</span></div>
+                    </a>
+                </div>
+                <div class="gallery-item gi-3">
+                    <a href="project-details.html?category=Luxury%20Living" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+                        <img src="images/unnamed3.jpg" alt="South Wind Project">
+                        <div class="item-overlay"><span>Luxury Living</span></div>
+                    </a>
+                </div>
+                <div class="gallery-item gi-4">
+                    <a href="project-details.html?category=Structural%20Framework" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+                        <img src="images/unnamed4.jpg" alt="South Wind Project">
+                        <div class="item-overlay"><span>Structural Framework</span></div>
+                    </a>
+                </div>
+                <div class="gallery-item gi-5">
+                    <a href="project-details.html?category=Commercial%20Space" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+                        <img src="images/unnamed5.jpg" alt="South Wind Project">
+                        <div class="item-overlay"><span>Commercial Space</span></div>
+                    </a>
+                </div>
+                <div class="gallery-item gi-6">
+                    <a href="project-details.html?category=Construction%20Site" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+                        <img src="images/unnamed.jpg" alt="South Wind Project">
+                        <div class="item-overlay"><span>Construction Site</span></div>
+                    </a>
+                </div>
+                <div class="gallery-item gi-7">
+                    <a href="project-details.html?category=Architectural%20Detail" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+                        <img src="images/unnamed9.jpg" alt="South Wind Project">
+                        <div class="item-overlay"><span>Architectural Detail</span></div>
+                    </a>
+                </div>
+                <div class="gallery-item gi-1">
+                    <a href="project-details.html?category=Urban%20Landmark" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+                        <img src="images/unnamed10.jpg" alt="South Wind Project">
+                        <div class="item-overlay"><span>Urban Landmark</span></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section-padding contact-section">
+        <div class="container">
+            <div class="contact-flex">
+                <div class="section-header" style="text-align: left;">
+                    <span>Get in Touch</span>
+                    <h3>Let's Build Something Great</h3>
+                </div>
+                
+                <div class="contact-info-grid">
+                    <div class="info-box">
+                        <h5>Corporate Office</h5>
+                        <p id="dyn-addr">House #9, Road #6, Block A<br>Mirpur 10, Dhaka North, 1216</p>
+                        <p style="margin-top:10px; font-size:0.9rem; color:var(--color-text-muted);" id="dyn-pluscode">Plus Code: R969+H8 Dhaka</p>
+                    </div>
+                    <div class="info-box">
+                        <h5>Direct Contact</h5>
+                        <a href="tel:+8801775202920" id="dyn-phone1">+880 1775-202920</a>
+                        <a href="tel:+8801912835901" id="dyn-phone2">+880 1912-835901</a>
+                    </div>
+                    <div class="info-box">
+                        <h5>Email Us</h5>
+                        <a href="mailto:southwindengineering43@gmail.com" id="dyn-email">southwindengineering43@gmail.com</a>
+                    </div>
+                </div>
+
+                <div class="form-wrapper">
+                    <form id="public-contact-form">
+                        <div class="form-group">
+                            <input type="text" id="form-name" class="form-control" placeholder="YOUR FULL NAME" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="form-email" class="form-control" placeholder="EMAIL ADDRESS" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="form-phone" class="form-control" placeholder="PHONE NUMBER (OPTIONAL)">
+                        </div>
+                        <div class="form-group">
+                            <textarea id="form-msg" class="form-control" rows="5" placeholder="PROJECT DESCRIPTION & REQUIREMENTS" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">Dispatch Brief</button>
+                    </form>
+                </div>
+
+                <div class="map-wrapper">
+                    <iframe 
+                        id="dyn-iframe"
+                        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14602.434608779951!2d90.3662281!3d23.8058288!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c13915830727%3A0xe54d9241b31a24d5!2sSouth%20Wind%20Engineering!5e0!3m2!1sen!2sbd!4v1715854832545!5m2!1sen!2sbd" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="https://www.facebook.com/Southwindengineerings/" id="soc-fb" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/southwindengineering/" id="soc-ig" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="#" id="soc-ln" target="_blank"><i class="fab fa-linkedin"></i></a>
+            </div>
+            <p class="copyright">© 2024 SOUTH WIND ENGINEERING. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+
+    <div class="floating-action">
+        <a href="https://wa.me/8801775202920" id="float-wa" class="float-btn f-whatsapp" title="WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="tel:+8801775202920" id="float-tel" class="float-btn f-phone" title="Call Us">
+            <i class="fas fa-phone"></i>
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            /* 1. System Synchronization (Dynamic Hydration Engine) */
+            async function pullDynamicContent() {
+                try {
+                    // Fetch all components concurrently
+                    const [settingsRes, servicesRes, projectsRes] = await Promise.all([
+                        fetch('/api/content').then(r => r.json()).catch(() => ({})),
+                        fetch('/api/services').then(r => r.json()).catch(() => []),
+                        fetch('/api/projects').then(r => r.json()).catch(() => [])
+                    ]);
+
+                    // Hydrate SEO Matrix
+                    if(settingsRes.seo_meta_title) document.getElementById('seo-title').innerText = settingsRes.seo_meta_title;
+                    if(settingsRes.seo_meta_description) document.getElementById('seo-desc').setAttribute('content', settingsRes.seo_meta_description);
+                    if(settingsRes.seo_og_title) document.getElementById('og-title').setAttribute('content', settingsRes.seo_og_title);
+                    if(settingsRes.seo_og_description) document.getElementById('og-desc').setAttribute('content', settingsRes.seo_og_description);
+
+                    // Hydrate Hero
+                    if(settingsRes.hero_title) document.getElementById('dyn-hero-title').innerText = settingsRes.hero_title;
+                    if(settingsRes.hero_subtitle) document.getElementById('dyn-hero-subtitle').innerText = settingsRes.hero_subtitle;
+                    if(settingsRes.hero_description) document.getElementById('dyn-hero-desc').innerText = settingsRes.hero_description;
+                    if(settingsRes.hero_image) document.getElementById('hero-bg-layer').style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8)), url('${settingsRes.hero_image}')`;
+
+                    // Hydrate Leadership
+                    if(settingsRes.about_title) document.getElementById('dyn-about-title').innerText = settingsRes.about_title;
+                    if(settingsRes.about_subtitle) document.getElementById('dyn-about-meta').innerText = settingsRes.about_subtitle;
+                    if(settingsRes.about_designation) document.getElementById('dyn-about-desig').innerText = settingsRes.about_designation;
+                    if(settingsRes.about_quote) document.getElementById('dyn-about-quote').innerText = settingsRes.about_quote;
+                    if(settingsRes.about_p1) document.getElementById('dyn-about-p1').innerText = settingsRes.about_p1;
+                    if(settingsRes.about_p2) document.getElementById('dyn-about-p2').innerText = settingsRes.about_p2;
+                    if(settingsRes.about_director_image) document.getElementById('dyn-about-img').src = settingsRes.about_director_image;
+
+                    // Hydrate Contact Nodes
+                    if(settingsRes.contact_address) document.getElementById('dyn-addr').innerHTML = settingsRes.contact_address.replace(/\n/g, '<br>');
+                    if(settingsRes.contact_plus_code) document.getElementById('dyn-pluscode').innerText = `Plus Code: ${settingsRes.contact_plus_code}`;
+                    if(settingsRes.contact_phone_1) {
+                        const p1 = document.getElementById('dyn-phone1'); p1.innerText = settingsRes.contact_phone_1; p1.href = `tel:${settingsRes.contact_phone_1.replace(/\s+/g, '')}`;
+                        document.getElementById('float-tel').href = `tel:${settingsRes.contact_phone_1.replace(/\s+/g, '')}`;
+                    }
+                    if(settingsRes.contact_phone_2) {
+                        const p2 = document.getElementById('dyn-phone2'); p2.innerText = settingsRes.contact_phone_2; p2.href = `tel:${settingsRes.contact_phone_2.replace(/\s+/g, '')}`;
+                    }
+                    if(settingsRes.contact_email) {
+                        const em = document.getElementById('dyn-email'); em.innerText = settingsRes.contact_email; em.href = `mailto:${settingsRes.contact_email}`;
+                    }
+                    if(settingsRes.contact_whatsapp) document.getElementById('float-wa').href = `https://wa.me/${settingsRes.contact_whatsapp}`;
+                    
+                    // Map Routing Execution
+                    if(settingsRes.contact_map_url) {
+                        document.getElementById('dyn-iframe').src = settingsRes.contact_map_url;
+                    }
+
+                    // Hydrate Social Coordinates
+                    if(settingsRes.social_facebook) document.getElementById('soc-fb').href = settingsRes.social_facebook;
+                    if(settingsRes.social_instagram) document.getElementById('soc-ig').href = settingsRes.social_instagram;
+                    if(settingsRes.social_linkedin) document.getElementById('soc-ln').href = settingsRes.social_linkedin;
+
+                    // Hydrate Competency Services Grid ONLY if backend data exists
+                    if(servicesRes && servicesRes.length > 0) {
+                        const servicesContainer = document.getElementById('dyn-services-container');
+                        servicesContainer.innerHTML = '';
+                        servicesRes.forEach(srv => {
+                            servicesContainer.innerHTML += `
+                                <div class="service-card">
+                                    <i class="${srv.icon_class || 'fas fa-building'}"></i>
+                                    <h4>${srv.title}</h4>
+                                    <p>${srv.description}</p>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    // Hydrate Structural Projects Grid Matrix ONLY if backend data exists
+                    if (projectsRes && projectsRes.length > 0) {
+                        const galleryContainer = document.getElementById('dyn-gallery-container');
+                        galleryContainer.innerHTML = '';
+                        
+                        // Layout pattern arrays to maintain structural design rhythm
+                        const layouts = ['gi-1', 'gi-2', 'gi-3', 'gi-4', 'gi-5', 'gi-6', 'gi-7'];
+                        projectsRes.forEach((proj, idx) => {
+                            const layoutClass = layouts[idx % layouts.length];
+                            // Using the updated single image_path schema from our new CMS logic
+                            const imgSource = proj.image_path ? proj.image_path : 'images/unnamed (1).jpg';
+                            
+                            galleryContainer.innerHTML += `
+                                <div class="gallery-item ${layoutClass}">
+                                    <a href="project-details.html?category=${encodeURIComponent(proj.category)}" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+                                        <img src="${imgSource}" alt="${proj.title}">
+                                        <div class="item-overlay"><span>${proj.category}</span></div>
+                                    </a>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    // Re-trigger scroll element parsing once items are dynamically loaded
+                    bindScrollObservers();
+
+                } catch (err) {
+                    console.error("System Hydration Context Failure:", err);
+                }
+            }
+
+            /* Interactive Lead Dispatches Form Handlers */
+            document.getElementById('public-contact-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const payload = {
+                    name: document.getElementById('form-name').value,
+                    email: document.getElementById('form-email').value,
+                    phone: document.getElementById('form-phone').value,
+                    message: document.getElementById('form-msg').value
+                };
+
+                try {
+                    const res = await fetch('/api/messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+                    if(data.success) {
+                        alert('Brief transmitted to our technical office successfully.');
+                        document.getElementById('public-contact-form').reset();
+                    } else {
+                        alert(`Transaction block: ${data.error}`);
+                    }
+                } catch (err) {
+                    alert('Network timeout. Please trace direct connectivity channels.');
+                }
+            });
+
+            /* Loader Logic & Initialization */
+            const loader = document.getElementById('premium-loader');
+            const loaderBar = document.getElementById('loader-bar');
+            let width = 0;
+            
+            const interval = setInterval(() => {
+                width += Math.random() * 30;
+                if(width > 100) width = 100;
+                loaderBar.style.width = width + '%';
+                
+                if(width === 100) {
+                    clearInterval(interval);
+                    setTimeout(async () => {
+                        await pullDynamicContent(); // Core initialization run
+                        loader.style.opacity = '0';
+                        setTimeout(() => loader.style.display = 'none', 500);
+                        animateHero();
+                    }, 500);
+                }
+            }, 100);
+
+            function animateHero() {
+                const tl = document.querySelectorAll('.hero-content > *');
+                tl.forEach((el, i) => {
+                    setTimeout(() => el.classList.add('reveal'), i * 200);
+                });
+            }
+
+            /* Custom Cursor */
+            const cursor = document.getElementById('cursor');
+            const follower = document.getElementById('cursor-follower');
+            
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+                follower.style.transform = `translate3d(${e.clientX - 15}px, ${e.clientY - 15}px, 0)`;
+            });
+
+            /* Header Scroll Effect */
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', () => {
+                if(window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            /* Theme Toggle */
+            const themeBtn = document.getElementById('theme-toggle');
+            themeBtn.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme');
+                const next = current === 'light' ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', next);
+                themeBtn.innerHTML = next === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            });
+
+            /* Reveal on Scroll */
+            function bindScrollObservers() {
+                const observerOptions = { threshold: 0.1 };
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if(entry.isIntersecting) {
+                            entry.target.classList.add('reveal');
+                        }
+                    });
+                }, observerOptions);
+
+                document.querySelectorAll('.service-card, .gallery-item, .info-box').forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(30px)';
+                    observer.observe(el);
+                });
+            }
+            // Bind initially just in case backend is slow
+            bindScrollObservers();
+        });
+    </script>
+    
+    <!-- BEGIN APPENDED PROJECT DETAILS DOUBLE-CLICK INTERCEPT ENGINE -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(async () => {
+                try {
+                    const res = await fetch('/api/projects');
+                    const activeProjects = await res.json();
+                    const galleryItems = document.querySelectorAll('.gallery-item a');
+                    
+                    galleryItems.forEach((linkNode, idx) => {
+                        const targetProj = activeProjects[idx];
+                        if (!targetProj) return;
+
+                        let singleClickTimeout;
+
+                        // Safely override the click event to distinguish single vs double tap
+                        linkNode.addEventListener('click', (e) => {
+                            e.preventDefault();
+
+                            if (singleClickTimeout) {
+                                clearTimeout(singleClickTimeout);
+                                singleClickTimeout = null;
+                                // DOUBLE CLICK EXECUTED
+                                window.location.href = `project-details.html?project=${targetProj.id}`;
+                            } else {
+                                singleClickTimeout = setTimeout(() => {
+                                    singleClickTimeout = null;
+                                    // SINGLE CLICK EXECUTED (Original Behavior)
+                                    window.location.href = linkNode.getAttribute('href');
+                                }, 300);
+                            }
+                        });
+                    });
+                } catch(e) {
+                    console.error('Project interception node mapping failed:', e);
+                }
+            }, 2500); // Wait for master hydration to finalize
+        });
+    </script>
+    <!-- END APPENDED PROJECT DETAILS DOUBLE-CLICK INTERCEPT ENGINE -->
+</body>
+</html>
