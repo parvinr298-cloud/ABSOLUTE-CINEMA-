@@ -6,6 +6,7 @@ const path = require('path');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const fs = require('fs'); // Added to read your schema.sql file
+const jwt = require('jsonwebtoken'); // Added for inline authentication
 require('dotenv').config();
 
 const app = express();
@@ -84,6 +85,77 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ==========================================
 // 4. API ROUTING
 // ==========================================
+
+// Inline Authentication Middleware to protect deep management operations
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Missing token. Access denied.' });
+    }
+    
+    jwt.verify(token, process.env.JWT_SECRET || 'super_secret_fallback_key_123!', (err, user) => {
+        if (err) {
+            return res.status(403).json({ error: 'Invalid or expired token.' });
+        }
+        req.user = user;
+        next();
+    });
+}
+
+// A. POST ROUTE: Add Media Asset to Page
+app.post('/api/project-pages/:pageId/media', authenticateToken, async (req, res) => {
+    const { pageId } = req.params;
+    const { media_path, media_type, display_order } = req.body;
+    try {
+        const result = await pool.query(
+            'INSERT INTO project_media (page_id, media_path, media_type, display_order) VALUES ($1, $2, $3, $4) RETURNING *',
+            [pageId, media_path, media_type || 'image', display_order || 0]
+        );
+        res.status(201).json({ success: true, data: result.rows[0] });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to insert page media: ' + err.message });
+    }
+});
+
+// B. DELETE ROUTE: Delete Page Module (Removes linked page media first to prevent foreign key blocks)
+app.delete('/api/project-pages/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    try {
+        // Clear children from project_media first
+        await pool.query('DELETE FROM project_media WHERE page_id = $1', [id]);
+        
+        // Delete parent page module
+        const result = await pool.query('DELETE FROM project_pages WHERE id = $1', [id]);
+        
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Page module not found.' });
+        }
+        res.json({ success: true, message: 'Page module removed.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database delete execution failed: ' + err.message });
+    }
+});
+
+// C. DELETE ROUTE: Delete Individual Page Media
+app.delete('/api/project-media/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await pool.query('DELETE FROM project_media WHERE id = $1', [id]);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Media asset not found.' });
+        }
+        res.json({ success: true, message: 'Media asset removed.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database delete execution failed: ' + err.message });
+    }
+});
+
+// Controller Routings
 app.use('/api/auth', require('./controllers/authController'));
 app.use('/api/content', require('./controllers/contentController'));
 app.use('/api/services', require('./controllers/serviceController'));
