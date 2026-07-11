@@ -51,6 +51,61 @@ CREATE TABLE IF NOT EXISTS media_library (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- =========================================================================
+-- APPENDED ENGINE UPGRADES: DEEP PROJECT SPECIFICATIONS & MEDIA SUPPORT
+-- =========================================================================
+
+-- Safe non-destructive column additions for original tables
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_path TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS video_path TEXT;
+
+-- New Architectural Project Pages Module
+CREATE TABLE IF NOT EXISTS project_pages (
+    id SERIAL PRIMARY KEY,
+    project_id INTEGER REFERENCES projects(id) ON DELETE CASCADE,
+    page_number INTEGER DEFAULT 1,
+    title VARCHAR(255),
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- New Matrix Media Support Module
+CREATE TABLE IF NOT EXISTS project_media (
+    id SERIAL PRIMARY KEY,
+    page_id INTEGER REFERENCES project_pages(id) ON DELETE CASCADE,
+    media_path TEXT NOT NULL,
+    media_type VARCHAR(50) DEFAULT 'image',
+    display_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- =========================================================================
+-- LIVE DATABASE CLEAN UP & DEDUPLICATION (PREVENTS MIGRATION ERRORS)
+-- =========================================================================
+
+-- 1. Delete existing duplicates so they do not block the Unique Constraints [1]
+DELETE FROM services a 
+USING services b 
+WHERE a.id > b.id AND a.title = b.title;
+
+DELETE FROM projects a 
+USING projects b 
+WHERE a.id > b.id AND a.title = b.title;
+
+-- 2. Safely apply Unique constraints to existing live tables [2]
+ALTER TABLE projects DROP CONSTRAINT IF EXISTS unique_project_title;
+ALTER TABLE projects ADD CONSTRAINT unique_project_title UNIQUE (title);
+
+ALTER TABLE services DROP CONSTRAINT IF EXISTS unique_service_title;
+ALTER TABLE services ADD CONSTRAINT unique_service_title UNIQUE (title);
+
+
+-- =========================================================================
+-- SEED DATA (ON CONFLICT DO NOTHING IS NOW ACTIVE AND WORKING)
+-- =========================================================================
+
 -- Seed Data for Core Content Layers
 INSERT INTO site_settings (key, value) VALUES
 ('hero_title', 'Architectural Excellence. Structural Integrity.'),
@@ -88,7 +143,7 @@ INSERT INTO services (title, description, icon_class, display_order) VALUES
 ('Interior Design', 'Luxury interior solutions that reflect your personality while maintaining practical elegance.', 'fas fa-couch', 4),
 ('Construction Mgmt.', 'End-to-end site supervision ensuring materials and workmanship meet our elite standards.', 'fas fa-hard-hat', 5),
 ('Urban Planning', 'Sustainable development strategies for modern urban environments in Bangladesh.', 'fas fa-city', 6)
-ON CONFLICT DO NOTHING;
+ON CONFLICT (title) DO NOTHING; -- Unique constraint will resolve this cleanly [2]
 
 -- Seed Default Projects matching layout classes
 INSERT INTO projects (title, category, is_featured, display_order, images) VALUES
@@ -100,34 +155,4 @@ INSERT INTO projects (title, category, is_featured, display_order, images) VALUE
 ('South Wind Project 6', 'Construction Site', true, 6, '["Images/unnamed.jpg"]'::jsonb),
 ('South Wind Project 7', 'Architectural Detail', true, 7, '["Images/unnamed9.jpg"]'::jsonb),
 ('South Wind Project 8', 'Urban Landmark', true, 8, '["Images/unnamed10.jpg"]'::jsonb)
-ON CONFLICT DO NOTHING;
-
-
--- =========================================================================
--- APPENDED ENGINE UPGRADES: DEEP PROJECT SPECIFICATIONS & MEDIA SUPPORT
--- =========================================================================
-
--- Safe non-destructive column additions for original tables
-ALTER TABLE projects ADD COLUMN IF NOT EXISTS description TEXT;
-ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_path TEXT;
-ALTER TABLE projects ADD COLUMN IF NOT EXISTS video_path TEXT;
-
--- New Architectural Project Pages Module
-CREATE TABLE IF NOT EXISTS project_pages (
-    id SERIAL PRIMARY KEY,
-    project_id INTEGER REFERENCES projects(id) ON DELETE CASCADE,
-    page_number INTEGER DEFAULT 1,
-    title VARCHAR(255),
-    description TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- New Matrix Media Support Module
-CREATE TABLE IF NOT EXISTS project_media (
-    id SERIAL PRIMARY KEY,
-    page_id INTEGER REFERENCES project_pages(id) ON DELETE CASCADE,
-    media_path TEXT NOT NULL,
-    media_type VARCHAR(50) DEFAULT 'image',
-    display_order INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+ON CONFLICT (title) DO NOTHING; -- Unique constraint will resolve this cleanly [2]
