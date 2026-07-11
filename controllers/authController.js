@@ -1,4 +1,3 @@
---- START OF FILE controllers/authController.js ---
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
