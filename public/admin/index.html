@@ -423,6 +423,7 @@
         let targetPickerFieldHook = '';
         let selectedMediaPaths = []; // Track multi-select images globally
         let activeCategoryContainerIdToReload = ''; // Reloader tracking hook
+        let currentProjectPages = []; // Global memory tracker to prevent JSON double-quotes HTML parse crashes [2]
 
         // Helper to safely extract arrays from various API formats (fixes Render wrapping issues)
         function getSafeArray(payload) {
@@ -636,8 +637,8 @@
                             ${hasVideo}
                         </td>
                         <td>
-                            <!-- Swipe horizontally on Android to access action buttons -->
-                            <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:black;" onclick="openProjectManager(${p.id})">Details</button>
+                            <!-- Swipe horizontally on Android to access action buttons. color:var(--bg) fixes light mode visibility [1, 2] -->
+                            <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:var(--bg);" onclick="openProjectManager(${p.id})">Details</button>
                             <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
                         </td>
                     </tr>
@@ -688,6 +689,7 @@
             if(confirm('Terminate active portfolio project entry completely?')) {
                 await fetch(`/api/projects/${id}`, { 
                     method: 'DELETE', 
+                    -- REPAIR ROUTE INTEGRATION IN ADMIN PANEL
                     headers: { 'Authorization': `Bearer ${operationalToken}` } 
                 });
                 synchronizePortfolioTable();
@@ -1067,8 +1069,8 @@
                             ${hasVideo}
                         </td>
                         <td>
-                            <!-- Swipe horizontally on Android to access these action buttons -->
-                            <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:black;" onclick="openProjectManager(${p.id})">Details</button>
+                            <!-- Swipe horizontally on Android to access these action buttons. color:var(--bg) fixes light mode visibility [1, 2] -->
+                            <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:var(--bg);" onclick="openProjectManager(${p.id})">Details</button>
                             <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem; margin-left:5px;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
                             <a href="/project-details.html?project=${p.id}" target="_blank" class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--success); color:black; margin-left:5px; text-decoration:none;">Preview</a>
                         </td>
@@ -1087,7 +1089,8 @@
             document.getElementById('edit-proj-desc').value = proj.description || '';
             document.getElementById('edit-proj-thumb').value = proj.image_path || '';
             
-            renderProjectPages(proj.pages || []);
+            currentProjectPages = proj.pages || []; // Safe global array mapping to prevent JSON breaking HTML [2]
+            renderProjectPages(currentProjectPages);
             document.getElementById('media-manager-block').style.display = 'none';
             document.getElementById('project-manage-modal').style.display = 'block';
         }
@@ -1110,19 +1113,27 @@
         function renderProjectPages(pages) {
             const tbody = document.getElementById('project-pages-list');
             tbody.innerHTML = '';
-            pages.forEach(p => {
+            pages.forEach((p, idx) => {
                 tbody.innerHTML += `
                     <tr>
                         <td>Page ${p.page_number}</td>
                         <td>${p.title || 'Module Segment'}</td>
                         <td>
-                            <button class="btn" style="padding:5px; font-size:0.7rem;" onclick='openPageMediaManager(${p.id}, ${JSON.stringify(p.media || [])})'>Media Logic</button>
+                            <!-- Referencing globally by array index to prevent quote serialization crashes on mobile [2] -->
+                            <button class="btn" style="padding:5px; font-size:0.7rem;" onclick='openPageMediaManagerByIndex(${idx})'>Media Logic</button>
                             <button class="btn btn-danger" style="padding:5px; font-size:0.7rem;" onclick="deleteProjectPage(${p.id})">Del</button>
                         </td>
                     </tr>
                 `;
             });
         }
+
+        window.openPageMediaManagerByIndex = function(idx) {
+            const p = currentProjectPages[idx];
+            if (p) {
+                openPageMediaManager(p.id, p.media || []);
+            }
+        };
 
         async function addNewProjectPage() {
             const id = document.getElementById('edit-proj-id').value;
@@ -1282,7 +1293,9 @@
                                 No pages created. Tap the button above to add your first page!
                             </div>`;
                     } else {
-                        pages.forEach(p => {
+                        // Store pages globally when rendering the visual grid
+                        currentProjectPages = pages;
+                        pages.forEach((p, idx) => {
                             let mediaThumbnails = '';
                             (p.media || []).forEach(m => {
                                 if (m.media_type === 'video') {
