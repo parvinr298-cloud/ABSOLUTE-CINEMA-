@@ -455,27 +455,36 @@
         }
 
         // Self-healing page deletion router [2]
-        async function executeDeletePageRoute(pageId) {
+        async function executeDeletePageRoute(pageId, projectId) {
+            // Dynamic projectId injector fixes empty mock values from parent categories [2]
+            if (!projectId) {
+                projectId = document.getElementById('edit-proj-id').value;
+            }
+
             if (discoveredDeletePageRoute) {
-                return await safeFetchJson(discoveredDeletePageRoute.replace('{id}', pageId), {
+                // Safely swap both pageId and optional parent projectId placeholders [2]
+                const cachedRoute = discoveredDeletePageRoute.replace('{id}', pageId);
+                return await safeFetchJson(projectId ? cachedRoute.replace('{projectId}', projectId) : cachedRoute, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${operationalToken}` }
                 });
             }
 
-            const projectId = document.getElementById('edit-proj-id').value; // Fetch parent ID context securely [2]
             const potentialRoutes = [
                 `/api/project-pages/${pageId}`,
                 `/api/project_pages/${pageId}`,
                 `/api/project-page/${pageId}`,
                 `/api/project_page/${pageId}`,
                 `/api/projects/pages/${pageId}`,
-                `/api/pages/${pageId}`,
-                // Added high-probability parent-child nested routes [2]
-                `/api/projects/${projectId}/pages/${pageId}`,
-                `/api/projects/${projectId}/project-pages/${pageId}`,
-                `/api/projects/${projectId}/project_pages/${pageId}`
+                `/api/pages/${pageId}`
             ];
+
+            // Only append nested structures if a valid parent projectId is supplied [2]
+            if (projectId) {
+                potentialRoutes.push(`/api/projects/${projectId}/pages/${pageId}`);
+                potentialRoutes.push(`/api/projects/${projectId}/project-pages/${pageId}`);
+                potentialRoutes.push(`/api/projects/${projectId}/project_pages/${pageId}`);
+            }
 
             for (const route of potentialRoutes) {
                 try {
@@ -484,14 +493,19 @@
                         headers: { 'Authorization': `Bearer ${operationalToken}` }
                     });
                     if (res.ok) {
-                        discoveredDeletePageRoute = route.replace(pageId, '{id}');
+                        // Cache the discovered path mapping for rapid reuse [2]
+                        if (projectId && route.includes(projectId)) {
+                            discoveredDeletePageRoute = route.replace(pageId, '{id}').replace(projectId, '{projectId}');
+                        } else {
+                            discoveredDeletePageRoute = route.replace(pageId, '{id}');
+                        }
                         return { success: true };
                     }
                 } catch (e) {
                     console.warn(`Route ${route} failed during probe:`, e);
                 }
             }
-            throw new Error("No active delete route found on your server. Checked: /api/project-pages, /api/project_pages, /api/project-page, and /api/projects/pages.");
+            throw new Error("No active delete route found on your server. Checked standard and nested parent-child paths.");
         }
 
         // Self-healing media deletion router [2]
@@ -1449,7 +1463,8 @@
                                             <button class="btn btn-success" style="padding:6px 12px; font-size:0.75rem;" onclick="openCategoryMediaPicker(${p.id}, '${containerId}')">
                                                 <i class="fas fa-images"></i> Add/Change Pics
                                             </button>
-                                            <button class="btn btn-danger" style="padding:6px 12px; font-size:0.75rem;" onclick="deleteCategoryPageNode(${p.id}, '${categoryName}', '${containerId}')">
+                                            <!-- Fixed page deletion parameter map to bypass modal validation block [2] -->
+                                            <button class="btn btn-danger" style="padding:6px 12px; font-size:0.75rem;" onclick="deleteCategoryPageNode(${p.id}, ${proj.id}, '${categoryName}', '${containerId}')">
                                                 <i class="fas fa-trash"></i> Delete Page
                                             </button>
                                         </div>
@@ -1514,11 +1529,11 @@
             } catch(e) { alert("Failed to add page: " + e.message); }
         }
 
-        async function deleteCategoryPageNode(pageId, categoryName, containerId) {
+        async function deleteCategoryPageNode(pageId, projectId, categoryName, containerId) {
             if (!confirm("Are you sure you want to delete this page and all its attached media?")) return;
             try {
-                // Invoking the self-healing page deletion router [2]
-                await executeDeletePageRoute(pageId);
+                // Safely passing both pageId and project context to resolve nested deletion routing [2]
+                await executeDeletePageRoute(pageId, projectId);
                 loadCategoryPortfolio(categoryName, containerId); // Reload category view
             } catch(e) { alert("Failed to delete page: " + e.message); }
         }
