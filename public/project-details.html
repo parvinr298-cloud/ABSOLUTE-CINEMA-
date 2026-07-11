@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SOUTH WIND | Project Specifications</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --color-bg: #ffffff;
+            --color-text: #1a1a1a;
+            --color-text-muted: #666666;
+            --color-accent: #000000;
+            --color-primary: #1a1a1a;
+            --color-surface: #fcfcfc;
+            --color-surface-dark: #f2f2f2;
+            --color-border: #eeeeee;
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+            --container-width: 1440px;
+        }
+
+        [data-theme="dark"] {
+            --color-bg: #0a0a0a;
+            --color-text: #ffffff;
+            --color-text-muted: #a0a0a0;
+            --color-accent: #ffffff;
+            --color-surface: #141414;
+            --color-surface-dark: #1f1f1f;
+            --color-border: #2a2a2a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-sans); background-color: var(--color-bg); color: var(--color-text); line-height: 1.7; padding-bottom: 0px;}
+
+        /* Return Navigation */
+        .back-nav {
+            padding: 30px 5%;
+            max-width: var(--container-width);
+            margin: 0 auto;
+        }
+        .back-nav a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Hero Specifications */
+        .project-hero {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .project-category {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--color-text-muted);
+            display: block;
+            margin-bottom: 15px;
+        }
+        .project-title {
+            font-family: var(--font-serif);
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            margin-bottom: 30px;
+            line-height: 1.1;
+        }
+        .project-desc {
+            font-size: 1.1rem;
+            color: var(--color-text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Media Container */
+        .page-container {
+            width: 90%;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            display: none;
+        }
+        .page-container.active { display: block; opacity: 1; }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        @media (max-width: 768px) { .media-grid { grid-template-columns: 1fr; } }
+        
+        .media-asset { width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--color-border); }
+
+        /* Pagination Controls */
+        .pagination-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin: 60px auto 0 auto;
+            width: 90%;
+            max-width: var(--container-width);
+            padding: 30px 0;
+            border-top: 1px solid var(--color-border);
+        }
+        .page-btn {
+            background: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .page-btn.active, .page-btn:hover { background: var(--color-accent); color: var(--color-bg); }
+        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        .page-title {
+            text-align: center; font-size: 1.5rem; margin-bottom: 40px; font-family: var(--font-serif);
+        }
+
+        .inner-pages-indicator {
+            display: flex;
+            gap: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .pagination-controls {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .page-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* 3D Blueprint Skyline Sketch Wrapper */
+        .bottom-blueprint-sketch {
+            width: 100%;
+            overflow: hidden;
+            background: transparent;
+            pointer-events: none;
+            user-select: none;
+            color: var(--color-text-muted);
+            opacity: 0.4;
+            margin-top: 50px;
+            line-height: 0;
+        }
+        .bottom-blueprint-sketch svg {
+            width: 100%;
+            height: auto;
+            max-height: 180px;
+        }
+
+        footer {
+            background: var(--color-surface-dark);
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid var(--color-border);
+        }
+        .footer-copyright {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="back-nav">
+        <a href="index.html#projects"><i class="fas fa-arrow-left"></i> Return to Studio</a>
+    </div>
+
+    <div class="project-hero">
+        <span class="project-category" id="render-category">System Querying...</span>
+        <h1 class="project-title" id="render-title">Loading Parameters</h1>
+        <p class="project-desc" id="render-desc"></p>
+    </div>
+
+    <div id="pages-wrapper"></div>
+    <div class="pagination-controls" id="pagination-wrapper"></div>
+
+    <!-- Shaded Blueprint Construction Sketch -->
+    <div class="bottom-blueprint-sketch">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="110" x2="1200" y2="110" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-dasharray="5 5" />
+            <line x1="0" y1="115" x2="1200" y2="115" stroke="currentColor" stroke-width="0.5" opacity="0.2" />
+            
+            <!-- Shaded Skyscraper Blocks (Deep Background Silhouette) -->
+            <rect x="80" y="30" width="60" height="80" fill="currentColor" opacity="0.05" />
+            <rect x="220" y="10" width="80" height="100" fill="currentColor" opacity="0.07" />
+            <polygon points="400,110 400,40 450,20 500,40 500,110" fill="currentColor" opacity="0.05" />
+            <rect x="680" y="25" width="90" height="85" fill="currentColor" opacity="0.06" />
+            <rect x="850" y="15" width="70" height="95" fill="currentColor" opacity="0.08" />
+            <polygon points="1000,110 1000,50 1050,30 1100,50 1100,110" fill="currentColor" opacity="0.05" />
+
+            <!-- Detailed Wireframes & Structural Outlines (Midground) -->
+            <path d="M 50,110 L 50,20 L 120,5 M 50,30 L 120,30 M 50,20 L 30,25 M 45,110 L 45,20 M 55,110 L 55,20" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.25" />
+            <path d="M 100,30 L 100,60 L 95,60 L 95,110" fill="none" stroke="currentColor" stroke-width="1" opacity="0.25" />
+            
+            <rect x="150" y="40" width="80" height="70" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
+            <line x1="150" y1="40" x2="230" y2="110" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
+            <line x1="230" y1="40" x2="150" y2="110" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
+            
+            <path d="M 280,110 L 280,10 L 310,0 L 340,10 L 340,110 Z" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4" />
+            <line x1="310" y1="0" x2="310" y2="110" stroke="currentColor" stroke-width="0.6" opacity="0.2" stroke-dasharray="2 2" />
+            <rect x="290" y="20" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
+            <rect x="320" y="20" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
+            <rect x="290" y="45" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
+            <rect x="320" y="45" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
+            
+            <path d="M 390,110 L 390,50 L 470,25 L 470,110 Z" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
+            <line x1="390" y1="65" x2="470" y2="65" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
+            <line x1="390" y1="80" x2="470" y2="80" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
+            
+            <rect x="520" y="30" width="90" height="80" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
+            <line x1="520" y1="30" x2="565" y2="70" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
+            <line x1="565" y1="70" x2="610" y2="30" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
+            <line x1="520" y1="70" x2="565" y2="30" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
+            <line x1="565" y1="30" x2="610" y2="70" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
+            
+            <path d="M 640,110 L 640,15 L 720,0 M 640,25 L 720,25 M 640,15 L 610,20 M 635,110 L 635,15 M 645,110 L 645,15" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
+            <path d="M 690,25 L 690,50 L 685,50 L 685,110" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" />
+            
+            <rect x="740" y="30" width="70" height="90" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
+            <path d="M 850,120 L 850,40 L 900,40 L 900,120" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
+            <path d="M 940,120 L 940,50 Q 975,20 1010,50 L 1010,120 Z" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
+            
+            <circle cx="1120" cy="60" r="15" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
+            <line x1="1120" y1="40" x2="1120" y2="80" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
+            <line x1="1100" y1="60" x2="1140" y2="60" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
+            <text x="1115" y="32" font-family="sans-serif" font-weight="bold" font-size="9" fill="currentColor" opacity="0.25">N</text>
+        </svg>
+    </div>
+
+    <footer>
+        <p class="footer-copyright">© 2024 SOUTH WIND ENGINEERING. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const activeTheme = localStorage.getItem('sw_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', activeTheme);
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('project');
+            const categoryParam = urlParams.get('category');
+            
+            const isLocalPreview = window.location.protocol === 'file:';
+
+            if (!projectId && !categoryParam) {
+                document.getElementById('render-title').innerText = 'No Active Configuration Provided.';
+                return;
+            }
+
+            // Helper to cleanly render images, local videos, or YouTube links
+            function renderMediaAsset(m) {
+                if (m.media_type === 'video') {
+                    const path = m.media_path || '';
+                    if (path.includes('youtube.com') || path.includes('youtu.be')) {
+                        let videoId = '';
+                        try {
+                            if (path.includes('youtu.be/')) {
+                                videoId = path.split('youtu.be/')[1].split(/[?#]/)[0];
+                            } else {
+                                const urlObj = new URL(path);
+                                videoId = urlObj.searchParams.get('v');
+                            }
+                        } catch (e) {
+                            console.error("Invalid YouTube URL path", e);
+                        }
+                        return `<iframe class="media-asset" style="aspect-ratio:16/9; width:100%; border:none; min-height:280px;" src="https://www.youtube.com/embed/${videoId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    } else {
+                        return `<video class="media-asset" src="${m.media_path}" controls autoplay muted loop></video>`;
+                    }
+                } else {
+                    return `<img class="media-asset" src="${m.media_path || 'images/unnamed1.jpg'}" alt="Asset">`;
+                }
+            }
+
+            try {
+                let proj = null;
+                let prevProjNode = null;
+                let nextProjNode = null;
+                let pages = [];
+
+                if (isLocalPreview || !projectId) {
+                    // --- OFFLINE/LOCAL STATIC PREVIEW FALLBACK ---
+                    const targetCategory = categoryParam || "Residential Elite";
+                    proj = {
+                        category: targetCategory,
+                        title: targetCategory,
+                        description: "Local File Preview. Run Node Server on Termux/PC to connect database API.",
+                        pages: [
+                            {
+                                title: "Primary Structural Design",
+                                media: [
+                                    { media_type: "image", media_path: "images/unnamed1.jpg" },
+                                    { media_type: "image", media_path: "images/unnamed2.jpg" }
+                                ]
+                            },
+                            {
+                                title: "Interior Layout Concept",
+                                media: [
+                                    { media_type: "image", media_path: "images/unnamed3.jpg" },
+                                    { media_type: "image", media_path: "images/unnamed4.jpg" }
+                                ]
+                            }
+                        ]
+                    };
+                    pages = proj.pages;
+                } else {
+                    // --- ONLINE RUNTIME API INTEGRATION ---
+                    const resAllProjects = await fetch('/api/projects');
+                    const allProjects = await resAllProjects.json();
+                    allProjects.sort((a, b) => a.category.localeCompare(b.category) || a.display_order - b.display_order);
+
+                    const currentProjIndex = allProjects.findIndex(p => p.id == projectId);
+                    prevProjNode = currentProjIndex > 0 ? allProjects[currentProjIndex - 1] : null;
+                    nextProjNode = currentProjIndex < allProjects.length - 1 ? allProjects[currentProjIndex + 1] : null;
+
+                    const res = await fetch(`/api/projects/${projectId}/details`);
+                    proj = await res.json();
+                    pages = proj.pages || [];
+                }
+
+                document.getElementById('render-category').innerText = proj.category;
+                document.getElementById('render-title').innerText = proj.title;
+                document.getElementById('render-desc').innerText = proj.description || '';
+
+                const wrapper = document.getElementById('pages-wrapper');
+                wrapper.innerHTML = '';
+
+                if (pages.length === 0) {
+                    wrapper.innerHTML = `
+                        <div class="page-container active" style="opacity: 1; display: block;">
+                            <div class="media-grid">
+                                <img class="media-asset" src="${proj.image_path || 'images/unnamed1.jpg'}">
+                            </div>
+                        </div>`;
+                } else {
+                    pages.forEach((page, idx) => {
+                        let mediaHTML = '';
+                        (page.media || []).forEach(m => {
+                            mediaHTML += renderMediaAsset(m);
+                        });
+
+                        wrapper.innerHTML += `
+                            <div class="page-container" id="page-node-${idx}">
+                                <h2 class="page-title">${page.title || ''}</h2>
+                                <div class="media-grid">${mediaHTML}</div>
+                            </div>
+                        `;
+                    });
+                }
+
+                // Render Controls Interface
+                const paginator = document.getElementById('pagination-wrapper');
+                
+                function drawPagination(currentIdx) {
+                    paginator.innerHTML = '';
+                    
+                    if (isLocalPreview) {
+                        paginator.innerHTML += `<div style="color:var(--color-text-muted); font-size:0.8rem; text-align:center; width:100%; margin-bottom: 10px;">PREVIEW MODE ENABLED (Offline Local Files)</div>`;
+                    }
+
+                    // Left Side: Previous Project Anchor
+                    if (prevProjNode) {
+                        const prevProjBtn = document.createElement('a');
+                        prevProjBtn.className = 'page-btn';
+                        prevProjBtn.href = `?project=${prevProjNode.id}`;
+                        prevProjBtn.innerHTML = `<i class="fas fa-arrow-left"></i> Prev Project`;
+                        paginator.appendChild(prevProjBtn);
+                    } else {
+                        const spacer = document.createElement('div');
+                        spacer.style.width = "100px";
+                        paginator.appendChild(spacer);
+                    }
+
+                    // Middle Section: Inner Photo Pages indicators
+                    if (pages.length > 1) {
+                        const innerPagesWrapper = document.createElement('div');
+                        innerPagesWrapper.className = 'inner-pages-indicator';
+
+                        pages.forEach((_, idx) => {
+                            const btn = document.createElement('button');
+                            btn.className = `page-btn ${idx === currentIdx ? 'active' : ''}`;
+                            btn.innerText = idx + 1;
+                            btn.onclick = () => {
+                                document.querySelectorAll('.page-container').forEach(el => el.classList.remove('active'));
+                                document.getElementById(`page-node-${idx}`).classList.add('active');
+                                drawPagination(idx);
+                            };
+                            innerPagesWrapper.appendChild(btn);
+                        });
+                        paginator.appendChild(innerPagesWrapper);
+                    } else {
+                        const textNode = document.createElement('span');
+                        textNode.style.color = "var(--color-text-muted)";
+                        textNode.style.fontSize = "0.8rem";
+                        textNode.innerText = "SINGLE SECTION VIEW";
+                        paginator.appendChild(textNode);
+                    }
+
+                    // Right Side: Next Project Anchor
+                    if (nextProjNode) {
+                        const nextProjBtn = document.createElement('a');
+                        nextProjBtn.className = 'page-btn';
+                        nextProjBtn.href = `?project=${nextProjNode.id}`;
+                        nextProjBtn.innerHTML = `Next Project <i class="fas fa-arrow-right"></i>`;
+                        paginator.appendChild(nextProjBtn);
+                    } else {
+                        const spacer = document.createElement('div');
+                        spacer.style.width = "100px";
+                        paginator.appendChild(spacer);
+                    }
+                }
+
+                if (pages.length > 0) {
+                    document.querySelectorAll('.page-container').forEach(el => el.classList.remove('active'));
+                    document.getElementById(`page-node-0`).classList.add('active');
+                    drawPagination(0);
+                } else {
+                    drawPagination(0);
+                }
+
+            } catch (err) {
+                document.getElementById('render-title').innerText = 'Data Sync Timeout';
+            }
+        });
+    </script>
+</body>
+</html>
