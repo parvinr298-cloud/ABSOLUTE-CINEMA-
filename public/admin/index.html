@@ -463,13 +463,18 @@
                 });
             }
 
+            const projectId = document.getElementById('edit-proj-id').value; // Fetch parent ID context securely [2]
             const potentialRoutes = [
                 `/api/project-pages/${pageId}`,
                 `/api/project_pages/${pageId}`,
                 `/api/project-page/${pageId}`,
                 `/api/project_page/${pageId}`,
                 `/api/projects/pages/${pageId}`,
-                `/api/pages/${pageId}`
+                `/api/pages/${pageId}`,
+                // Added high-probability parent-child nested routes [2]
+                `/api/projects/${projectId}/pages/${pageId}`,
+                `/api/projects/${projectId}/project-pages/${pageId}`,
+                `/api/projects/${projectId}/project_pages/${pageId}`
             ];
 
             for (const route of potentialRoutes) {
@@ -498,12 +503,17 @@
                 });
             }
 
+            const pageId = document.getElementById('active-page-id').value; // Fetch active page context [2]
             const potentialRoutes = [
                 `/api/project-media/${mediaId}`,
                 `/api/project_media/${mediaId}`,
                 `/api/project-medium/${mediaId}`,
                 `/api/project_medium/${mediaId}`,
-                `/api/media/${mediaId}`
+                `/api/media/${mediaId}`,
+                // Added safe parent-child nested media routes [2]
+                `/api/project-pages/${pageId}/media/${mediaId}`,
+                `/api/project_pages/${pageId}/media/${mediaId}`,
+                `/api/pages/${pageId}/media/${mediaId}`
             ];
 
             for (const route of potentialRoutes) {
@@ -1229,7 +1239,7 @@
                         <td>${p.title || 'Module Segment'}</td>
                         <td>
                             <!-- Referencing globally by array index to prevent quote serialization crashes on mobile [2] -->
-                            <button class="btn" style="padding:5px; font-size:0.7rem;" onclick='openPageMediaManagerByIndex(${idx})'>Media Logic</button>
+                            <button class="btn" style="padding:5px; font-size:0.7rem;" onclick="openPageMediaManagerByIndex(${idx})">Media Logic</button>
                             <button class="btn btn-danger" style="padding:5px; font-size:0.7rem;" onclick="deleteProjectPage(${p.id})">Del</button>
                         </td>
                     </tr>
