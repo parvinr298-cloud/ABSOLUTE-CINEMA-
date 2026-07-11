@@ -29,13 +29,50 @@ const globalLimiter = rateLimit({
 app.use('/api/', globalLimiter);
 
 // ==========================================
-// 2. DATABASE CONFIGURATION
+// 2. DATABASE CONFIGURATION & AUTO-MIGRATION
 // ==========================================
+const fs = require('fs'); // <-- Added for reading the schema file
+
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 app.set('db', pool);
+
+// Global Auto-Seeding (Creates tables and first Admin account automatically)
+async function initializeDatabaseAdmin() {
+    try {
+        // 1. Automatically read and execute schema.sql to build tables
+        const schemaPath = path.join(__dirname, 'schema.sql');
+        if (fs.existsSync(schemaPath)) {
+            const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+            await pool.query(schemaSql);
+            console.log('>>> Database tables and seed data verified/created successfully.');
+        }
+
+        // 2. Verify or create the default admin account
+        const checkUser = await pool.query('SELECT * FROM users LIMIT 1');
+        if (checkUser.rows.length === 0) {
+            const defaultEmail = 'admin@example.com';
+            const rawPassword = 'ChangeMe123!';
+            const salt = await bcrypt.genSalt(12);
+            const hashed = await bcrypt.hash(rawPassword, salt);
+            
+            await pool.query(
+                'INSERT INTO users (email, password_hash, must_change_password) VALUES ($1, $2, true)',
+                [defaultEmail, hashed]
+            );
+            console.log('=====================================================');
+            console.log('SECURITY NOTICE: Default admin account created.');
+            console.log(`Login Email: ${defaultEmail}`);
+            console.log(`Initial Password: ${rawPassword}`);
+            console.log('=====================================================');
+        }
+    } catch (err) {
+        console.error('Database Initial Check Error:', err.message);
+    }
+}
+initializeDatabaseAdmin();
 
 // Global Auto-Seeding (Creates your first Admin account automatically)
 async function initializeDatabaseAdmin() {
