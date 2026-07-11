@@ -423,7 +423,7 @@
         let targetPickerFieldHook = '';
         let selectedMediaPaths = []; // Track multi-select images globally
         let activeCategoryContainerIdToReload = ''; // Reloader tracking hook
-        let currentProjectPages = []; // Global memory tracker to prevent JSON double-quotes HTML parse crashes [2]
+        let currentProjectPages = []; // Global memory tracker to prevent JSON breaking HTML [2]
 
         // Helper to safely extract arrays from various API formats (fixes Render wrapping issues)
         function getSafeArray(payload) {
@@ -689,7 +689,6 @@
             if(confirm('Terminate active portfolio project entry completely?')) {
                 await fetch(`/api/projects/${id}`, { 
                     method: 'DELETE', 
-                    -- REPAIR ROUTE INTEGRATION IN ADMIN PANEL
                     headers: { 'Authorization': `Bearer ${operationalToken}` } 
                 });
                 synchronizePortfolioTable();
