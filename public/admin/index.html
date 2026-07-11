@@ -323,92 +323,6 @@
                     <div class="form-row"><label>Physical Structural Address Matrix Layout</label><textarea id="set-contact_address" rows="3"></textarea></div>
                     <div class="form-row"><label>Global Satellite Nav System Plus Code</label><input type="text" id="set-contact_plus_code"></div>
                     <div class="form-row"><label>Primary Voice Communication Channel Phone Line 1</label><input type="text" id="set-contact_phone_1"></div>
-                    <div class="form-row"><label>Backup Voice Communication Channel Phone Line 2</label><input type="text" i><input type="text" id="set-about_director_image"><button type="button" class="btn" style="margin-top:10px; background:var(--surface-accent); color:white;" onclick="launchMediaPicker('set-about_director_image')">Browse Gallery Node</button></div>
-                    <button type="submit" class="btn">Deploy System Synchronization</button>
-                </form>
-            </div>
-
-            <div id="services-panel" class="panel">
-                <h2>Manage Engineering System Competencies</h2>
-                <button class="btn" onclick="openServiceForm()" style="margin-bottom:20px;">Register New Structural Competency Module</button>
-                <table id="services-data-table">
-                    <thead><tr><th>Icon Layout Badge</th><th>Structural Core Title</th><th>Operational Description Block</th><th>Sorting Weight Order</th><th>Actions Engine Matrix</th></tr></thead>
-                    <tbody id="services-table-body"></tbody>
-                </table>
-            </div>
-
-            <div id="projects-panel" class="panel">
-                <h2>Manage Architecture Signature Portfolio Matrix</h2>
-                
-                <div style="background: var(--surface-accent); border: 1px solid var(--border); padding: 30px; margin-bottom: 40px; border-radius: 4px;">
-                    <h3 style="font-size: 1.1rem; margin-bottom: 20px; letter-spacing: 1px; color: var(--text);">INDEX OR RE-ALIGN STRUCTURAL PROJECT</h3>
-                    <form id="advanced-portfolio-form">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
-                            <div class="form-row" style="margin-bottom: 0;">
-                                <label>Architectural Sector Category</label>
-                                <select id="proj-category" required>
-                                    <option value="Modern Facade">Modern Facade</option>
-                                    <option value="Residential Elite">Residential Elite</option>
-                                    <option value="Luxury Living">Luxury Living</option>
-                                    <option value="Commercial Infrastructure">Commercial Infrastructure</option>
-                                </select>
-                            </div>
-                            <div class="form-row" style="margin-bottom: 0;">
-                                <label>Signature System Title</label>
-                                <input type="text" id="proj-title" placeholder="e.g., Al-Noor Tower Complex" required>
-                            </div>
-                            <div class="form-row" style="margin-bottom: 0;">
-                                <label>Display Matrix Weight Order</label>
-                                <input type="number" id="proj-order" value="0" min="0" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <label>Structural Core Operational Description</label>
-                            <textarea id="proj-description" rows="3" placeholder="Enter deep technical details or design specifications..." required></textarea>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
-                            <div class="form-row" style="margin-bottom: 0;">
-                                <label>Primary Image Resource URL Target</label>
-                                <div style="display: flex; gap: 10px;">
-                                    <input type="text" id="proj-image-path" placeholder="media/uploads/facade_01.webp" required>
-                                    <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('proj-image-path')">Browse</button>
-                                </div>
-                            </div>
-                            <div class="form-row" style="margin-bottom: 0;">
-                                <label>Dynamic Video Core Target Path (Optional / YouTube / MP4 File)</label>
-                                <div style="display: flex; gap: 10px;">
-                                    <input type="text" id="proj-video-path" placeholder="media/uploads/drone_cinematic.mp4">
-                                    <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('proj-video-path')">Browse</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn" style="background: var(--success); color: black;">Deploy Portfolio Specifications Matrix</button>
-                    </form>
-                </div>
-
-                <table id="projects-data-table">
-                    <thead>
-                        <tr>
-                            <th>Order Weight</th>
-                            <th>Category Sector</th>
-                            <th>Project Signature Identity</th>
-                            <th>Media Asset Framework</th>
-                            <th>Action Nodes</th>
-                        </tr>
-                    </thead>
-                    <tbody id="projects-table-body"></tbody>
-                </table>
-            </div>
-
-            <div id="contact-panel" class="panel">
-                <h2>Manage Corporate Contact Specifications</h2>
-                <form id="contact-sync-form">
-                    <div class="form-row"><label>Physical Structural Address Matrix Layout</label><textarea id="set-contact_address" rows="3"></textarea></div>
-                    <div class="form-row"><label>Global Satellite Nav System Plus Code</label><input type="text" id="set-contact_plus_code"></div>
-                    <div class="form-row"><label>Primary Voice Communication Channel Phone Line 1</label><input type="text" id="set-contact_phone_1"></div>
                     <div class="form-row"><label>Backup Voice Communication Channel Phone Line 2</label><input type="text" id="set-contact_phone_2"></div>
                     <div class="form-row"><label>Corporate Electronic Mailing Hub Coordinates</label><input type="email" id="set-contact_email"></div>
                     <div class="form-row"><label>Instant Messenger Protocol WhatsApp Target Base Value</label><input type="text" id="set-contact_whatsapp"></div>
@@ -433,7 +347,8 @@
                     <label style="cursor:pointer;">
                         <i class="fas fa-cloud-upload-alt" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
                         <span>Transmit Binary Asset Track Into Optimized Web Target File</span>
-                        <input type="file" id="media-upload-node" style="display:none;" onchange="executeServerUpload(this)">
+                        <!-- Upgraded to allow multiple file uploads at once directly from Android -->
+                        <input type="file" id="media-upload-node" style="display:none;" multiple onchange="executeServerUpload(this)">
                     </label>
                 </div>
                 <div class="media-grid" id="media-catalog-box"></div>
@@ -453,10 +368,21 @@
         </div>
     </div>
 
+    <!-- Modal Layout Multi-Selector Node Frame -->
     <div id="media-modal-picker" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10005; padding:60px;">
         <div style="background:var(--surface); border:1px solid var(--border); width:100%; max-width:800px; margin:0 auto; padding:40px; height:100%; overflow-y:auto; border-radius:4px;">
             <h3>Pick System Target Resource Route Matrix</h3>
-            <div class="media-grid" id="modal-picker-catalog-box" style="margin-top:30px;"></div>
+            
+            <!-- Dynamic Action Bar for Multi-Select Imports -->
+            <div id="modal-batch-action-bar" style="margin-top:15px; display:none; gap:10px; align-items:center; flex-wrap:wrap;">
+                <button class="btn" style="background:var(--success); color:black;" id="batch-add-confirm-btn" onclick="executeBatchMediaAttachment()">
+                    Attach Selected (<span id="batch-count">0</span>)
+                </button>
+                <button class="btn" style="background:var(--surface-accent); color:var(--text);" onclick="selectAllLibraryFiles(true)">Select All</button>
+                <button class="btn" style="background:var(--surface-accent); color:var(--text);" onclick="selectAllLibraryFiles(false)">Clear Selection</button>
+            </div>
+
+            <div class="media-grid" id="modal-picker-catalog-box" style="margin-top:20px;"></div>
             <button class="btn btn-danger" style="margin-top:30px;" onclick="closeMediaPickerWindow()">Close Window</button>
         </div>
     </div>
@@ -464,8 +390,39 @@
     <script>
         let operationalToken = localStorage.getItem('sw_token') || '';
         let targetPickerFieldHook = '';
+        let selectedMediaPaths = []; // Track multi-select images globally
+
+        // Helper to safely extract arrays from various API formats (fixes Render wrapping issues)
+        function getSafeArray(payload) {
+            if (Array.isArray(payload)) return payload;
+            if (payload && typeof payload === 'object') {
+                return payload.projects || payload.services || payload.messages || payload.media || payload.data || [];
+            }
+            return [];
+        }
+
+        // Theme switching logic inside CMS
+        function toggleCmsTheme() {
+            const current = document.documentElement.getAttribute('data-theme') || 'dark';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('sw_theme', next); // Unified key across all files
+            updateThemeButtonUI(next);
+        }
+
+        function updateThemeButtonUI(theme) {
+            const btn = document.getElementById('cms-theme-toggle');
+            if (btn) {
+                btn.innerHTML = theme === 'dark' ? '<i class="fas fa-sun"></i> Light' : '<i class="fas fa-moon"></i> Dark';
+            }
+        }
 
         function verifyIdentityTokenPresence() {
+            // Adopt theme setting early
+            const activeTheme = localStorage.getItem('sw_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', activeTheme);
+            updateThemeButtonUI(activeTheme);
+
             if(operationalToken) {
                 document.getElementById('auth-gateway').style.display = 'none';
                 pullAdminContextMetrics();
@@ -571,7 +528,8 @@
 
         async function synchronizeCompetencyTable() {
             const res = await fetch('/api/services');
-            const data = await res.json();
+            const payload = await res.json();
+            const data = getSafeArray(payload); // Safety wrap integration
             const container = document.getElementById('services-table-body');
             container.innerHTML = '';
             data.forEach(s => {
@@ -614,7 +572,8 @@
         // ADVANCED SYNCHRONIZATION PIPELINE FOR MULTI-MEDIA PORTFOLIOS
         async function synchronizePortfolioTable() {
             const res = await fetch('/api/projects');
-            const data = await res.json();
+            const payload = await res.json();
+            const data = getSafeArray(payload); // Safety wrap integration
             const container = document.getElementById('projects-table-body');
             container.innerHTML = '';
             
@@ -639,6 +598,8 @@
                             ${hasVideo}
                         </td>
                         <td>
+                            <!-- Swipe horizontally on Android to access action buttons -->
+                            <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:black;" onclick="openProjectManager(${p.id})">Details</button>
                             <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
                         </td>
                     </tr>
@@ -698,7 +659,8 @@
 
         async function synchronizeInboxTable() {
             const res = await fetch('/api/messages', { headers: { 'Authorization': `Bearer ${operationalToken}` } });
-            const data = await res.json();
+            const payload = await res.json();
+            const data = getSafeArray(payload); // Safety wrap integration
             const container = document.getElementById('inbox-table-body');
             container.innerHTML = '';
             data.forEach(m => {
@@ -709,12 +671,21 @@
                         <td>${m.email}<br>${m.phone || 'N/A'}</td>
                         <td>${m.message}</td>
                         <td>
-                            ${!m.is_read ? `<button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--success); color:black;" onclick="flagMessageReadState(${m.id})">Read</button>` : ''}
+                            <!-- Detailed read modal popup for Android -->
+                            <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--success); color:black;" onclick="viewAndReadMessage(${m.id}, '${m.name.replace(/'/g, "\\'")}', '${m.email}', '${m.phone || 'N/A'}', '${m.message.replace(/\n/g, '<br>').replace(/'/g, "\\'")}')">Read</button>
                             <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteMessage(${m.id})">Delete</button>
                         </td>
                     </tr>
                 `;
             });
+        }
+
+        // View and read dispatch payload popup fix
+        window.viewAndReadMessage = async function(id, name, email, phone, msg) {
+            alert(`SENDER DETAILS:\\n-------------------------\\nName: ${name}\\nEmail: ${email}\\nPhone: ${phone}\\n\\nMESSAGE:\\n${msg.replace(/<br>/g, '\\n')}`);
+            await fetch(`/api/messages/${id}/read`, { method: 'PATCH', headers: { 'Authorization': `Bearer ${operationalToken}` } });
+            synchronizeInboxTable();
+            pullAdminContextMetrics();
         }
 
         async function flagMessageReadState(id) {
@@ -733,7 +704,8 @@
 
         async function synchronizeMediaGridEngine() {
             const res = await fetch('/api/media/library', { headers: { 'Authorization': `Bearer ${operationalToken}` } });
-            const data = await res.json();
+            const payload = await res.json();
+            const data = getSafeArray(payload); // Safety wrap integration
             const container = document.getElementById('media-catalog-box');
             container.innerHTML = '';
             data.forEach(item => {
@@ -746,22 +718,27 @@
             });
         }
 
+        // Updated Upload System allowing multiple uploads sequentially on Android
         async function executeServerUpload(inputNode) {
             if(inputNode.files.length === 0) return;
-            const formData = new FormData();
-            formData.append('file', inputNode.files[0]);
+            let successCount = 0;
+            for(let i=0; i < inputNode.files.length; i++) {
+                const formData = new FormData();
+                formData.append('file', inputNode.files[i]);
 
-            const res = await fetch('/api/media/upload', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${operationalToken}` },
-                body: formData
-            });
-            const data = await res.json();
-            if(data.url) {
-                alert('Upload finalized. Web-optimized variant mapping active.');
+                const res = await fetch('/api/media/upload', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${operationalToken}` },
+                    body: formData
+                });
+                const data = await res.json();
+                if(data.url) successCount++;
+            }
+            if (successCount > 0) {
+                alert(`Uploaded ${successCount} assets to your vault successfully!`);
                 synchronizeMediaGridEngine();
                 pullAdminContextMetrics();
-            } else { alert(data.error); }
+            }
         }
 
         async function executeDeleteAsset(id, event) {
@@ -781,15 +758,49 @@
 
         async function hydrateMediaPickerGrid() {
             const res = await fetch('/api/media/library', { headers: { 'Authorization': `Bearer ${operationalToken}` } });
-            const data = await res.json();
+            const payload = await res.json();
+            const data = getSafeArray(payload); // Safety wrap integration
             const container = document.getElementById('modal-picker-catalog-box');
             container.innerHTML = '';
+            
+            selectedMediaPaths = []; // reset batch selections
+            
+            const isMultiSelect = (targetPickerFieldHook === 'new-media-path');
+            const batchBar = document.getElementById('modal-batch-action-bar');
+            
+            if (isMultiSelect) {
+                batchBar.style.display = 'flex';
+                document.getElementById('batch-count').innerText = "0";
+            } else {
+                batchBar.style.display = 'none';
+            }
+
             data.forEach(item => {
-                container.innerHTML += `
-                    <div class="media-item" onclick="assignAssetPathToFieldHook('${item.filepath}')">
-                        <img src="${item.filepath}">
-                    </div>
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'media-item';
+                itemDiv.setAttribute('data-filepath', item.filepath);
+                itemDiv.innerHTML = `
+                    <img src="${item.filepath}">
+                    <div class="chk-badge" style="position: absolute; top:5px; right:5px; background:var(--success); color:#000; width:24px; height:24px; border-radius:50%; display:none; align-items:center; justify-content:center; z-index:4;"><i class="fas fa-check"></i></div>
                 `;
+
+                itemDiv.onclick = () => {
+                    if (isMultiSelect) {
+                        itemDiv.classList.toggle('multi-selected');
+                        const badge = itemDiv.querySelector('.chk-badge');
+                        if (itemDiv.classList.contains('multi-selected')) {
+                            badge.style.display = 'flex';
+                            selectedMediaPaths.push(item.filepath);
+                        } else {
+                            badge.style.display = 'none';
+                            selectedMediaPaths = selectedMediaPaths.filter(p => p !== item.filepath);
+                        }
+                        document.getElementById('batch-count').innerText = selectedMediaPaths.length;
+                    } else {
+                        assignAssetPathToFieldHook(item.filepath);
+                    }
+                };
+                container.appendChild(itemDiv);
             });
         }
 
@@ -804,13 +815,19 @@
 
         async function pullAdminContextMetrics() {
             try {
-                const [p, s, m, l, u] = await Promise.all([
+                const [pPayload, sPayload, mPayload, lPayload, u] = await Promise.all([
                     fetch('/api/projects').then(r => r.json()),
                     fetch('/api/services').then(r => r.json()),
                     fetch('/api/messages', { headers: { 'Authorization': `Bearer ${operationalToken}` } }).then(r => r.json()),
                     fetch('/api/media/library', { headers: { 'Authorization': `Bearer ${operationalToken}` } }).then(r => r.json()),
                     fetch('/api/auth/profile', { headers: { 'Authorization': `Bearer ${operationalToken}` } }).then(r => r.json())
                 ]);
+
+                // Safe array wraps prevents "undefined" layout metrics crash on startup
+                const p = getSafeArray(pPayload);
+                const s = getSafeArray(sPayload);
+                const m = getSafeArray(mPayload);
+                const l = getSafeArray(lPayload);
 
                 document.getElementById('metric-p').innerText = p.length;
                 document.getElementById('metric-s').innerText = s.length;
@@ -908,10 +925,10 @@
                                 <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="document.getElementById('media-manager-block').style.display='none'">Hide</button>
                             </div>
                             <input type="hidden" id="active-page-id">
-                            <div style="display:flex; gap:10px; margin-top:15px;">
-                                <input type="text" id="new-media-path" placeholder="URL Path Coordinate">
-                                <button class="btn" style="background:var(--border); color:white; padding:14px;" onclick="launchMediaPicker('new-media-path')">Browse</button>
-                                <select id="new-media-type" style="width:120px;"><option value="image">Image</option><option value="video">Video</option></select>
+                            <div style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap;">
+                                <input type="text" id="new-media-path" placeholder="URL Path Coordinate / Paste YouTube Link">
+                                <button class="btn" style="background:var(--border); color:white; padding:14px;" onclick="launchMediaPicker('new-media-path')">Browse Multi</button>
+                                <select id="new-media-type" style="width:120px;"><option value="image">Image</option><option value="video">Video (MP4 / YT)</option></select>
                                 <button class="btn" onclick="addMediaToActivePage()">Attach Asset</button>
                             </div>
                             <table style="margin-top:15px;">
@@ -988,7 +1005,8 @@
         // 5. Append CMS Advanced Override Render Logic Array Elements 
         window.synchronizePortfolioTable = async function() {
             const res = await fetch('/api/projects');
-            const data = await res.json();
+            const payload = await res.json();
+            const data = getSafeArray(payload); // Safety wrap integration
             const container = document.getElementById('projects-table-body');
             container.innerHTML = '';
             
@@ -1011,6 +1029,7 @@
                             ${hasVideo}
                         </td>
                         <td>
+                            <!-- Swipe horizontally on Android to access these action buttons -->
                             <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:black;" onclick="openProjectManager(${p.id})">Details</button>
                             <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem; margin-left:5px;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
                             <a href="/project-details.html?project=${p.id}" target="_blank" class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--success); color:black; margin-left:5px; text-decoration:none;">Preview</a>
@@ -1108,7 +1127,7 @@
             const pageId = document.getElementById('active-page-id').value;
             const path = document.getElementById('new-media-path').value;
             const type = document.getElementById('new-media-type').value;
-            if(!path) return alert("Select media asset framework first.");
+            if(!path) return alert("Select media asset first.");
             
             await fetch(`/api/project-pages/${pageId}/media`, {
                 method: 'POST',
@@ -1117,6 +1136,45 @@
             });
             document.getElementById('new-media-path').value = '';
             openProjectManager(document.getElementById('edit-proj-id').value);
+        }
+
+        // BATCH ASSET ATTACHMENT EXECUTION FROM MULTI-SELECT WINDOW
+        async function executeBatchMediaAttachment() {
+            if (selectedMediaPaths.length === 0) return alert("Select at least one image.");
+            const pageId = document.getElementById('active-page-id').value;
+            const type = document.getElementById('new-media-type').value;
+            
+            let attachedCount = 0;
+            for (const path of selectedMediaPaths) {
+                await fetch(`/api/project-pages/${pageId}/media`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                    body: JSON.stringify({ media_path: path, media_type: type, display_order: document.getElementById('project-media-list').children.length + attachedCount })
+                });
+                attachedCount++;
+            }
+            
+            closeMediaPickerWindow();
+            openProjectManager(document.getElementById('edit-proj-id').value);
+            alert(`Successfully batch-attached ${attachedCount} assets to your page!`);
+        }
+
+        function selectAllLibraryFiles(selectTrue) {
+            const items = document.querySelectorAll('#modal-picker-catalog-box .media-item');
+            selectedMediaPaths = [];
+            items.forEach(item => {
+                const badge = item.querySelector('.chk-badge');
+                const filepath = item.getAttribute('data-filepath');
+                if (selectTrue) {
+                    item.classList.add('multi-selected');
+                    badge.style.display = 'flex';
+                    selectedMediaPaths.push(filepath);
+                } else {
+                    item.classList.remove('multi-selected');
+                    badge.style.display = 'none';
+                }
+            });
+            document.getElementById('batch-count').innerText = selectedMediaPaths.length;
         }
 
         async function deleteMedia(mediaId) {
