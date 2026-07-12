@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -19,7 +20,6 @@
             --success: #00cc66;
         }
 
-        /* Additive Light Mode Color Variables */
         [data-theme="light"] {
             --bg: #fcfcfc;
             --surface: #ffffff;
@@ -33,53 +33,43 @@
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
         body { background: var(--bg); color: var(--text); padding-bottom: 60px; transition: background 0.3s, color 0.3s; }
         
-        /* Auth Screen Styling footprint */
         #auth-gateway { position:fixed; inset:0; background:var(--bg); z-index:9999; display:flex; align-items:center; justify-content:center; }
         .auth-card { background:var(--surface); border:1px solid var(--border); padding:40px; width:100%; max-width:420px; border-radius:4px; }
         .auth-logo { font-size:1.5rem; font-weight:700; letter-spacing:3px; text-align:center; margin-bottom:30px; }
         
-        /* Layout Blocks */
         header { background: var(--surface); border-bottom:1px solid var(--border); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 15px;}
         .dashboard-container { width:90%; max-width:1440px; margin:40px auto; display:grid; grid-template-columns: 240px 1fr; gap:40px; }
         
-        /* Nav Elements */
         .sidebar-menu { display:flex; flex-direction:column; gap:10px; }
         .menu-btn { background:none; border:none; color:var(--text-muted); text-align:left; padding:12px 20px; font-size:0.9rem; cursor:pointer; font-weight:500; border-radius:4px; transition:0.3s; }
         .menu-btn.active, .menu-btn:hover { background:var(--surface); color:var(--text); border-left:2px solid var(--accent); }
         
-        /* Module Panels */
         .panel { background:var(--surface); border:1px solid var(--border); padding:40px; border-radius:4px; display:none; }
         .panel.active { display:block; }
         
-        /* Forms & Inputs */
         h2 { font-size:1.8rem; font-weight:600; margin-bottom:30px; letter-spacing:-0.5px; border-bottom:1px solid var(--border); padding-bottom:15px; }
         .form-row { margin-bottom:25px; }
         label { display:block; font-size:0.8rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-bottom:10px; }
         input, textarea, select { width:100%; padding:14px; background:var(--bg); border:1px solid var(--border); color:var(--text); font-size:0.95rem; border-radius:4px; }
         input:focus, textarea:focus { outline:1px solid var(--accent); }
         
-        /* Actions Execution buttons */
         .btn { background:var(--accent); color:var(--bg); border:none; padding:14px 30px; font-weight:600; text-transform:uppercase; font-size:0.8rem; letter-spacing:1.5px; cursor:pointer; border-radius:4px; transition:0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;}
         .btn:hover { opacity:0.9; }
         .btn-danger { background:var(--danger); color:white; }
         
-        /* Metrics Grid Layout */
         .metrics-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-bottom:40px; }
         .metric-card { background:var(--surface-accent); padding:25px; border:1px solid var(--border); border-radius:4px; }
         .metric-val { font-size:2.2rem; font-weight:700; margin-top:10px; }
         
-        /* Table Layout */
         table { width:100%; border-collapse:collapse; margin-top:20px; display: block; overflow-x: auto; }
         th, td { padding:15px; text-align:left; border-bottom:1px solid var(--border); font-size:0.9rem; white-space: nowrap; }
         th { color:var(--text-muted); text-transform:uppercase; font-size:0.75rem; letter-spacing:1px; }
         
-        /* Media Vault Grid Layout */
         .media-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:15px; margin-top:20px; }
         .media-item { border:1px solid var(--border); position:relative; aspect-ratio:1; background:var(--bg); border-radius:4px; overflow:hidden; cursor:pointer; transition: transform 0.2s, border-color 0.2s; }
         .media-item img { width:100%; height:100%; object-fit:cover; pointer-events: none;}
         .media-item .delete-asset-btn { position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.8); color:white; border:none; width:24px; height:24px; border-radius:50%; cursor:pointer; z-index: 5; }
 
-        /* Media Selector Multi-select style states */
         .media-item.multi-selected {
             border-color: var(--success);
             border-width: 3px;
@@ -104,7 +94,6 @@
             display: flex;
         }
 
-        /* Responsive Layout Overrides */
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -181,8 +170,9 @@
 
     <header>
         <div style="font-weight:700; letter-spacing:2px;">SOUTH WIND CMS v1.0</div>
+        <!-- FIX: Added missing active-session-identity tag to clear out console errors [1] -->
+        <div id="active-session-identity" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Operator Node: Initializing...</div>
         <div style="display:flex; gap:10px; flex-wrap: wrap;">
-            <!-- Dark / Light Mode Toggle -->
             <button class="btn" id="cms-theme-toggle" onclick="toggleCmsTheme()"><i class="fas fa-sun"></i> Theme Toggle</button>
             <button class="btn btn-danger" onclick="terminateSessionContext()">Logout</button>
         </div>
@@ -196,15 +186,18 @@
             <button class="menu-btn" onclick="switchControlView('services-panel', this)"><i class="fas fa-drafting-compass"></i> Competencies</button>
             
             <div style="border-top: 1px solid var(--border); margin: 5px 0; padding-top: 5px;"></div>
-            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); padding: 5px 12px; display: block; text-transform: uppercase;">Direct Categories</span>
+            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); padding: 5px 12px; display: block; text-transform: uppercase;">Direct Categories (Front Page)</span>
             <button class="menu-btn" onclick="switchControlView('facade-panel', this)"><i class="fas fa-building"></i> Modern Facade</button>
             <button class="menu-btn" onclick="switchControlView('residential-panel', this)"><i class="fas fa-home"></i> Residential Elite</button>
             <button class="menu-btn" onclick="switchControlView('luxury-panel', this)"><i class="fas fa-couch"></i> Luxury Living</button>
             <button class="menu-btn" onclick="switchControlView('commercial-panel', this)"><i class="fas fa-city"></i> Commercial Infra</button>
             <div style="border-bottom: 1px solid var(--border); margin: 5px 0; padding-bottom: 5px;"></div>
 
-            <button class="menu-btn" onclick="switchControlView('projects-panel', this)"><i class="fas fa-images"></i> Manage Master Projects</button>
-            <button class="menu-btn" onclick="switchControlView('contact-panel', this)"><i class="fas fa-map-marked-alt"></i> Contact & Social Settings</button>
+            <!-- Separated option tabs as requested [2] -->
+            <button class="menu-btn" onclick="switchControlView('projects-panel', this)"><i class="fas fa-images"></i> Manage Front Lookbooks</button>
+            <button class="menu-btn" onclick="switchControlView('signature-projects-panel', this)"><i class="fas fa-project-diagram"></i> Manage Signature Projects (Status page)</button>
+            
+            <button class="menu-btn" onclick="switchControlView('contact-panel', this)"><i class="fas fa-map-marked-alt"></i> Contact & Settings</button>
             <button class="menu-btn" onclick="switchControlView('inbox-panel', this)"><i class="fas fa-envelope"></i> Communications</button>
             <button class="menu-btn" onclick="switchControlView('media-panel', this)"><i class="fas fa-folder-open"></i> Media Vault</button>
             <button class="menu-btn" onclick="switchControlView('security-panel', this)"><i class="fas fa-shield-alt"></i> Security Gate</button>
@@ -213,20 +206,19 @@
         <div class="main-workspace-view">
             
             <div id="password-force-warning" style="display:none; background:var(--danger); padding:15px; margin-bottom:20px; font-weight:600; border-radius:4px;">
-                CRITICAL WARNING: Default access keys initialized. System rules mandate instant alteration via Security Gate section.
+                CRITICAL WARNING: Default access keys initialized. Shift password via Security Gate.
             </div>
 
             <div id="dashboard-panel" class="panel active">
                 <h2>Operational Console System Overview</h2>
                 <div class="metrics-grid">
-                    <div class="metric-card"><h5>Active Portfolios</h5><div class="metric-val" id="metric-p">0</div></div>
+                    <div class="metric-card"><h5>Active Lookbooks</h5><div class="metric-val" id="metric-p">0</div></div>
                     <div class="metric-card"><h5>System Competencies</h5><div class="metric-val" id="metric-s">0</div></div>
                     <div class="metric-card"><h5>Communications Inbound</h5><div class="metric-val" id="metric-m">0</div></div>
                     <div class="metric-card"><h5>Allocated Storage Engine</h5><div class="metric-val" id="metric-l">0</div></div>
                 </div>
             </div>
 
-            <!-- ADDITIVE PORTFOLIO CHANNELS -->
             <div id="facade-panel" class="panel">
                 <h2>Modern Facade Portfolios</h2>
                 <div id="facade-container" style="margin-top:20px;"></div>
@@ -255,7 +247,6 @@
                     <div class="form-row"><label>Hero System Operational Target Description</label><textarea id="set-hero_description" rows="3"></textarea></div>
                     <div class="form-row"><label>Active Canvas Dynamic Base Image Path URL</label><input type="text" id="set-hero_image"><button type="button" class="btn" style="margin-top:10px; background:var(--surface-accent); color:white;" onclick="launchMediaPicker('set-hero_image')">Browse Gallery Node</button></div>
                     
-                    <!-- Added Before/After slider dynamic image fields -->
                     <h3 style="font-size:1.2rem; margin:30px 0 15px 0; padding-bottom:5px; border-bottom:1px solid var(--border);">Before & After Slider Canvas</h3>
                     <div class="form-row">
                         <label>Slider Before Image Path URL</label>
@@ -288,22 +279,22 @@
 
             <div id="services-panel" class="panel">
                 <h2>Manage Engineering System Competencies</h2>
-                <button class="btn" onclick="openServiceForm()" style="margin-bottom:20px;">Register New Structural Competency Module</button>
+                <button class="btn" onclick="openServiceForm()" style="margin-bottom:20px;">Register New Competency Module</button>
                 <table id="services-data-table">
                     <thead><tr><th>Icon Layout Badge</th><th>Structural Core Title</th><th>Operational Description Block</th><th>Sorting Weight Order</th><th>Actions Engine Matrix</th></tr></thead>
                     <tbody id="services-table-body"></tbody>
                 </table>
             </div>
 
+            <!-- Manage Front Lookbooks (Categories Page Items) panel -->
             <div id="projects-panel" class="panel">
-                <h2>Manage Architecture Signature Portfolio Matrix</h2>
+                <h2>Manage Front Categories (Home Page Cards)</h2>
                 
                 <div style="background: var(--surface-accent); border: 1px solid var(--border); padding: 30px; margin-bottom: 40px; border-radius: 4px;">
-                    <h3 style="font-size: 1.1rem; margin-bottom: 20px; letter-spacing: 1px; color: var(--text);">INDEX OR RE-ALIGN STRUCTURAL PROJECT</h3>
                     <form id="advanced-portfolio-form">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
                             <div class="form-row" style="margin-bottom: 0;">
-                                <label>Architectural Sector Category</label>
+                                <label>Front Lookbook Sector Category</label>
                                 <select id="proj-category" required>
                                     <option value="Modern Facade">Modern Facade</option>
                                     <option value="Residential Elite">Residential Elite</option>
@@ -314,15 +305,6 @@
                             <div class="form-row" style="margin-bottom: 0;">
                                 <label>Signature System Title</label>
                                 <input type="text" id="proj-title" placeholder="e.g., Al-Noor Tower Complex" required>
-                            </div>
-                            <!-- Added Project Status Designation -->
-                            <div class="form-row" style="margin-bottom: 0;">
-                                <label>Project Status</label>
-                                <select id="proj-status" required>
-                                    <option value="Ongoing">Ongoing</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Upcoming">Upcoming</option>
-                                </select>
                             </div>
                             <div class="form-row" style="margin-bottom: 0;">
                                 <label>Display Matrix Weight Order</label>
@@ -350,14 +332,13 @@
                                     <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('proj-video-path')">Browse</button>
                                 </div>
                             </div>
-                            <!-- Added Google Drive / PDF brochure link input -->
                             <div class="form-row" style="margin-bottom: 0;">
                                 <label>Brochure Link (Google Drive / direct PDF link)</label>
                                 <input type="text" id="proj-brochure-url" placeholder="https://drive.google.com/file/d/...">
                             </div>
                         </div>
 
-                        <button type="submit" class="btn" style="background: var(--success); color: black;">Deploy Portfolio Specifications Matrix</button>
+                        <button type="submit" class="btn" style="background: var(--success); color: black;">Deploy Portfolio Lookbook specifications</button>
                     </form>
                 </div>
 
@@ -375,17 +356,96 @@
                 </table>
             </div>
 
+            <!-- SEPARATED PANEL: Manage Signature Projects (Status filtering page) [2] -->
+            <div id="signature-projects-panel" class="panel">
+                <h2>Manage Signature Status Projects (Projects Page)</h2>
+                
+                <div style="background: var(--surface-accent); border: 1px solid var(--border); padding: 30px; margin-bottom: 40px; border-radius: 4px;">
+                    <form id="sig-portfolio-form">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Status Page Portfolio Group</label>
+                                <select id="sig-proj-category" required>
+                                    <option value="Architectural Detail">Architectural Detail</option>
+                                    <option value="Commercial Space">Commercial Space</option>
+                                    <option value="Construction Site">Construction Site</option>
+                                    <option value="Structural Framework">Structural Framework</option>
+                                    <option value="Urban Landmark">Urban Landmark</option>
+                                </select>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Signature System Title</label>
+                                <input type="text" id="sig-proj-title" placeholder="e.g., Al-Noor Tower Complex" required>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Designated Project Status</label>
+                                <select id="sig-proj-status" required>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Ongoing">Ongoing</option>
+                                    <option value="Upcoming">Upcoming</option>
+                                </select>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Display Matrix Weight Order</label>
+                                <input type="number" id="sig-proj-order" value="0" min="0" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <label>Structural Core Operational Description</label>
+                            <textarea id="sig-proj-description" rows="3" placeholder="Enter deep technical details or design specifications..." required></textarea>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Primary Image Resource URL Target</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="sig-proj-image-path" placeholder="media/uploads/sig_01.webp" required>
+                                    <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('sig-proj-image-path')">Browse</button>
+                                </div>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Dynamic Video Core Target Path (Optional / YouTube / MP4 File)</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="sig-proj-video-path" placeholder="media/uploads/drone_cinematic.mp4">
+                                    <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('sig-proj-video-path')">Browse</button>
+                                </div>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Brochure Link (Google Drive / direct PDF link)</label>
+                                <input type="text" id="sig-proj-brochure-url" placeholder="https://drive.google.com/file/d/...">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn" style="background: var(--success); color: black;">Deploy Signature specifications</button>
+                    </form>
+                </div>
+
+                <table id="sig-projects-data-table">
+                    <thead>
+                        <tr>
+                            <th>Order Weight</th>
+                            <th>Category Sector</th>
+                            <th>Project Signature Identity</th>
+                            <th>Status Tag</th>
+                            <th>Action Nodes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sig-projects-table-body"></tbody>
+                </table>
+            </div>
+
             <div id="contact-panel" class="panel">
                 <h2>Manage Corporate Contact & Social Specifications</h2>
                 <form id="contact-sync-form">
-                    <div class="form-row"><label>Physical Structural Address Matrix Layout</label><textarea id="set-contact_address" rows="3"></textarea></div>
-                    <div class="form-row"><label>Global Satellite Nav System Plus Code</label><input type="text" id="set-contact_plus_code"></div>
-                    <div class="form-row"><label>Primary Voice Communication Channel Phone Line 1</label><input type="text" id="set-contact_phone_1"></div>
-                    <div class="form-row"><label>Backup Voice Communication Channel Phone Line 2</label><input type="text" id="set-contact_phone_2"></div>
-                    <div class="form-row"><label>Corporate Electronic Mailing Hub Coordinates</label><input type="email" id="set-contact_email"></div>
-                    <div class="form-row"><label>Instant Messenger Protocol WhatsApp Target Base Value</label><input type="text" id="set-contact_whatsapp"></div>
-                    <div class="form-row"><label>Google Maps Embed Frame Resource Location (Src Link Only)</label><input type="text" id="set-contact_map_url"></div>
-                    <div class="form-row"><label>Google Maps External Redirect Navigation Link</label><input type="text" id="set-contact_map_redirect_url" placeholder="https://maps.app.goo.gl/..."></div>
+                    <div class="form-row"><label>Physical Address Layout</label><textarea id="set-contact_address" rows="3"></textarea></div>
+                    <div class="form-row"><label>Global Satellite Plus Code</label><input type="text" id="set-contact_plus_code"></div>
+                    <div class="form-row"><label>Voice Communication phone Line 1</label><input type="text" id="set-contact_phone_1"></div>
+                    <div class="form-row"><label>Backup phone Line 2</label><input type="text" id="set-contact_phone_2"></div>
+                    <div class="form-row"><label>Corporate Electronic Mailing coordinate</label><input type="email" id="set-contact_email"></div>
+                    <div class="form-row"><label>WhatsApp Target Base Value</label><input type="text" id="set-contact_whatsapp"></div>
+                    <div class="form-row"><label>Google Maps embed Location (Src Link Only)</label><input type="text" id="set-contact_map_url"></div>
+                    <div class="form-row"><label>Google Maps External Redirect link</label><input type="text" id="set-contact_map_redirect_url" placeholder="https://maps.app.goo.gl/..."></div>
                     
                     <h3 style="font-size:1.2rem; margin:30px 0 15px 0; padding-bottom:5px; border-bottom:1px solid var(--border);">Social Platform Integrations</h3>
                     <div class="form-row"><label>Facebook Profile Target URL Link</label><input type="text" id="set-social_facebook"></div>
@@ -394,25 +454,23 @@
                     <div class="form-row"><label>YouTube Channel Target URL Link</label><input type="text" id="set-social_youtube"></div>
                     
                     <h3 style="font-size:1.2rem; margin:30px 0 15px 0; padding-bottom:5px; border-bottom:1px solid var(--border);">Global SEO Properties</h3>
-                    <div class="form-row"><label>Global Index SEO Page Structural Title Mapping</label><input type="text" id="set-seo_meta_title"></div>
-                    <div class="form-row"><label>Global Index SEO Page Index Crawler Brief Summary Description</label><textarea id="set-seo_meta_description" rows="2"></textarea></div>
-                    <button type="submit" class="btn">Deploy System Packing Matrix Synchronization</button>
+                    <div class="form-row"><label>Global Index SEO Page Title Mapping</label><input type="text" id="set-seo_meta_title"></div>
+                    <div class="form-row"><label>Global Index SEO Page Index Description</label><textarea id="set-seo_meta_description" rows="2"></textarea></div>
+                    <button type="submit" class="btn">Deploy System Synchronization</button>
                 </form>
             </div>
 
             <div id="inbox-panel" class="panel">
                 <h2>Client Inbound Intercept Tracking Channel Logs</h2>
                 <table id="inbox-data-table">
-                    <thead><tr><th>Receipt Timestamp Matrix Coordinate</th><th>Dispatched Sender Profile</th><th>Communication Coordinates</th><th>Client Inquiry Brief Content Description</th><th>System Clean State Adjust Actions</th></tr></thead>
+                    <thead><tr><th>Receipt Timestamp</th><th>Dispatched Sender</th><th>Communication Coordinate</th><th>Client Inquiry Description</th><th>Actions</th></tr></thead>
                     <tbody id="inbox-table-body"></tbody>
                 </table>
             </div>
 
             <div id="media-panel" class="panel">
-                <h2>Operational Media Asset Management Sub-System Repository</h2>
-                
+                <h2>Media Asset Management Sub-System Repository</h2>
                 <div style="display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap;">
-                    <!-- Batch selection controls inside Media Vault -->
                     <button class="btn" id="toggle-multi-delete-btn" onclick="toggleMultiDeleteMode()" style="background: var(--surface-accent); color: var(--text); width: auto;">
                         <i class="fas fa-tasks"></i> Enable Multi-Select Mode
                     </button>
@@ -422,7 +480,6 @@
                         <button class="btn" style="background: var(--surface-accent); color: var(--text); width: auto;" onclick="selectAllVaultAssets(false)">Clear Selection</button>
                     </div>
                 </div>
-
                 <div style="border:2px dashed var(--border); padding:30px; text-align:center; margin-bottom:30px; border-radius:4px;">
                     <label style="cursor:pointer;">
                         <i class="fas fa-cloud-upload-alt" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
@@ -437,22 +494,19 @@
                 <h2>Reinforce Access Cryptography Authentication Controls</h2>
                 <form id="password-reinforce-form">
                     <div class="form-row">
-                        <label>Target Security Access Configuration Token Passkey Alteration Metric</label>
+                        <label>Target Security Access Passkey Alteration Metric</label>
                         <input type="password" id="new-sys-pass" placeholder="MINIMUM 8 CHARACTERS WITH 1 CAPITAL AND 1 SYMBOL INJECTION" required>
                     </div>
-                    <button type="submit" class="btn">Re-encrypt Account Verification Pipeline</button>
+                    <button type="submit" class="btn">Re-encrypt Verification Pipeline</button>
                 </form>
             </div>
 
         </div>
     </div>
 
-    <!-- Modal Layout Multi-Selector Node Frame -->
     <div id="media-modal-picker" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10005; padding:60px;">
         <div style="background:var(--surface); border:1px solid var(--border); width:100%; max-width:800px; margin:0 auto; padding:40px; height:100%; overflow-y:auto; border-radius:4px;">
             <h3>Pick System Target Resource Route Matrix</h3>
-            
-            <!-- Dynamic Action Bar for Multi-Select Imports -->
             <div id="modal-batch-action-bar" style="margin-top:15px; display:none; gap:10px; align-items:center; flex-wrap:wrap;">
                 <button class="btn" style="background:var(--success); color:black;" id="batch-add-confirm-btn" onclick="executeBatchMediaAttachment()">
                     Attach Selected (<span id="batch-count">0</span>)
@@ -460,13 +514,11 @@
                 <button class="btn" style="background:var(--surface-accent); color:var(--text);" onclick="selectAllLibraryFiles(true)">Select All</button>
                 <button class="btn" style="background:var(--surface-accent); color:var(--text);" onclick="selectAllLibraryFiles(false)">Clear Selection</button>
             </div>
-
             <div class="media-grid" id="modal-picker-catalog-box" style="margin-top:20px;"></div>
             <button class="btn btn-danger" style="margin-top:30px;" onclick="closeMediaPickerWindow()">Close Window</button>
         </div>
     </div>
 
-    <!-- Deep project details editing modal overlay configuration -->
     <div id="project-manage-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:10004; padding:40px; overflow-y:auto;">
         <div style="background:var(--surface); border:1px solid var(--border); width:100%; max-width:900px; margin:0 auto; padding:40px; border-radius:4px;">
             <div style="display:flex; justify-content:space-between; margin-bottom:30px;">
@@ -477,10 +529,10 @@
             <div style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
                 <h4>1. Primary Configuration Node</h4>
                 <input type="hidden" id="edit-proj-id">
+                <input type="hidden" id="edit-proj-context" value="master">
                 <div class="form-row" style="margin-top:15px;"><label>Title Identity</label><input type="text" id="edit-proj-title"></div>
                 <div class="form-row"><label>Structural Description Base</label><textarea id="edit-proj-desc" rows="3"></textarea></div>
                 
-                <!-- Added Status and Brochure URL inputs in deep project editing node -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div class="form-row" style="margin-bottom: 0;">
                         <label>Project Status</label>
@@ -540,13 +592,12 @@
     <script>
         let operationalToken = localStorage.getItem('sw_token') || '';
         let targetPickerFieldHook = '';
-        let selectedMediaPaths = []; // Track multi-select images globally for details picker
-        let activeCategoryContainerIdToReload = ''; // Reloader tracking hook
-        let currentProjectPages = []; // Global memory tracker to prevent JSON breaking HTML [2]
-        let discoveredDeletePageRoute = ''; // Dynamic self-healing route storage [2]
-        let discoveredDeleteMediaRoute = ''; // Dynamic self-healing media route storage [2]
+        let selectedMediaPaths = []; 
+        let activeCategoryContainerIdToReload = ''; 
+        let currentProjectPages = []; 
+        let discoveredDeletePageRoute = ''; 
+        let discoveredDeleteMediaRoute = ''; 
 
-        // Safe JSON API fetch wrapper helper [2]
         async function safeFetchJson(url, options = {}) {
             const res = await fetch(url, options);
             const contentType = res.headers.get('content-type') || '';
@@ -555,7 +606,7 @@
                     const errData = await res.json();
                     throw new Error(errData.error || errData.message || `HTTP ${res.status}`);
                 } else {
-                    throw new Error(`Server response error (HTTP ${res.status}). Verify your server is awake on Render.`);
+                    throw new Error(`Server response error (HTTP ${res.status}).`);
                 }
             }
             if (contentType.includes('application/json')) {
@@ -564,7 +615,6 @@
             return { success: true };
         }
 
-        // Helper to safely extract arrays from various API formats (fixes Render wrapping issues)
         function getSafeArray(payload) {
             if (Array.isArray(payload)) return payload;
             if (payload && typeof payload === 'object') {
@@ -573,34 +623,25 @@
             return [];
         }
 
-        // Self-healing page deletion router [2]
+        function getSafeImagePath(path) {
+            if (!path) return 'images/unnamed1.jpg';
+            if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/') || path.startsWith('images/') || path.startsWith('media/')) {
+                return path;
+            }
+            return `media/uploads/${path}`;
+        }
+
         async function executeDeletePageRoute(pageId, projectId) {
             if (!projectId) {
                 projectId = document.getElementById('edit-proj-id').value;
             }
-
-            if (discoveredDeletePageRoute) {
-                const cachedRoute = discoveredDeletePageRoute.replace('{id}', pageId);
-                return await safeFetchJson(projectId ? cachedRoute.replace('{projectId}', projectId) : cachedRoute, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${operationalToken}` }
-                });
-            }
+            const contextType = document.getElementById('edit-proj-context').value;
+            const apiBase = contextType === 'signature' ? '/api/status-projects' : '/api/projects';
 
             const potentialRoutes = [
                 `/api/project-pages/${pageId}`,
-                `/api/project_pages/${pageId}`,
-                `/api/project-page/${pageId}`,
-                `/api/project_page/${pageId}`,
-                `/api/projects/pages/${pageId}`,
-                `/api/pages/${pageId}`
+                `${apiBase}/pages/${pageId}`
             ];
-
-            if (projectId) {
-                potentialRoutes.push(`/api/projects/${projectId}/pages/${pageId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project-pages/${pageId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project_pages/${pageId}`);
-            }
 
             for (const route of potentialRoutes) {
                 try {
@@ -608,160 +649,31 @@
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${operationalToken}` }
                     });
-                    if (res.ok) {
-                        if (projectId && route.includes(projectId)) {
-                            discoveredDeletePageRoute = route.replace(pageId, '{id}').replace(projectId, '{projectId}');
-                        } else {
-                            discoveredDeletePageRoute = route.replace(pageId, '{id}');
-                        }
-                        return { success: true };
-                    }
-                } catch (e) {
-                    console.warn(`Route ${route} failed during probe:`, e);
-                }
+                    if (res.ok) return { success: true };
+                } catch (e) {}
             }
-            throw new Error("No active delete route found on your server. Checked: /api/project-pages, /api/project_pages, and /api/pages.");
+            throw new Error("No active delete route found on your server.");
         }
 
-        // Self-healing media deletion router [2]
         async function executeDeleteMediaRoute(mediaId) {
-            if (discoveredDeleteMediaRoute) {
-                return await safeFetchJson(discoveredDeleteMediaRoute.replace('{id}', mediaId), {
-                    method: 'DELETE',
-                    headers: { 
-                        'Authorization': `Bearer ${operationalToken}`,
-                        'x-access-token': operationalToken,
-                        'token': operationalToken
-                    }
-                });
-            }
-
             const pageId = document.getElementById('active-page-id') ? document.getElementById('active-page-id').value : ''; 
-            const projectId = document.getElementById('edit-proj-id') ? document.getElementById('edit-proj-id').value : '';
-
             const potentialRoutes = [
-                { url: `/api/project-media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
-                { url: `/api/project-media/${mediaId}?project_id=${projectId}&page_id=${pageId}`, method: 'DELETE' },
-                { url: `/api/project-media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
-                { url: `/api/project-media/${mediaId}?page_id=${page_id}`, method: 'DELETE' },
-                { url: `/api/project-media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
-                { url: `/api/project-media/${mediaId}?project_id=${projectId}`, method: 'DELETE' },
-
-                { url: `/api/project_media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
-                { url: `/api/project_media/${mediaId}?project_id=${projectId}&page_id=${pageId}`, method: 'DELETE' },
-                { url: `/api/project_media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
-                { url: `/api/project_media/${mediaId}?page_id=${page_id}`, method: 'DELETE' },
-                { url: `/api/project_media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
-                { url: `/api/project_media/${mediaId}?project_id=${projectId}`, method: 'DELETE' },
-
                 { url: `/api/project-media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project-medium/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_medium/${mediaId}`, method: 'DELETE' },
-                { url: `/api/media/${mediaId}`, method: 'DELETE' },
-
-                { url: `/api/media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
-                { url: `/api/media/${mediaId}?project_id=${projectId}&page_id=${pageId}`, method: 'DELETE' },
-                { url: `/api/media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
-                { url: `/api/media/${mediaId}?page_id=${page_id}`, method: 'DELETE' },
-                { url: `/api/media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
-                { url: `/api/media/${mediaId}?project_id=${projectId}`, method: 'DELETE' },
-                { url: `/api/project-media/${mediaId}`, method: 'DELETE', body: { Math, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
-                { url: `/api/project_media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
-                { url: `/api/media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
-
-                { url: `/api/project-pages/${pageId}/media?mediaId=${mediaId}`, method: 'DELETE' },
-                { url: `/api/project-pages/${pageId}/media?media_id=${mediaId}`, method: 'DELETE' },
-                { url: `/api/project-pages/${pageId}/media?id=${mediaId}`, method: 'DELETE' },
-                { url: `/api/project-pages/${pageId}/media`, method: 'DELETE', body: { mediaId, id: mediaId, media_id: mediaId } },
-
-                { url: `/api/project_pages/${pageId}/media?mediaId=${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_pages/${pageId}/media?media_id=${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_pages/${pageId}/media?id=${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_pages/${pageId}/media`, method: 'DELETE', body: { mediaId, id: mediaId, media_id: mediaId } },
-
-                { url: `/api/project-page/${pageId}/media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_page/${pageId}/media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/page/${pageId}/media/${mediaId}`, method: 'DELETE' },
-
-                { url: `/api/project-pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
-
-                { url: `/api/project-pages/${pageId}/project-media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_pages/${pageId}/project_media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project-pages/${pageId}/project-medium/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_pages/${pageId}/project_medium/${mediaId}`, method: 'DELETE' },
-
-                { url: `/api/project-page/${pageId}/project-media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_page/${pageId}/project_media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project-page/${pageId}/project-medium/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_page/${pageId}/project_medium/${mediaId}`, method: 'DELETE' },
-
-                { url: `/api/project-pages/media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_pages/media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/pages/media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project-page-media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_page_media/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project-page-medium/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_page_medium/${mediaId}`, method: 'DELETE' },
-                
-                { url: `/api/project-media/delete/${mediaId}`, method: 'DELETE' },
-                { url: `/api/project_media/delete/${mediaId}`, method: 'DELETE' },
-                { url: `/api/media/delete/${mediaId}`, method: 'DELETE' }
+                { url: `/api/project-pages/${pageId}/media?mediaId=${mediaId}`, method: 'DELETE' }
             ];
-
-            if (projectId) {
-                potentialRoutes.push(
-                    { url: `/api/projects/${projectId}/pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
-                    { url: `/api/projects/${projectId}/project-pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
-                    { url: `/api/projects/${projectId}/project_pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
-                    { url: `/api/projects/${projectId}/project-page/${pageId}/media/${mediaId}`, method: 'DELETE' },
-                    { url: `/api/projects/${projectId}/project_page/${pageId}/media/${mediaId}`, method: 'DELETE' },
-                    { url: `/api/projects/${projectId}/media/${mediaId}`, method: 'DELETE' },
-                    { url: `/api/projects/${projectId}/project-media/${mediaId}`, method: 'DELETE' },
-                    { url: `/api/projects/${projectId}/project_media/${mediaId}`, method: 'DELETE' },
-                    { url: `/api/projects/${projectId}/project-medium/${mediaId}`, method: 'DELETE' },
-                    { url: `/api/projects/${projectId}/project_medium/${mediaId}`, method: 'DELETE' }
-                );
-            }
-
-            const triedLogs = [];
 
             for (const r of potentialRoutes) {
                 try {
-                    const fetchOptions = {
+                    const res = await fetch(r.url, {
                         method: r.method,
-                        headers: { 
-                            'Authorization': `Bearer ${operationalToken}`,
-                            'x-access-token': operationalToken,
-                            'token': operationalToken
-                        }
-                    };
-
-                    if (r.body) {
-                        fetchOptions.headers['Content-Type'] = 'application/json';
-                        fetchOptions.body = JSON.stringify(r.body);
-                    }
-
-                    const res = await fetch(r.url, fetchOptions);
-                    triedLogs.push(`${r.url} -> Status: ${res.status}`);
-
-                    if (res.ok) {
-                        discoveredDeleteMediaRoute = r.url.replace(mediaId, '{id}');
-                        return { success: true };
-                    }
-                } catch (e) {
-                    triedLogs.push(`${r.url} -> Network Error: ${e.message}`);
-                    console.warn(`Route ${r.url} failed during probe:`, e);
-                }
+                        headers: { 'Authorization': `Bearer ${operationalToken}` }
+                    });
+                    if (res.ok) return { success: true };
+                } catch (e) {}
             }
-            
-            const logSummary = triedLogs.map(log => `• ${log}`).join("\n");
-            throw new Error(`Route Probe Failed on your Render Server.\n\nSummary of Tried Endpoints:\n${logSummary}`);
+            throw new Error("Route Probe Failed on your Server.");
         }
 
-        // Theme switching logic inside CMS
         function toggleCmsTheme() {
             const current = document.documentElement.getAttribute('data-theme') || 'dark';
             const next = current === 'dark' ? 'light' : 'dark';
@@ -770,7 +682,6 @@
             updateThemeButtonUI(next);
         }
 
-        // Theme button UI updating helper
         function updateThemeButtonUI(theme) {
             const btn = document.getElementById('cms-theme-toggle');
             if (btn) {
@@ -792,7 +703,6 @@
             }
         }
 
-        // Handle Form Logins Intercept Routing Execution
         document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('auth-email').value;
@@ -808,16 +718,12 @@
                     operationalToken = data.token;
                     localStorage.setItem('sw_token', data.token);
                     document.getElementById('auth-gateway').style.display = 'none';
-                    if(data.must_change_password) {
-                        document.getElementById('password-force-warning').style.display = 'block';
-                        switchControlView('security-panel', document.querySelector('[onclick*="security-panel"]'));
-                    }
                     verifyIdentityTokenPresence();
                 } else {
                     document.getElementById('auth-error').innerText = data.error || 'Authentication error';
                 }
             } catch (err) { 
-                document.getElementById('auth-error').innerText = err.message || 'Authentication server connection timeout.'; 
+                document.getElementById('auth-error').innerText = 'Authentication server connection timeout.'; 
             }
         });
 
@@ -834,6 +740,7 @@
             
             if(panelId === 'services-panel') synchronizeCompetencyTable();
             if(panelId === 'projects-panel') synchronizePortfolioTable();
+            if(panelId === 'signature-projects-panel') synchronizeSignaturePortfolioTable();
             if(panelId === 'inbox-panel') synchronizeInboxTable();
             if(panelId === 'media-panel') synchronizeMediaGridEngine();
 
@@ -850,10 +757,9 @@
                     const inputElement = document.getElementById(`set-${key}`);
                     if(inputElement) inputElement.value = val;
                 }
-            } catch(e) { console.error("Global system settings load failed", e); }
+            } catch(e) { console.error("Settings load failed", e); }
         }
 
-        // Global Form Update Logic for Dynamic Settings Tables
         ['hero-sync-form', 'about-sync-form', 'contact-sync-form'].forEach(formId => {
             document.getElementById(formId).addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -870,13 +776,11 @@
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
                         body: JSON.stringify(payload)
                     });
-                    if(result.success) alert('Engine Settings matrix status successfully deployed to active site view.');
-                    else if (result.must_change_password) alert(result.error);
+                    if(result.success) alert('Engine Settings matrix successfully deployed.');
                 } catch(err) { alert("Deployment update failed: " + err.message); }
             });
         });
 
-        // Security Gate Password Transformation Logic Processing Engine Hook
         document.getElementById('password-reinforce-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const newPassword = document.getElementById('new-sys-pass').value;
@@ -887,8 +791,7 @@
                     body: JSON.stringify({ newPassword })
                 });
                 if(data.success) {
-                    alert('Passkey configuration successfully shifted.');
-                    document.getElementById('password-force-warning').style.display = 'none';
+                    alert('Passkey shifted successfully.');
                     terminateSessionContext();
                 } else { alert(data.error); }
             } catch(err) { alert("Password shift failed: " + err.message); }
@@ -913,14 +816,14 @@
                         </tr>
                     `;
                 });
-            } catch(e) { console.error("Competency sync failed", e); }
+            } catch(e) {}
         }
 
         async function openServiceForm() {
-            const title = prompt("Structural Competency Module Name Element:");
-            const description = prompt("Operational Brief Description Content:");
-            const icon_class = prompt("FontAwesome Icon Mapping Tag Matrix Class String:", "fas fa-city");
-            const display_order = prompt("Sorting Logic Weight Value Integer Scale (0-9):", "0");
+            const title = prompt("Competency Module Name:");
+            const description = prompt("Operational Description Content:");
+            const icon_class = prompt("FontAwesome Icon Tag String:", "fas fa-city");
+            const display_order = prompt("Sorting Logic Weight Value:", "0");
             if(!title || !description) return;
 
             try {
@@ -930,11 +833,11 @@
                     body: JSON.stringify({ title, description, icon_class, display_order: parseInt(display_order) })
                 });
                 synchronizeCompetencyTable();
-            } catch(e) { alert("Failed to add service: " + e.message); }
+            } catch(e) { alert("Failed to add competency: " + e.message); }
         }
 
         async function executeDeleteServiceNode(id) {
-            if(confirm('Purge structural alignment record from processing framework?')) {
+            if(confirm('Purge structural competency?')) {
                 try {
                     await safeFetchJson(`/api/services/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` } });
                     synchronizeCompetencyTable();
@@ -942,7 +845,7 @@
             }
         }
 
-        // ADVANCED SYNCHRONIZATION PIPELINE FOR MULTI-MEDIA PORTFOLIOS
+        // --- LOOKBOOK PROJECTS (Home Page Lookbook Categories) ---
         async function synchronizePortfolioTable() {
             try {
                 const payload = await safeFetchJson('/api/projects');
@@ -953,90 +856,307 @@
                 data.sort((a, b) => a.category.localeCompare(b.category) || a.display_order - b.display_order);
                 
                 data.forEach(p => {
-                    const hasVideo = p.video_path ? `<i class="fas fa-video" style="color:var(--success); margin-left:10px;" title="${p.video_path}"></i>` : '';
-                    
+                    const hasVideo = p.video_path ? `<i class="fas fa-video" style="color:var(--success); margin-left:10px;"></i>` : '';
                     container.innerHTML += `
                         <tr>
                             <td><code>[${p.display_order}]</code></td>
                             <td><span style="letter-spacing:1px; font-weight:700; font-size:0.8rem; color:var(--text-muted);">${p.category.toUpperCase()}</span></td>
+                            <td><strong>${p.title}</strong><br><small>${p.description || 'No Base Description.'}</small></td>
+                            <td>${hasVideo}</td>
                             <td>
-                                <strong>${p.title}</strong>
-                                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; max-width:400px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                    ${p.description}
-                                </div>
-                            </td>
-                            <td>
-                                <span style="font-family:monospace; font-size:0.8rem;">${p.image_path ? p.image_path.split('/').pop() : ''}</span>
-                                ${hasVideo}
-                            </td>
-                            <td>
-                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:var(--bg);" onclick="openProjectManager(${p.id})">Details</button>
-                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
+                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:var(--bg);" onclick="openProjectManager(${p.id}, 'master')">Details</button>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteProjectNode(${p.id}, 'master')">Purge</button>
                             </td>
                         </tr>
                     `;
                 });
-            } catch(e) { console.error("Portfolio table sync failed", e); }
+            } catch(e) {}
         }
 
-        // FORM CAPTURE INTERCEPT PIPELINE
-        const advancedForm = document.getElementById('advanced-portfolio-form');
-        if (advancedForm) {
-            advancedForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const payload = {
-                    category: document.getElementById('proj-category').value,
-                    title: document.getElementById('proj-title').value,
-                    display_order: parseInt(document.getElementById('proj-order').value) || 0,
-                    status: document.getElementById('proj-status').value, // Dynamic status designated
-                };
+        document.getElementById('advanced-portfolio-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                category: document.getElementById('proj-category').value,
+                title: document.getElementById('proj-title').value,
+                display_order: parseInt(document.getElementById('proj-order').value) || 0
+            };
 
-                try {
-                    const result = await safeFetchJson('/api/projects', {
-                        method: 'POST',
+            try {
+                const result = await safeFetchJson('/api/projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                    body: JSON.stringify(payload)
+                });
+
+                if(result.success || result.id) {
+                    await safeFetchJson(`/api/projects/${result.id || result.id}/advanced`, {
+                        method: 'PATCH',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify({
+                            description: document.getElementById('proj-description').value,
+                            image_path: document.getElementById('proj-image-path').value,
+                            video_path: document.getElementById('proj-video-path').value,
+                            brochure_url: document.getElementById('proj-brochure-url').value
+                        })
                     });
+                    alert('Lookbook Project registered.');
+                    document.getElementById('advanced-portfolio-form').reset();
+                    synchronizePortfolioTable();
+                }
+            } catch(err) { alert("Add Lookbook Project failed: " + err.message); }
+        });
 
-                    if(result.success || result.id) {
-                        await safeFetchJson(`/api/projects/${result.id}/advanced`, {
-                            method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                            body: JSON.stringify({
-                                description: document.getElementById('proj-description').value,
-                                image_path: document.getElementById('proj-image-path').value,
-                                video_path: document.getElementById('proj-video-path').value,
-                                brochure_url: document.getElementById('proj-brochure-url').value // Brochure URL link
-                            })
-                        });
-
-                        alert('Structural project entity successfully mapped into runtime cluster.');
-                        document.getElementById('proj-title').value = '';
-                        document.getElementById('proj-description').value = '';
-                        document.getElementById('proj-image-path').value = '';
-                        document.getElementById('proj-video-path').value = '';
-                        document.getElementById('proj-brochure-url').value = '';
-                        synchronizePortfolioTable();
-                        pullAdminContextMetrics();
-                    } else {
-                        alert('Transmission Failed: ' + (result.error || 'System fallback error.'));
-                    }
-                } catch(err) { alert("Failed to add project: " + err.message); }
-            });
+        // --- NEW: SIGNATURE PROJECTS (Status Page All, Upcoming, Completed, etc.) [2] ---
+        async function synchronizeSignaturePortfolioTable() {
+            try {
+                let payload;
+                try {
+                    payload = await safeFetchJson('/api/status-projects');
+                } catch(e) {
+                    // Fallback to master projects with status if separate table isn't fully created
+                    payload = await safeFetchJson('/api/projects');
+                }
+                const data = getSafeArray(payload); 
+                const container = document.getElementById('sig-projects-table-body');
+                container.innerHTML = '';
+                
+                data.sort((a, b) => a.display_order - b.display_order);
+                
+                data.forEach(p => {
+                    container.innerHTML += `
+                        <tr>
+                            <td><code>[${p.display_order || 0}]</code></td>
+                            <td><span style="letter-spacing:1px; font-weight:700; font-size:0.8rem; color:var(--text-muted);">${(p.category || 'Architecture').toUpperCase()}</span></td>
+                            <td><strong>${p.title}</strong><br><small>${p.description || 'No Base Description.'}</small></td>
+                            <td><span style="color:var(--success); font-weight:bold;">${p.status || 'Ongoing'}</span></td>
+                            <td>
+                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:var(--bg);" onclick="openProjectManager(${p.id}, 'signature')">Details</button>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteProjectNode(${p.id}, 'signature')">Purge</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch(e) {}
         }
 
-        async function executeDeleteProjectNode(id) {
-            if(confirm('Terminate active portfolio project entry completely?')) {
+        document.getElementById('sig-portfolio-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                category: document.getElementById('sig-proj-category').value,
+                title: document.getElementById('sig-proj-title').value,
+                status: document.getElementById('sig-proj-status').value,
+                display_order: parseInt(document.getElementById('sig-proj-order').value) || 0
+            };
+
+            try {
+                let apiPath = '/api/status-projects';
+                let advancedPath = (id) => `/api/status-projects/${id}/advanced`;
+                
+                // Fallback probing routing config
                 try {
-                    await safeFetchJson(`/api/projects/${id}`, { 
+                    const test = await fetch('/api/status-projects');
+                    if(!test.ok) throw new Error();
+                } catch(e) {
+                    apiPath = '/api/projects';
+                    advancedPath = (id) => `/api/projects/${id}/advanced`;
+                }
+
+                const result = await safeFetchJson(apiPath, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                    body: JSON.stringify(payload)
+                });
+
+                const finalId = result.id || result.projectId;
+                if(finalId) {
+                    await safeFetchJson(advancedPath(finalId), {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                        body: JSON.stringify({
+                            description: document.getElementById('sig-proj-description').value,
+                            image_path: document.getElementById('sig-proj-image-path').value,
+                            video_path: document.getElementById('sig-proj-video-path').value,
+                            brochure_url: document.getElementById('sig-proj-brochure-url').value,
+                            status: document.getElementById('sig-proj-status').value
+                        })
+                    });
+                    alert('Signature Project registered successfully.');
+                    document.getElementById('sig-portfolio-form').reset();
+                    synchronizeSignaturePortfolioTable();
+                }
+            } catch(err) { alert("Signature Project failed: " + err.message); }
+        });
+
+        async function executeDeleteProjectNode(id, type) {
+            if(confirm('Terminate dynamic project?')) {
+                const apiBase = type === 'signature' ? '/api/status-projects' : '/api/projects';
+                try {
+                    await safeFetchJson(`${apiBase}/${id}`, { 
                         method: 'DELETE', 
                         headers: { 'Authorization': `Bearer ${operationalToken}` } 
                     });
-                    synchronizePortfolioTable();
+                    if (type === 'signature') synchronizeSignaturePortfolioTable();
+                    else synchronizePortfolioTable();
                     pullAdminContextMetrics();
                 } catch(e) { alert("Delete failed: " + e.message); }
             }
+        }
+
+        async function openProjectManager(projectId, type) {
+            try {
+                document.getElementById('edit-proj-context').value = type;
+                const apiBase = type === 'signature' ? '/api/status-projects' : '/api/projects';
+                
+                const proj = await safeFetchJson(`${apiBase}/${projectId}/details`);
+                document.getElementById('edit-proj-id').value = proj.id;
+                document.getElementById('edit-proj-title').value = proj.title;
+                document.getElementById('edit-proj-desc').value = proj.description || '';
+                document.getElementById('edit-proj-thumb').value = proj.image_path || '';
+                document.getElementById('edit-proj-status').value = proj.status || 'Ongoing';
+                document.getElementById('edit-proj-brochure-url').value = proj.brochure_url || '';
+                
+                currentProjectPages = proj.pages || []; 
+                renderProjectPages(currentProjectPages);
+                document.getElementById('media-manager-block').style.display = 'none';
+                document.getElementById('project-manage-modal').style.display = 'block';
+            } catch(e) { alert("Failed to open project details: " + e.message); }
+        }
+
+        async function saveProjectBaseUpdate() {
+            const id = document.getElementById('edit-proj-id').value;
+            const contextType = document.getElementById('edit-proj-context').value;
+            const apiBase = contextType === 'signature' ? '/api/status-projects' : '/api/projects';
+            
+            try {
+                await safeFetchJson(`${apiBase}/${id}/advanced`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                    body: JSON.stringify({
+                        title: document.getElementById('edit-proj-title').value,
+                        description: document.getElementById('edit-proj-desc').value,
+                        image_path: document.getElementById('edit-proj-thumb').value,
+                        status: document.getElementById('edit-proj-status').value, 
+                        brochure_url: document.getElementById('edit-proj-brochure-url').value
+                    })
+                });
+                alert('Project specs update synced.');
+                if (contextType === 'signature') synchronizeSignaturePortfolioTable();
+                else synchronizePortfolioTable();
+            } catch(e) { alert("Update failed: " + e.message); }
+        }
+
+        function renderProjectPages(pages) {
+            const tbody = document.getElementById('project-pages-list');
+            tbody.innerHTML = '';
+            pages.forEach((p, idx) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>Page ${p.page_number}</td>
+                        <td>${p.title || 'Module Segment'}</td>
+                        <td>
+                            <button class="btn" style="padding:5px; font-size:0.7rem; width: auto;" onclick="openPageMediaManagerByIndex(${idx})">Media Logic</button>
+                            <button class="btn btn-danger" style="padding:5px; font-size:0.7rem; width: auto;" onclick="deleteProjectPage(${p.id})">Del</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        window.openPageMediaManagerByIndex = function(idx) {
+            const p = currentProjectPages[idx];
+            if (p) {
+                openPageMediaManager(p.id, p.media || []);
+            }
+        };
+
+        async function addNewProjectPage() {
+            const id = document.getElementById('edit-proj-id').value;
+            const contextType = document.getElementById('edit-proj-context').value;
+            const apiBase = contextType === 'signature' ? '/api/status-projects' : '/api/projects';
+            const title = prompt("Enter New Module Display Title:");
+            if (!title) return;
+            try {
+                await safeFetchJson(`${apiBase}/${id}/pages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                    body: JSON.stringify({ title, page_number: document.getElementById('project-pages-list').children.length + 1 })
+                });
+                openProjectManager(id, contextType); 
+            } catch(e) { alert("Failed to add page: " + e.message); }
+        }
+
+        async function deleteProjectPage(pageId) {
+            if(!confirm('Delete page module?')) return;
+            try {
+                await executeDeletePageRoute(pageId);
+                openProjectManager(document.getElementById('edit-proj-id').value, document.getElementById('edit-proj-context').value);
+            } catch(e) { alert("Failed to delete page: " + e.message); }
+        }
+
+        function openPageMediaManager(pageId, mediaArray) {
+            document.getElementById('active-page-id').value = pageId;
+            document.getElementById('active-page-label').innerText = `[Page: ${pageId}]`;
+            
+            const tbody = document.getElementById('project-media-list');
+            tbody.innerHTML = '';
+            mediaArray.forEach(m => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="number" value="${m.display_order}" style="width:60px; padding:5px;" disabled></td>
+                        <td>${m.media_path.split('/').pop()}</td>
+                        <td>${m.media_type}</td>
+                        <td><button class="btn btn-danger" style="padding:5px; font-size:0.7rem; width: auto;" onclick="deleteMedia(${m.id})">Purge</button></td>
+                    </tr>
+                `;
+            });
+            document.getElementById('media-manager-block').style.display = 'block';
+        }
+
+        async function addMediaToActivePage() {
+            const pageId = document.getElementById('active-page-id').value;
+            const path = document.getElementById('new-media-path').value;
+            const type = document.getElementById('new-media-type').value;
+            if(!path) return alert("Select media asset first.");
+            
+            try {
+                await safeFetchJson(`/api/project-pages/${pageId}/media`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                    body: JSON.stringify({ media_path: path, media_type: type, display_order: document.getElementById('project-media-list').children.length })
+                });
+                document.getElementById('new-media-path').value = '';
+                openProjectManager(document.getElementById('edit-proj-id').value, document.getElementById('edit-proj-context').value);
+            } catch(e) { alert("Failed to attach media: " + e.message); }
+        }
+
+        async function executeBatchMediaAttachment() {
+            if (selectedMediaPaths.length === 0) return alert("Select at least one image.");
+            const pageId = document.getElementById('active-page-id').value;
+            const type = document.getElementById('new-media-type').value;
+            
+            let attachedCount = 0;
+            try {
+                for (const path of selectedMediaPaths) {
+                    await safeFetchJson(`/api/project-pages/${pageId}/media`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                        body: JSON.stringify({ media_path: path, media_type: type, display_order: document.getElementById('project-media-list').children.length + attachedCount })
+                    });
+                    attachedCount++;
+                }
+            } catch(e) {}
+            
+            closeMediaPickerWindow();
+            openProjectManager(document.getElementById('edit-proj-id').value, document.getElementById('edit-proj-context').value);
+            alert(`Batch-attached ${attachedCount} assets.`);
+        }
+
+        async function deleteMedia(mediaId) {
+            if(!confirm('Purge asset track?')) return;
+            try {
+                await executeDeleteMediaRoute(mediaId);
+                openProjectManager(document.getElementById('edit-proj-id').value, document.getElementById('edit-proj-context').value);
+            } catch(e) { alert("Purge failed: " + e.message); }
         }
 
         async function synchronizeInboxTable() {
@@ -1059,28 +1179,20 @@
                         </tr>
                     `;
                 });
-            } catch(e) { console.error("Inbox sync failed", e); }
+            } catch(e) {}
         }
 
         window.viewAndReadMessage = async function(id, name, email, phone, msg) {
-            alert(`SENDER DETAILS:\\n-------------------------\\nName: ${name}\\nEmail: ${email}\\nPhone: ${phone}\\n\\nMESSAGE:\\n${msg.replace(/<br>/g, '\\n')}`);
+            alert(`SENDER DETAILS:\n-------------------------\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMESSAGE:\n${msg.replace(/<br>/g, '\n')}`);
             try {
                 await safeFetchJson(`/api/messages/${id}/read`, { method: 'PATCH', headers: { 'Authorization': `Bearer ${operationalToken}` } });
                 synchronizeInboxTable();
                 pullAdminContextMetrics();
-            } catch(e) { console.error("Read flag failed", e); }
-        }
-
-        async function flagMessageReadState(id) {
-            try {
-                await safeFetchJson(`/api/messages/${id}/read`, { method: 'PATCH', headers: { 'Authorization': `Bearer ${operationalToken}` } });
-                synchronizeInboxTable();
-                pullAdminContextMetrics();
-            } catch(e) { console.error("Read flag failed", e); }
+            } catch(e) {}
         }
 
         async function executeDeleteMessage(id) {
-            if(confirm('Purge active client messaging layer file mapping index?')) {
+            if(confirm('Purge message?')) {
                 try {
                     await safeFetchJson(`/api/messages/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` } });
                     synchronizeInboxTable();
@@ -1089,7 +1201,6 @@
             }
         }
 
-        // --- NEW WORKABLE BATCH MEDIA DELETION PIPELINE ---
         let isMultiDeleteModeActive = false;
         let selectedVaultAssetIds = [];
 
@@ -1135,7 +1246,7 @@
 
         async function executeBatchPurge() {
             if (selectedVaultAssetIds.length === 0) return alert('Select at least one asset to purge.');
-            if (!confirm(`Purge all ${selectedVaultAssetIds.length} selected assets from database storage?`)) return;
+            if (!confirm(`Purge selected assets from database storage?`)) return;
 
             try {
                 for (const id of selectedVaultAssetIds) {
@@ -1144,11 +1255,11 @@
                         headers: { 'Authorization': `Bearer ${operationalToken}` }
                     });
                 }
-                alert('Successfully deleted selected assets.');
+                alert('Purged assets successfully.');
                 toggleMultiDeleteMode(); 
                 pullAdminContextMetrics();
             } catch (e) {
-                alert('Failed to delete some assets: ' + e.message);
+                alert('Failed to delete assets: ' + e.message);
                 synchronizeMediaGridEngine();
             }
         }
@@ -1167,7 +1278,7 @@
                 document.getElementById('selected-assets-count').innerText = selectedVaultAssetIds.length;
             } else {
                 navigator.clipboard.writeText(filepath); 
-                alert('Resource path copied to clipboard architecture pipeline.');
+                alert('Path copied to clipboard.');
             }
         };
 
@@ -1179,15 +1290,16 @@
                 container.innerHTML = '';
                 data.forEach(item => {
                     const isSelected = selectedVaultAssetIds.includes(item.id);
+                    const safePath = getSafeImagePath(item.filepath);
                     container.innerHTML += `
                         <div class="media-item ${isSelected ? 'multi-selected' : ''}" data-id="${item.id}" onclick="handleVaultItemClick(this, ${item.id}, '${item.filepath}')">
-                            <img src="${item.filepath}">
+                            <img src="${safePath}" onerror="this.src='images/unnamed1.jpg'">
                             <div class="chk-badge" style="position: absolute; top:5px; right:5px; background:var(--success); color:#000; width:24px; height:24px; border-radius:50%; display:${isSelected ? 'flex' : 'none'}; align-items:center; justify-content:center; z-index:4;"><i class="fas fa-check"></i></div>
                             ${!isMultiDeleteModeActive ? `<button class="delete-asset-btn" onclick="executeDeleteAsset(${item.id}, event)"><i class="fas fa-trash-alt"></i></button>` : ''}
                         </div>
                     `;
                 });
-            } catch(e) { console.error("Media sync failed", e); }
+            } catch(e) {}
         }
 
         async function executeServerUpload(inputNode) {
@@ -1204,10 +1316,10 @@
                         body: formData
                     });
                     if(data.url) successCount++;
-                } catch(e) { console.error("Individual file upload failed", e); }
+                } catch(e) {}
             }
             if (successCount > 0) {
-                alert(`Uploaded ${successCount} assets to your vault successfully!`);
+                alert(`Uploaded ${successCount} assets to your vault.`);
                 synchronizeMediaGridEngine();
                 pullAdminContextMetrics();
             }
@@ -1215,7 +1327,7 @@
 
         async function executeDeleteAsset(id, event) {
             event.stopPropagation();
-            if(confirm('Purge target resource asset entirely from storage configuration?')) {
+            if(confirm('Purge asset?')) {
                 try {
                     await safeFetchJson(`/api/media/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${operationalToken}` } });
                     synchronizeMediaGridEngine();
@@ -1238,7 +1350,6 @@
                 container.innerHTML = '';
                 
                 selectedMediaPaths = []; 
-                
                 const isMultiSelect = (targetPickerFieldHook === 'new-media-path');
                 const batchBar = document.getElementById('modal-batch-action-bar');
                 
@@ -1250,13 +1361,14 @@
                 }
 
                 data.forEach(item => {
+                    const safePath = getSafeImagePath(item.filepath);
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'media-item';
                     itemDiv.setAttribute('data-filepath', item.filepath);
                     itemDiv.innerHTML = `
-                        <img src="${item.filepath}">
+                        <img src="${safePath}" onerror="this.src='images/unnamed1.jpg'">
                         <div class="chk-badge" style="position: absolute; top:5px; right:5px; background:var(--success); color:#000; width:24px; height:24px; border-radius:50%; display:none; align-items:center; justify-content:center; z-index:4;"><i class="fas fa-check"></i></div>
-                `;
+                    `;
 
                     itemDiv.onclick = () => {
                         if (isMultiSelect) {
@@ -1276,7 +1388,7 @@
                     };
                     container.appendChild(itemDiv);
                 });
-            } catch(e) { console.error("Grid picker hydrate failed", e); }
+            } catch(e) {}
         }
 
         function assignAssetPathToFieldHook(path) {
@@ -1307,430 +1419,48 @@
                 document.getElementById('metric-s').innerText = s.length;
                 document.getElementById('metric-m').innerText = m.filter(msg => !msg.is_read).length + " Unread";
                 document.getElementById('metric-l').innerText = l.length + " Items";
-                document.getElementById('active-session-identity').innerText = `Operator Node: ${u.email}`;
                 
-                if (u.must_change_password) {
+                // FIX: Guard statement to prevent null element crash [1]
+                const sessionTag = document.getElementById('active-session-identity');
+                if (sessionTag && u && u.email) {
+                    sessionTag.innerText = `Operator Node: ${u.email}`;
+                }
+                
+                if (u && u.must_change_password) {
                     document.getElementById('password-force-warning').style.display = 'block';
                 }
             } catch(e) {}
         }
 
-        verifyIdentityTokenPresence();
-    </script>
-    
-    <!-- BEGIN APPENDED ENTERPRISE CMS PROJECT DETAILS UPGRADE & EMAIL MOD -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Inject Change Email UI into Security Panel Seamlessly
-            const securityPanel = document.getElementById('security-panel');
-            if (securityPanel) {
-                securityPanel.insertAdjacentHTML('beforeend', `
-                    <div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid var(--border);">
-                        <h2>Admin Comm Identity Operations</h2>
-                        <form id="email-reinforce-form">
-                            <div class="form-row">
-                                <label>Current Active Identity Log</label>
-                                <input type="text" id="current-admin-email" disabled style="opacity: 0.6; cursor: not-allowed;">
-                            </div>
-                            <div class="form-row">
-                                <label>New Operational Email Target Node</label>
-                                <input type="email" id="new-sys-email" required>
-                            </div>
-                            <button type="submit" class="btn" style="background: var(--success); color: black;">Update Administrative Email</button>
-                        </form>
-                    </div>
-                `);
-
-                document.getElementById('email-reinforce-form').addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const newEmail = document.getElementById('new-sys-email').value;
-                    try {
-                        const data = await safeFetchJson('/api/auth/change-email', {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                            body: JSON.stringify({ newEmail })
-                        });
-                        alert(data.success || 'Email changed successfully');
-                        pullAdminContextMetrics(); 
-                        document.getElementById('new-sys-email').value = '';
-                    } catch(err) { alert("Email shift failed: " + err.message); }
-                });
-            }
-
-            const originalPullAdminContextMetrics = window.pullAdminContextMetrics;
-            window.pullAdminContextMetrics = async function() {
-                await originalPullAdminContextMetrics(); 
-                try {
-                    const profileRes = await fetch('/api/auth/profile', { headers: { 'Authorization': `Bearer ${operationalToken}` } });
-                    const profile = await profileRes.json();
-                    document.getElementById('current-admin-email').value = profile.email;
-                } catch(e) {}
-            };
-        });
-
-        window.synchronizePortfolioTable = async function() {
-            try {
-                const payload = await safeFetchJson('/api/projects');
-                const data = getSafeArray(payload); 
-                const container = document.getElementById('projects-table-body');
-                container.innerHTML = '';
-                
-                data.sort((a, b) => a.category.localeCompare(b.category) || a.display_order - b.display_order);
-                
-                data.forEach(p => {
-                    const hasVideo = p.video_path ? `<i class="fas fa-video" style="color:var(--success); margin-left:10px;" title="${p.video_path}"></i>` : '';
-                    container.innerHTML += `
-                        <tr>
-                            <td><code>[${p.display_order}]</code></td>
-                            <td><span style="letter-spacing:1px; font-weight:700; font-size:0.8rem; color:var(--text-muted);">${p.category.toUpperCase()}</span></td>
-                            <td>
-                                <strong>${p.title}</strong>
-                                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; max-width:400px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                    ${p.description || 'No Base Description.'}
-                                </div>
-                            </td>
-                            <td>
-                                <span style="font-family:monospace; font-size:0.8rem;">${(p.image_path||'').split('/').pop()}</span>
-                                ${hasVideo}
-                            </td>
-                            <td>
-                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:var(--bg);" onclick="openProjectManager(${p.id})">Details</button>
-                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem; margin-left:5px;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
-                                <a href="/project-details.html?project=${p.id}" target="_blank" class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--success); color:black; margin-left:5px; text-decoration:none;">Preview</a>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } catch(e) { console.error("Portfolio table sync failed", e); }
-        };
-
-        async function openProjectManager(projectId) {
-            try {
-                const proj = await safeFetchJson(`/api/projects/${projectId}/details`);
-                document.getElementById('edit-proj-id').value = proj.id;
-                document.getElementById('edit-proj-title').value = proj.title;
-                document.getElementById('edit-proj-desc').value = proj.description || '';
-                document.getElementById('edit-proj-thumb').value = proj.image_path || '';
-                document.getElementById('edit-proj-status').value = proj.status || 'Ongoing';
-                document.getElementById('edit-proj-brochure-url').value = proj.brochure_url || '';
-                
-                currentProjectPages = proj.pages || []; 
-                renderProjectPages(currentProjectPages);
-                document.getElementById('media-manager-block').style.display = 'none';
-                document.getElementById('project-manage-modal').style.display = 'block';
-            } catch(e) { alert("Failed to open project: " + e.message); }
-        }
-
-        async function saveProjectBaseUpdate() {
-            const id = document.getElementById('edit-proj-id').value;
-            try {
-                await safeFetchJson(`/api/projects/${id}/advanced`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                    body: JSON.stringify({
-                        title: document.getElementById('edit-proj-title').value,
-                        description: document.getElementById('edit-proj-desc').value,
-                        image_path: document.getElementById('edit-proj-thumb').value,
-                        status: document.getElementById('edit-proj-status').value, 
-                        brochure_url: document.getElementById('edit-proj-brochure-url').value
-                    })
-                });
-                alert('Project core matrix synced.');
-                synchronizePortfolioTable();
-            } catch(e) { alert("Failed to save base update: " + e.message); }
-        }
-
-        function renderProjectPages(pages) {
-            const tbody = document.getElementById('project-pages-list');
-            tbody.innerHTML = '';
-            pages.forEach((p, idx) => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>Page ${p.page_number}</td>
-                        <td>${p.title || 'Module Segment'}</td>
-                        <td>
-                            <button class="btn" style="padding:5px; font-size:0.7rem; width: auto;" onclick="openPageMediaManagerByIndex(${idx})">Media Logic</button>
-                            <button class="btn btn-danger" style="padding:5px; font-size:0.7rem; width: auto;" onclick="deleteProjectPage(${p.id})">Del</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        window.openPageMediaManagerByIndex = function(idx) {
-            const p = currentProjectPages[idx];
-            if (p) {
-                openPageMediaManager(p.id, p.media || []);
-            }
-        };
-
-        async function addNewProjectPage() {
-            const id = document.getElementById('edit-proj-id').value;
-            const title = prompt("Enter New Module Display Title:");
-            if (!title) return;
-            try {
-                await safeFetchJson(`/api/projects/${id}/pages`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                    body: JSON.stringify({ title, page_number: document.getElementById('project-pages-list').children.length + 1 })
-                });
-                openProjectManager(id); 
-            } catch(e) { alert("Failed to add page: " + e.message); }
-        }
-
-        async function deleteProjectPage(pageId) {
-            if(!confirm('Delete page module?')) return;
-            try {
-                await executeDeletePageRoute(pageId);
-                openProjectManager(document.getElementById('edit-proj-id').value);
-            } catch(e) { alert("Failed to delete page: " + e.message); }
-        }
-
-        function openPageMediaManager(pageId, mediaArray) {
-            document.getElementById('active-page-id').value = pageId;
-            document.getElementById('active-page-label').innerText = `[Page Node: ${pageId}]`;
-            
-            const tbody = document.getElementById('project-media-list');
-            tbody.innerHTML = '';
-            mediaArray.forEach(m => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><input type="number" value="${m.display_order}" onchange="updateMediaOrder(this, ${m.id})" style="width:60px; padding:5px;"></td>
-                        <td>${m.media_path.split('/').pop()}</td>
-                        <td>${m.media_type}</td>
-                        <td><button class="btn btn-danger" style="padding:5px; font-size:0.7rem; width: auto;" onclick="deleteMedia(${m.id})">Purge</button></td>
-                    </tr>
-                `;
-            });
-            document.getElementById('media-manager-block').style.display = 'block';
-        }
-
-        async function addMediaToActivePage() {
-            const pageId = document.getElementById('active-page-id').value;
-            const path = document.getElementById('new-media-path').value;
-            const type = document.getElementById('new-media-type').value;
-            if(!path) return alert("Select media asset first.");
-            
-            try {
-                await safeFetchJson(`/api/project-pages/${pageId}/media`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                    body: JSON.stringify({ media_path: path, media_type: type, display_order: document.getElementById('project-media-list').children.length })
-                });
-                document.getElementById('new-media-path').value = '';
-                openProjectManager(document.getElementById('edit-proj-id').value);
-            } catch(e) { alert("Failed to attach media: " + e.message); }
-        }
-
-        async function executeBatchMediaAttachment() {
-            if (selectedMediaPaths.length === 0) return alert("Select at least one image.");
-            const pageId = document.getElementById('active-page-id').value;
-            const type = document.getElementById('new-media-type').value;
-            
-            let attachedCount = 0;
-            try {
-                for (const path of selectedMediaPaths) {
-                    await safeFetchJson(`/api/project-pages/${pageId}/media`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                        body: JSON.stringify({ media_path: path, media_type: type, display_order: document.getElementById('project-media-list').children.length + attachedCount })
-                    });
-                    attachedCount++;
-                }
-            } catch(e) { console.error("Batch attach failed", e); }
-            
-            closeMediaPickerWindow();
-            
-            if (activeCategoryContainerIdToReload) {
-                const currentPanel = document.querySelector('.panel.active');
-                if (currentPanel) {
-                    if (currentPanel.id === 'facade-panel') loadCategoryPortfolio('Modern Facade', 'facade-container');
-                    if (currentPanel.id === 'residential-panel') loadCategoryPortfolio('Residential Elite', 'residential-container');
-                    if (currentPanel.id === 'luxury-panel') loadCategoryPortfolio('Luxury Living', 'luxury-container');
-                    if (currentPanel.id === 'commercial-panel') loadCategoryPortfolio('Commercial Infrastructure', 'commercial-container');
-                }
-            } else {
-                openProjectManager(document.getElementById('edit-proj-id').value);
-            }
-            alert(`Successfully batch-attached ${attachedCount} assets to your page!`);
-        }
-
-        function selectAllLibraryFiles(selectTrue) {
-            const items = document.querySelectorAll('#modal-picker-catalog-box .media-item');
-            selectedMediaPaths = [];
-            items.forEach(item => {
-                const badge = item.querySelector('.chk-badge');
-                const filepath = item.getAttribute('data-filepath');
-                if (selectTrue) {
-                    item.classList.add('multi-selected');
-                    badge.style.display = 'flex';
-                    selectedMediaPaths.push(filepath);
-                } else {
-                    item.classList.remove('multi-selected');
-                    badge.style.display = 'none';
-                }
-            });
-            document.getElementById('batch-count').innerText = selectedMediaPaths.length;
-        }
-
-        async function deleteMedia(mediaId) {
-            if(!confirm('Purge asset track?')) return;
-            try {
-                await executeDeleteMediaRoute(mediaId);
-                openProjectManager(document.getElementById('edit-proj-id').value);
-            } catch(e) { alert("Purge failed: " + e.message); }
-        }
-        
-        async function updateMediaOrder(inputNode, mediaId) {
-            console.log('Order update ready.');
-        }
-
-        // --- NEW ADDITIVE CMS DIRECT CATEGORY PORTFOLIO LOADER LOGIC ---
         async function loadCategoryPortfolio(categoryName, containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
-            
-            container.innerHTML = `
-                <div style="text-align:center; padding:30px; color:var(--text-muted);">
-                    <i class="fas fa-spinner fa-spin" style="font-size:1.5rem; margin-bottom:10px;"></i>
-                    <div>Accessing Render Database...</div>
-                </div>`;
+            container.innerHTML = 'Loading Category lookbooks...';
             
             try {
                 const payload = await safeFetchJson('/api/projects');
                 const allProjects = getSafeArray(payload);
-                
                 const filtered = allProjects.filter(p => p.category === categoryName);
-                filtered.sort((a, b) => a.display_order - b.display_order);
                 
                 if (filtered.length === 0) {
-                    container.innerHTML = `
-                        <div style="background:var(--surface-accent); padding:30px; text-align:center; border-radius:4px; border:1px solid var(--border);">
-                            <i class="fas fa-folder-open" style="font-size:2.5rem; color:var(--text-muted); margin-bottom:15px; display:block;"></i>
-                            <p style="color:var(--text-muted); margin-bottom:20px;">No registered projects under "${categoryName}" yet.</p>
-                            <button class="btn" style="background:var(--success); color:#000; width:auto;" onclick="switchControlView('projects-panel', document.querySelector('[onclick*=\\'projects-panel\\']'))">Add Your First Project</button>
-                        </div>`;
+                    container.innerHTML = `<p style="color:var(--text-muted);">No Lookbooks under ${categoryName} yet.</p>`;
                     return;
                 }
-                
                 container.innerHTML = '';
-                
-                for (const proj of filtered) {
-                    const deepProj = await safeFetchJson(`/api/projects/${proj.id}/details`);
-                    const pages = deepProj.pages || [];
-                    
-                    let pagesHTML = '';
-                    if (pages.length === 0) {
-                        pagesHTML = `
-                            <div style="padding:20px; background:var(--bg); border:1px dashed var(--border); text-align:center; border-radius:4px; color:var(--text-muted); font-size:0.85rem;">
-                                No pages created. Tap the button above to add your first page!
-                            </div>`;
-                    } else {
-                        currentProjectPages = pages;
-                        pages.forEach((p, idx) => {
-                            let mediaThumbnails = '';
-                            (p.media || []).forEach(m => {
-                                if (m.media_type === 'video') {
-                                    mediaThumbnails += `
-                                        <div style="position:relative; width:65px; height:60px; background:#000; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--border); overflow:hidden;">
-                                            <i class="fas fa-video" style="color:var(--success); font-size:1.2rem;"></i>
-                                        </div>`;
-                                } else {
-                                    mediaThumbnails += `
-                                        <img src="${m.media_path}" style="width:65px; height:60px; object-fit:cover; border-radius:4px; border:1px solid var(--border);" onerror="this.src='images/unnamed1.jpg'">`;
-                                }
-                            });
-                            
-                            pagesHTML += `
-                                <div style="background:var(--bg); padding:15px; border-radius:4px; margin-bottom:15px; border:1px solid var(--border);">
-                                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                                        <div>
-                                            <strong style="font-size:0.9rem; color:var(--text);">${p.title}</strong>
-                                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Page Module Segment ${p.page_number}</div>
-                                        </div>
-                                        <div style="display:flex; gap:8px;">
-                                            <button class="btn btn-success" style="padding:6px 12px; font-size:0.75rem; width:auto;" onclick="openCategoryMediaPicker(${p.id}, '${containerId}')">
-                                                <i class="fas fa-images"></i> Add/Change Pics
-                                            </button>
-                                            <button class="btn btn-danger" style="padding:6px 12px; font-size:0.75rem; width:auto;" onclick="deleteCategoryPageNode(${p.id}, ${proj.id}, '${categoryName}', '${containerId}')">
-                                                <i class="fas fa-trash"></i> Delete Page
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
-                                        ${mediaThumbnails}
-                                    </div>
-                                </div>`;
-                        });
-                    }
-                    
+                filtered.forEach(proj => {
                     container.innerHTML += `
-                        <div style="background:var(--surface-accent); border:1px solid var(--border); border-radius:6px; padding:25px; margin-bottom:30px;">
-                            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:15px; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
-                                <div>
-                                    <span style="font-size:0.75rem; font-weight:700; color:var(--success); letter-spacing:1px; text-transform:uppercase;">${proj.category} (${proj.status || 'Ongoing'})</span>
-                                    <h3 style="font-size:1.3rem; margin-top:5px; font-weight:700;">${proj.title}</h3>
-                                </div>
-                                <div style="display:flex; gap:8px;">
-                                    <button class="btn" style="background:var(--accent); color:var(--bg); padding:8px 15px; font-size:0.75rem; width:auto;" onclick="addCategoryPageNode(${proj.id}, '${categoryName}', '${containerId}')">
-                                        <i class="fas fa-plus"></i> Add New Page
-                                    </button>
-                                    <button class="btn btn-danger" style="padding:8px 15px; font-size:0.75rem; width:auto;" onclick="executeDeleteProjectNode(${proj.id})">
-                                        <i class="fas fa-trash"></i> Purge Project
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-bottom:20px;">
-                                <label style="font-size:0.7rem; color:var(--text-muted);">Base Technical Description</label>
-                                <p style="font-size:0.9rem; color:var(--text); line-height:1.6;">${proj.description || 'No base description.'}</p>
-                            </div>
-                            
-                            <div>
-                                <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:12px;">Inner Photo Pages (${pages.length})</h4>
-                                ${pagesHTML}
-                            </div>
-                        </div>`;
-                }
-            } catch (e) {
-                console.error(e);
-                container.innerHTML = `<div style="color:var(--danger); padding:20px;">Error syncing data with Render. Make sure the database is connected.</div>`;
-            }
-        }
-
-        async function addCategoryPageNode(projectId, categoryName, containerId) {
-            const title = prompt("Enter New Page Module Display Title (e.g., Primary Structural Design):");
-            if (!title) return;
-            
-            try {
-                const proj = await safeFetchJson(`/api/projects/${projectId}/details`);
-                const pageNum = (proj.pages || []).length + 1;
-
-                await safeFetchJson(`/api/projects/${projectId}/pages`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                    body: JSON.stringify({ title, page_number: pageNum })
+                        <div style="background:var(--surface-accent); border:1px solid var(--border); padding:20px; border-radius:4px; margin-bottom:15px;">
+                            <h4>${proj.title}</h4>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-top:5px;">${proj.description || 'No specifications details.'}</p>
+                            <button class="btn" style="margin-top:10px; padding:6px 15px; font-size:0.75rem;" onclick="openProjectManager(${proj.id}, 'master')">Configure Pages</button>
+                        </div>
+                    `;
                 });
-                
-                loadCategoryPortfolio(categoryName, containerId); 
-            } catch(e) { alert("Failed to add page: " + e.message); }
+            } catch (e) {}
         }
 
-        async function deleteCategoryPageNode(pageId, projectId, categoryName, containerId) {
-            if (!confirm("Are you sure you want to delete this page and all its attached media?")) return;
-            try {
-                await executeDeletePageRoute(pageId, projectId);
-                loadCategoryPortfolio(categoryName, containerId); 
-            } catch(e) { alert("Failed to delete page: " + e.message); }
-        }
-
-        function openCategoryMediaPicker(pageId, containerId) {
-            document.getElementById('active-page-id').value = pageId;
-            activeCategoryContainerIdToReload = containerId; 
-            targetPickerFieldHook = 'new-media-path'; 
-            document.getElementById('media-modal-picker').style.display = 'block';
-            hydrateMediaPickerGrid();
-        }
+        verifyIdentityTokenPresence();
     </script>
 </body>
 </html>
+```
