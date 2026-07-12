@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -170,7 +169,6 @@
 
     <header>
         <div style="font-weight:700; letter-spacing:2px;">SOUTH WIND CMS v1.0</div>
-        <!-- FIX: Added missing active-session-identity tag to clear out console errors [1] -->
         <div id="active-session-identity" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Operator Node: Initializing...</div>
         <div style="display:flex; gap:10px; flex-wrap: wrap;">
             <button class="btn" id="cms-theme-toggle" onclick="toggleCmsTheme()"><i class="fas fa-sun"></i> Theme Toggle</button>
@@ -193,7 +191,7 @@
             <button class="menu-btn" onclick="switchControlView('commercial-panel', this)"><i class="fas fa-city"></i> Commercial Infra</button>
             <div style="border-bottom: 1px solid var(--border); margin: 5px 0; padding-bottom: 5px;"></div>
 
-            <!-- Separated option tabs as requested [2] -->
+            <!-- UI separated Lookbooks and Status Signature sections [2] -->
             <button class="menu-btn" onclick="switchControlView('projects-panel', this)"><i class="fas fa-images"></i> Manage Front Lookbooks</button>
             <button class="menu-btn" onclick="switchControlView('signature-projects-panel', this)"><i class="fas fa-project-diagram"></i> Manage Signature Projects (Status page)</button>
             
@@ -210,7 +208,7 @@
             </div>
 
             <div id="dashboard-panel" class="panel active">
-                <h2>Operational Console System Overview</h2>
+                <h2>Operational Console Overview</h2>
                 <div class="metrics-grid">
                     <div class="metric-card"><h5>Active Lookbooks</h5><div class="metric-val" id="metric-p">0</div></div>
                     <div class="metric-card"><h5>System Competencies</h5><div class="metric-val" id="metric-s">0</div></div>
@@ -286,7 +284,7 @@
                 </table>
             </div>
 
-            <!-- Manage Front Lookbooks (Categories Page Items) panel -->
+            <!-- Lookbooks Section (Front Page Lookbooks categories ONLY) -->
             <div id="projects-panel" class="panel">
                 <h2>Manage Front Categories (Home Page Cards)</h2>
                 
@@ -338,7 +336,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn" style="background: var(--success); color: black;">Deploy Portfolio Lookbook specifications</button>
+                        <button type="submit" class="btn" style="background: var(--success); color: black;">Deploy Portfolio Lookbook Specifications</button>
                     </form>
                 </div>
 
@@ -356,7 +354,7 @@
                 </table>
             </div>
 
-            <!-- SEPARATED PANEL: Manage Signature Projects (Status filtering page) [2] -->
+            <!-- Status Projects Section - FIX: Maps directly to projects table to avoid 404 database crashes [2] -->
             <div id="signature-projects-panel" class="panel">
                 <h2>Manage Signature Status Projects (Projects Page)</h2>
                 
@@ -417,7 +415,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn" style="background: var(--success); color: black;">Deploy Signature specifications</button>
+                        <button type="submit" class="btn" style="background: var(--success); color: black;">Deploy Signature Specifications</button>
                     </form>
                 </div>
 
@@ -439,12 +437,12 @@
                 <h2>Manage Corporate Contact & Social Specifications</h2>
                 <form id="contact-sync-form">
                     <div class="form-row"><label>Physical Address Layout</label><textarea id="set-contact_address" rows="3"></textarea></div>
-                    <div class="form-row"><label>Global Satellite Plus Code</label><input type="text" id="set-contact_plus_code"></div>
-                    <div class="form-row"><label>Voice Communication phone Line 1</label><input type="text" id="set-contact_phone_1"></div>
-                    <div class="form-row"><label>Backup phone Line 2</label><input type="text" id="set-contact_phone_2"></div>
-                    <div class="form-row"><label>Corporate Electronic Mailing coordinate</label><input type="email" id="set-contact_email"></div>
-                    <div class="form-row"><label>WhatsApp Target Base Value</label><input type="text" id="set-contact_whatsapp"></div>
-                    <div class="form-row"><label>Google Maps embed Location (Src Link Only)</label><input type="text" id="set-contact_map_url"></div>
+                    <div class="form-row"><label>Global Plus Code</label><input type="text" id="set-contact_plus_code"></div>
+                    <div class="form-row"><label>Phone Line 1</label><input type="text" id="set-contact_phone_1"></div>
+                    <div class="form-row"><label>Backup Phone Line 2</label><input type="text" id="set-contact_phone_2"></div>
+                    <div class="form-row"><label>Corporate Electronic Email</label><input type="email" id="set-contact_email"></div>
+                    <div class="form-row"><label>WhatsApp Target</label><input type="text" id="set-contact_whatsapp"></div>
+                    <div class="form-row"><label>Google Maps Location (Src Link Only)</label><input type="text" id="set-contact_map_url"></div>
                     <div class="form-row"><label>Google Maps External Redirect link</label><input type="text" id="set-contact_map_redirect_url" placeholder="https://maps.app.goo.gl/..."></div>
                     
                     <h3 style="font-size:1.2rem; margin:30px 0 15px 0; padding-bottom:5px; border-bottom:1px solid var(--border);">Social Platform Integrations</h3>
@@ -595,8 +593,6 @@
         let selectedMediaPaths = []; 
         let activeCategoryContainerIdToReload = ''; 
         let currentProjectPages = []; 
-        let discoveredDeletePageRoute = ''; 
-        let discoveredDeleteMediaRoute = ''; 
 
         async function safeFetchJson(url, options = {}) {
             const res = await fetch(url, options);
@@ -635,15 +631,12 @@
             if (!projectId) {
                 projectId = document.getElementById('edit-proj-id').value;
             }
-            const contextType = document.getElementById('edit-proj-context').value;
-            const apiBase = contextType === 'signature' ? '/api/status-projects' : '/api/projects';
-
-            const potentialRoutes = [
+            const routes = [
                 `/api/project-pages/${pageId}`,
-                `${apiBase}/pages/${pageId}`
+                `/api/projects/pages/${pageId}`
             ];
 
-            for (const route of potentialRoutes) {
+            for (const route of routes) {
                 try {
                     const res = await fetch(route, {
                         method: 'DELETE',
@@ -657,12 +650,12 @@
 
         async function executeDeleteMediaRoute(mediaId) {
             const pageId = document.getElementById('active-page-id') ? document.getElementById('active-page-id').value : ''; 
-            const potentialRoutes = [
+            const routes = [
                 { url: `/api/project-media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project-pages/${pageId}/media?mediaId=${mediaId}`, method: 'DELETE' }
             ];
 
-            for (const r of potentialRoutes) {
+            for (const r of routes) {
                 try {
                     const res = await fetch(r.url, {
                         method: r.method,
@@ -845,7 +838,7 @@
             }
         }
 
-        // --- LOOKBOOK PROJECTS (Home Page Lookbook Categories) ---
+        // --- LOOKBOOK PROJECTS (Home Page Categories ONLY) ---
         async function synchronizePortfolioTable() {
             try {
                 const payload = await safeFetchJson('/api/projects');
@@ -853,9 +846,13 @@
                 const container = document.getElementById('projects-table-body');
                 container.innerHTML = '';
                 
-                data.sort((a, b) => a.category.localeCompare(b.category) || a.display_order - b.display_order);
+                // Keep lookbook panel strictly clean [2]
+                const lookbookCategories = ["Modern Facade", "Residential Elite", "Luxury Living", "Commercial Infrastructure"];
+                const filteredData = data.filter(p => lookbookCategories.includes(p.category));
                 
-                data.forEach(p => {
+                filteredData.sort((a, b) => a.category.localeCompare(b.category) || a.display_order - b.display_order);
+                
+                filteredData.forEach(p => {
                     const hasVideo = p.video_path ? `<i class="fas fa-video" style="color:var(--success); margin-left:10px;"></i>` : '';
                     container.innerHTML += `
                         <tr>
@@ -888,8 +885,8 @@
                     body: JSON.stringify(payload)
                 });
 
-                if(result.success || result.id) {
-                    await safeFetchJson(`/api/projects/${result.id || result.id}/advanced`, {
+                if(result.id) {
+                    await safeFetchJson(`/api/projects/${result.id}/advanced`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
                         body: JSON.stringify({
@@ -902,27 +899,26 @@
                     alert('Lookbook Project registered.');
                     document.getElementById('advanced-portfolio-form').reset();
                     synchronizePortfolioTable();
+                    pullAdminContextMetrics();
                 }
-            } catch(err) { alert("Add Lookbook Project failed: " + err.message); }
+            } catch(err) { alert("Add Lookbook failed: " + err.message); }
         });
 
-        // --- NEW: SIGNATURE PROJECTS (Status Page All, Upcoming, Completed, etc.) [2] ---
+        // --- SIGNATURE PROJECTS (Status Page Categories ONLY) - FIX: No 404 database crashes [1] ---
         async function synchronizeSignaturePortfolioTable() {
             try {
-                let payload;
-                try {
-                    payload = await safeFetchJson('/api/status-projects');
-                } catch(e) {
-                    // Fallback to master projects with status if separate table isn't fully created
-                    payload = await safeFetchJson('/api/projects');
-                }
+                const payload = await safeFetchJson('/api/projects');
                 const data = getSafeArray(payload); 
                 const container = document.getElementById('sig-projects-table-body');
                 container.innerHTML = '';
                 
-                data.sort((a, b) => a.display_order - b.display_order);
+                // Filters by target status lists to separate CMS configurations cleanly
+                const sigCategories = ["Architectural Detail", "Commercial Space", "Construction Site", "Structural Framework", "Urban Landmark"];
+                const filteredData = data.filter(p => sigCategories.includes(p.category));
                 
-                data.forEach(p => {
+                filteredData.sort((a, b) => a.display_order - b.display_order);
+                
+                filteredData.forEach(p => {
                     container.innerHTML += `
                         <tr>
                             <td><code>[${p.display_order || 0}]</code></td>
@@ -944,32 +940,19 @@
             const payload = {
                 category: document.getElementById('sig-proj-category').value,
                 title: document.getElementById('sig-proj-title').value,
-                status: document.getElementById('sig-proj-status').value,
                 display_order: parseInt(document.getElementById('sig-proj-order').value) || 0
             };
 
             try {
-                let apiPath = '/api/status-projects';
-                let advancedPath = (id) => `/api/status-projects/${id}/advanced`;
-                
-                // Fallback probing routing config
-                try {
-                    const test = await fetch('/api/status-projects');
-                    if(!test.ok) throw new Error();
-                } catch(e) {
-                    apiPath = '/api/projects';
-                    advancedPath = (id) => `/api/projects/${id}/advanced`;
-                }
-
-                const result = await safeFetchJson(apiPath, {
+                // Post directly to projects table to avoid 404 errors [1]
+                const result = await safeFetchJson('/api/projects', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
                     body: JSON.stringify(payload)
                 });
 
-                const finalId = result.id || result.projectId;
-                if(finalId) {
-                    await safeFetchJson(advancedPath(finalId), {
+                if(result.id) {
+                    await safeFetchJson(`/api/projects/${result.id}/advanced`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
                         body: JSON.stringify({
@@ -983,15 +966,15 @@
                     alert('Signature Project registered successfully.');
                     document.getElementById('sig-portfolio-form').reset();
                     synchronizeSignaturePortfolioTable();
+                    pullAdminContextMetrics();
                 }
             } catch(err) { alert("Signature Project failed: " + err.message); }
         });
 
         async function executeDeleteProjectNode(id, type) {
-            if(confirm('Terminate dynamic project?')) {
-                const apiBase = type === 'signature' ? '/api/status-projects' : '/api/projects';
+            if(confirm('Terminate project?')) {
                 try {
-                    await safeFetchJson(`${apiBase}/${id}`, { 
+                    await safeFetchJson(`/api/projects/${id}`, { 
                         method: 'DELETE', 
                         headers: { 'Authorization': `Bearer ${operationalToken}` } 
                     });
@@ -1005,9 +988,7 @@
         async function openProjectManager(projectId, type) {
             try {
                 document.getElementById('edit-proj-context').value = type;
-                const apiBase = type === 'signature' ? '/api/status-projects' : '/api/projects';
-                
-                const proj = await safeFetchJson(`${apiBase}/${projectId}/details`);
+                const proj = await safeFetchJson(`/api/projects/${projectId}/details`);
                 document.getElementById('edit-proj-id').value = proj.id;
                 document.getElementById('edit-proj-title').value = proj.title;
                 document.getElementById('edit-proj-desc').value = proj.description || '';
@@ -1019,16 +1000,15 @@
                 renderProjectPages(currentProjectPages);
                 document.getElementById('media-manager-block').style.display = 'none';
                 document.getElementById('project-manage-modal').style.display = 'block';
-            } catch(e) { alert("Failed to open project details: " + e.message); }
+            } catch(e) { alert("Failed to open project: " + e.message); }
         }
 
         async function saveProjectBaseUpdate() {
             const id = document.getElementById('edit-proj-id').value;
             const contextType = document.getElementById('edit-proj-context').value;
-            const apiBase = contextType === 'signature' ? '/api/status-projects' : '/api/projects';
             
             try {
-                await safeFetchJson(`${apiBase}/${id}/advanced`, {
+                await safeFetchJson(`/api/projects/${id}/advanced`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
                     body: JSON.stringify({
@@ -1039,7 +1019,7 @@
                         brochure_url: document.getElementById('edit-proj-brochure-url').value
                     })
                 });
-                alert('Project specs update synced.');
+                alert('Project core update synchronized.');
                 if (contextType === 'signature') synchronizeSignaturePortfolioTable();
                 else synchronizePortfolioTable();
             } catch(e) { alert("Update failed: " + e.message); }
@@ -1072,11 +1052,10 @@
         async function addNewProjectPage() {
             const id = document.getElementById('edit-proj-id').value;
             const contextType = document.getElementById('edit-proj-context').value;
-            const apiBase = contextType === 'signature' ? '/api/status-projects' : '/api/projects';
-            const title = prompt("Enter New Module Display Title:");
+            const title = prompt("Enter New Page Module Display Title:");
             if (!title) return;
             try {
-                await safeFetchJson(`${apiBase}/${id}/pages`, {
+                await safeFetchJson(`/api/projects/${id}/pages`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
                     body: JSON.stringify({ title, page_number: document.getElementById('project-pages-list').children.length + 1 })
@@ -1420,7 +1399,6 @@
                 document.getElementById('metric-m').innerText = m.filter(msg => !msg.is_read).length + " Unread";
                 document.getElementById('metric-l').innerText = l.length + " Items";
                 
-                // FIX: Guard statement to prevent null element crash [1]
                 const sessionTag = document.getElementById('active-session-identity');
                 if (sessionTag && u && u.email) {
                     sessionTag.innerText = `Operator Node: ${u.email}`;
@@ -1463,4 +1441,3 @@
     </script>
 </body>
 </html>
-```
