@@ -21,6 +21,7 @@
             --font-sans: 'Inter', sans-serif;
             --font-serif: 'Playfair Display', serif;
             --container-width: 1440px;
+            --slider-linear: 0,0,0;
         }
 
         [data-theme="dark"] {
@@ -31,6 +32,18 @@
             --color-surface: #141414;
             --color-surface-dark: #1f1f1f;
             --color-border: #2a2a2a;
+            --slider-linear: 0,0,0;
+        }
+
+        [data-theme="blueprint"] {
+            --color-bg: #00162e;
+            --color-text: #dcf1ff;
+            --color-text-muted: #74aade;
+            --color-accent: #00f0ff;
+            --color-surface: #002347;
+            --color-surface-dark: #002d59;
+            --color-border: #003c73;
+            --slider-linear: 0,22,46;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,13 +51,15 @@
 
         /* Return Navigation */
         .back-nav {
+            position: relative;
             padding: 30px 5%;
             max-width: var(--container-width);
             margin: 0 auto;
+            z-index: 10;
         }
         .back-nav a {
             text-decoration: none;
-            color: var(--color-text);
+            color: #ffffff;
             font-size: 0.9rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -54,18 +69,42 @@
             gap: 10px;
         }
 
-        /* Hero Specifications */
+        /* Hero Specifications & Automated Image Swapping Slider */
         .project-hero {
+            position: relative;
             max-width: 1000px;
             margin: 0 auto;
             text-align: center;
-            padding: 60px 20px;
+            padding: 100px 20px 80px 20px;
+            z-index: 5;
+            color: #ffffff;
+        }
+        .project-hero-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 480px;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .slider-slide {
+            position: absolute;
+            inset: 0;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        .slider-slide.active {
+            opacity: 1;
         }
         .project-category {
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 4px;
-            color: var(--color-text-muted);
+            color: rgba(255,255,255,0.7);
             display: block;
             margin-bottom: 15px;
         }
@@ -77,9 +116,46 @@
         }
         .project-desc {
             font-size: 1.1rem;
-            color: var(--color-text-muted);
+            color: rgba(255,255,255,0.85);
             max-width: 700px;
             margin: 0 auto;
+        }
+
+        /* Technical Specs Card Grid */
+        .specs-section-box {
+            max-width: 850px;
+            margin: -30px auto 60px auto;
+            background: var(--color-surface);
+            padding: 45px;
+            border-radius: 4px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 10;
+        }
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            text-align: left;
+        }
+        .spec-item {
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 10px;
+        }
+        .spec-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--color-text-muted);
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .spec-value {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--color-text);
         }
 
         /* Media Container */
@@ -226,6 +302,9 @@
 </head>
 <body>
 
+    <!-- Autoplay cross-fading hero image slider in background -->
+    <div class="project-hero-slider" id="hero-slider-bg"></div>
+
     <div class="back-nav">
         <a href="index.html#projects"><i class="fas fa-arrow-left"></i> Return to Studio</a>
     </div>
@@ -234,6 +313,20 @@
         <span class="project-category" id="render-category">System Querying...</span>
         <h1 class="project-title" id="render-title">Loading Parameters</h1>
         <p class="project-desc" id="render-desc"></p>
+    </div>
+
+    <!-- Appended technical specifications card grid -->
+    <div class="specs-section-box">
+        <div class="specs-grid" id="dyn-specs-grid">
+            <!-- Dynamically populated from CMS specifications description parser -->
+        </div>
+        
+        <!-- CMS-Editable Brochure Download CTA -->
+        <div id="brochure-container" style="text-align: center; margin-top: 35px; display: none;">
+            <a href="#" id="dyn-brochure-link" class="page-btn active" target="_blank" style="padding: 12px 35px; font-size: 0.8rem; letter-spacing: 1.5px;">
+                <i class="fas fa-file-pdf"></i> Download Brochure
+            </a>
+        </div>
     </div>
 
     <div id="pages-wrapper"></div>
@@ -371,6 +464,8 @@
                         category: targetCategory,
                         title: targetCategory,
                         description: "Local File Preview. Run Node Server on Termux/PC to connect database API.",
+                        status: "Ongoing",
+                        brochure_url: "",
                         pages: [
                             {
                                 title: "Primary Structural Design",
@@ -407,7 +502,109 @@
 
                 document.getElementById('render-category').innerText = proj.category;
                 document.getElementById('render-title').innerText = proj.title;
-                document.getElementById('render-desc').innerText = proj.description || '';
+
+                // --- PREMIUM MULTI-SLIDER DYNAMIC SWAP ANIMATOR ---
+                const sliderBg = document.getElementById('hero-slider-bg');
+                if (sliderBg) {
+                    sliderBg.innerHTML = '';
+                    const slideImages = [];
+                    
+                    // Add primary thumbnail first
+                    if (proj.image_path) slideImages.push(proj.image_path);
+                    
+                    // Collect sub-page media images
+                    pages.forEach(page => {
+                        (page.media || []).forEach(m => {
+                            if (m.media_type === 'image' && m.media_path) {
+                                slideImages.push(m.media_path);
+                            }
+                        });
+                    });
+
+                    // Deduplicate images
+                    const uniqueImages = [...new Set(slideImages)];
+                    
+                    if (uniqueImages.length > 0) {
+                        uniqueImages.forEach((img, idx) => {
+                            sliderBg.innerHTML += `
+                                <div class="slider-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(to bottom, rgba(var(--slider-linear, 0,0,0), 0.5), rgba(var(--slider-linear, 0,0,0), 0.85)), url('${img}');"></div>
+                            `;
+                        });
+
+                        // Autoplay fading if more than 1 image exists
+                        if (uniqueImages.length > 1) {
+                            let activeSlideIdx = 0;
+                            setInterval(() => {
+                                const slides = sliderBg.querySelectorAll('.slider-slide');
+                                if (slides[activeSlideIdx]) {
+                                    slides[activeSlideIdx].classList.remove('active');
+                                }
+                                activeSlideIdx = (activeSlideIdx + 1) % slides.length;
+                                if (slides[activeSlideIdx]) {
+                                    slides[activeSlideIdx].classList.add('active');
+                                }
+                            }, 5000); 
+                        }
+                    } else {
+                        // Default Fallback
+                        sliderBg.innerHTML = `<div class="slider-slide active" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.85)), url('images/unnamed6.jpg');"></div>`;
+                    }
+                }
+
+                // --- ARONNOK-INSPIRED DYNAMIC SPECIFICATIONS CARD PARSER ---
+                const specsGrid = document.getElementById('dyn-specs-grid');
+                if (specsGrid) {
+                    specsGrid.innerHTML = '';
+                    
+                    // Core properties
+                    specsGrid.innerHTML += `
+                        <div class="spec-item">
+                            <span class="spec-label">Architectural Sector</span>
+                            <span class="spec-value">${proj.category}</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Project Status</span>
+                            <span class="spec-value">${proj.status || 'Ongoing'}</span>
+                        </div>
+                    `;
+
+                    // Dynamic description bullet parsing logic
+                    if (proj.description) {
+                        const lines = proj.description.split('\n');
+                        let parsedAny = false;
+                        lines.forEach(line => {
+                            if (line.includes(':')) {
+                                const parts = line.split(':');
+                                const key = parts[0].trim();
+                                const val = parts.slice(1).join(':').trim();
+                                if (key && val) {
+                                    specsGrid.innerHTML += `
+                                        <div class="spec-item">
+                                            <span class="spec-label">${key}</span>
+                                            <span class="spec-value">${val}</span>
+                                        </div>
+                                    `;
+                                    parsedAny = true;
+                                }
+                            }
+                        });
+                        
+                        if (!parsedAny) {
+                            document.getElementById('render-desc').innerText = proj.description;
+                        } else {
+                            // Extract lines without colons to display as raw description text block
+                            const rawDesc = lines.filter(line => !line.includes(':')).join('\n').trim();
+                            document.getElementById('render-desc').innerText = rawDesc || '';
+                        }
+                    }
+                }
+
+                // --- CMS-EDITABLE BROCHURE TRIGGER ---
+                if (proj.brochure_url) {
+                    const brochureLink = document.getElementById('dyn-brochure-link');
+                    brochureLink.href = proj.brochure_url;
+                    document.getElementById('brochure-container').style.display = 'block';
+                }
 
                 const wrapper = document.getElementById('pages-wrapper');
                 wrapper.innerHTML = '';
