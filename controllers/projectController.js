@@ -13,11 +13,11 @@ router.get('/', async (req, res) => {
 
 router.post('/', auth, async (req, res) => {
     const db = req.app.get('db');
-    const { title, category, is_featured, display_order, images } = req.body;
+    const { title, category, is_featured, display_order, images, status, brochure_url } = req.body;
     try {
         const created = await db.query(
-            'INSERT INTO projects (title, category, is_featured, display_order, images) VALUES ($1, $2, $3, $4, $5::jsonb) RETURNING *',
-            [title, category, is_featured || false, display_order || 0, JSON.stringify(images || [])]
+            'INSERT INTO projects (title, category, is_featured, display_order, images, status, brochure_url) VALUES ($1, $2, $3, $4, $5::jsonb, $6, $7) RETURNING *',
+            [title, category, is_featured || false, display_order || 0, JSON.stringify(images || []), status || 'Ongoing', brochure_url || null]
         );
         res.json(created.rows[0]);
     } catch (err) {
@@ -43,11 +43,11 @@ router.put('/reorder', auth, async (req, res) => {
 
 router.put('/:id', auth, async (req, res) => {
     const db = req.app.get('db');
-    const { title, category, is_featured, display_order, images } = req.body;
+    const { title, category, is_featured, display_order, images, status, brochure_url } = req.body;
     try {
         const updated = await db.query(
-            'UPDATE projects SET title = $1, category = $2, is_featured = $3, display_order = $4, images = $5::jsonb WHERE id = $6 RETURNING *',
-            [title, category, is_featured, display_order, JSON.stringify(images || []), req.params.id]
+            'UPDATE projects SET title = $1, category = $2, is_featured = $3, display_order = $4, images = $5::jsonb, status = $6, brochure_url = $7 WHERE id = $8 RETURNING *',
+            [title, category, is_featured, display_order, JSON.stringify(images || []), status || 'Ongoing', brochure_url || null, req.params.id]
         );
         res.json(updated.rows[0]);
     } catch (err) {
@@ -71,11 +71,11 @@ router.delete('/:id', auth, async (req, res) => {
 
 router.patch('/:id/advanced', auth, async (req, res) => {
     const db = req.app.get('db');
-    const { description, image_path, video_path, title, category } = req.body;
+    const { description, image_path, video_path, title, category, status, brochure_url } = req.body;
     try {
         const updated = await db.query(
-            'UPDATE projects SET description = $1, image_path = $2, video_path = $3, title = COALESCE($4, title), category = COALESCE($5, category) WHERE id = $6 RETURNING *',
-            [description, image_path, video_path, title, category, req.params.id]
+            'UPDATE projects SET description = $1, image_path = $2, video_path = $3, title = COALESCE($4, title), category = COALESCE($5, category), status = COALESCE($6, status), brochure_url = COALESCE($7, brochure_url) WHERE id = $8 RETURNING *',
+            [description, image_path, video_path, title, category, status, brochure_url, req.params.id]
         );
         res.json(updated.rows[0]);
     } catch (err) {
