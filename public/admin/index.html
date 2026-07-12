@@ -33,7 +33,7 @@
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
         body { background: var(--bg); color: var(--text); padding-bottom: 60px; transition: background 0.3s, color 0.3s; }
         
-        /* Auth Screen Styling */
+        /* Auth Screen Styling footprint */
         #auth-gateway { position:fixed; inset:0; background:var(--bg); z-index:9999; display:flex; align-items:center; justify-content:center; }
         .auth-card { background:var(--surface); border:1px solid var(--border); padding:40px; width:100%; max-width:420px; border-radius:4px; }
         .auth-logo { font-size:1.5rem; font-weight:700; letter-spacing:3px; text-align:center; margin-bottom:30px; }
@@ -141,7 +141,7 @@
                 padding: 20px;
             }
             input, textarea, select {
-                font-size: 16px; /* Prevents auto-zoom on mobile fields */
+                font-size: 16px; 
             }
             #project-manage-modal, #media-modal-picker {
                 padding: 15px !important;
@@ -254,6 +254,20 @@
                     <div class="form-row"><label>Hero Dynamic Area Subtitle</label><input type="text" id="set-hero_subtitle"></div>
                     <div class="form-row"><label>Hero System Operational Target Description</label><textarea id="set-hero_description" rows="3"></textarea></div>
                     <div class="form-row"><label>Active Canvas Dynamic Base Image Path URL</label><input type="text" id="set-hero_image"><button type="button" class="btn" style="margin-top:10px; background:var(--surface-accent); color:white;" onclick="launchMediaPicker('set-hero_image')">Browse Gallery Node</button></div>
+                    
+                    <!-- Added Before/After slider dynamic image fields -->
+                    <h3 style="font-size:1.2rem; margin:30px 0 15px 0; padding-bottom:5px; border-bottom:1px solid var(--border);">Before & After Slider Canvas</h3>
+                    <div class="form-row">
+                        <label>Slider Before Image Path URL</label>
+                        <input type="text" id="set-slider_before_image">
+                        <button type="button" class="btn" style="margin-top:10px; background:var(--surface-accent); color:white;" onclick="launchMediaPicker('set-slider_before_image')">Browse Gallery Node</button>
+                    </div>
+                    <div class="form-row">
+                        <label>Slider After Image Path URL</label>
+                        <input type="text" id="set-slider_after_image">
+                        <button type="button" class="btn" style="margin-top:10px; background:var(--surface-accent); color:white;" onclick="launchMediaPicker('set-slider_after_image')">Browse Gallery Node</button>
+                    </div>
+                    
                     <button type="submit" class="btn">Deploy System Synchronization</button>
                 </form>
             </div>
@@ -301,6 +315,15 @@
                                 <label>Signature System Title</label>
                                 <input type="text" id="proj-title" placeholder="e.g., Al-Noor Tower Complex" required>
                             </div>
+                            <!-- Added Project Status Designation -->
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Project Status</label>
+                                <select id="proj-status" required>
+                                    <option value="Ongoing">Ongoing</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Upcoming">Upcoming</option>
+                                </select>
+                            </div>
                             <div class="form-row" style="margin-bottom: 0;">
                                 <label>Display Matrix Weight Order</label>
                                 <input type="number" id="proj-order" value="0" min="0" required>
@@ -326,6 +349,11 @@
                                     <input type="text" id="proj-video-path" placeholder="media/uploads/drone_cinematic.mp4">
                                     <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('proj-video-path')">Browse</button>
                                 </div>
+                            </div>
+                            <!-- Added Google Drive / PDF brochure link input -->
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Brochure Link (Google Drive / direct PDF link)</label>
+                                <input type="text" id="proj-brochure-url" placeholder="https://drive.google.com/file/d/...">
                             </div>
                         </div>
 
@@ -382,6 +410,19 @@
 
             <div id="media-panel" class="panel">
                 <h2>Operational Media Asset Management Sub-System Repository</h2>
+                
+                <div style="display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap;">
+                    <!-- Batch selection controls inside Media Vault -->
+                    <button class="btn" id="toggle-multi-delete-btn" onclick="toggleMultiDeleteMode()" style="background: var(--surface-accent); color: var(--text);">
+                        <i class="fas fa-tasks"></i> Enable Multi-Select Mode
+                    </button>
+                    <div id="multi-delete-actions-bar" style="display: none; gap: 10px; align-items: center;">
+                        <button class="btn btn-danger" onclick="executeBatchPurge()">Purge Selected (<span id="selected-assets-count">0</span>)</button>
+                        <button class="btn" style="background: var(--surface-accent); color: var(--text);" onclick="selectAllVaultAssets(true)">Select All</button>
+                        <button class="btn" style="background: var(--surface-accent); color: var(--text);" onclick="selectAllVaultAssets(false)">Clear Selection</button>
+                    </div>
+                </div>
+
                 <div style="border:2px dashed var(--border); padding:30px; text-align:center; margin-bottom:30px; border-radius:4px;">
                     <label style="cursor:pointer;">
                         <i class="fas fa-cloud-upload-alt" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
@@ -425,10 +466,81 @@
         </div>
     </div>
 
+    <!-- Deep project details editing modal overlay configuration -->
+    <div id="project-manage-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:10004; padding:40px; overflow-y:auto;">
+        <div style="background:var(--surface); border:1px solid var(--border); width:100%; max-width:900px; margin:0 auto; padding:40px; border-radius:4px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:30px;">
+                <h3 style="font-size:1.5rem;">Deep Project Specifications Management</h3>
+                <button class="btn btn-danger" style="width:auto; margin:0;" onclick="document.getElementById('project-manage-modal').style.display='none'">Close Node</button>
+            </div>
+            
+            <div style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+                <h4>1. Primary Configuration Node</h4>
+                <input type="hidden" id="edit-proj-id">
+                <div class="form-row" style="margin-top:15px;"><label>Title Identity</label><input type="text" id="edit-proj-title"></div>
+                <div class="form-row"><label>Structural Description Base</label><textarea id="edit-proj-desc" rows="3"></textarea></div>
+                
+                <!-- Added Status and Brochure URL inputs in deep project editing node -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-row" style="margin-bottom: 0;">
+                        <label>Project Status</label>
+                        <select id="edit-proj-status">
+                            <option value="Ongoing">Ongoing</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Upcoming">Upcoming</option>
+                        </select>
+                    </div>
+                    <div class="form-row" style="margin-bottom: 0;">
+                        <label>Brochure Link (Google Drive / direct PDF link)</label>
+                        <input type="text" id="edit-proj-brochure-url" placeholder="https://drive.google.com/file/d/...">
+                    </div>
+                </div>
+
+                <div class="form-row" style="margin-top:20px;"><label>Active Thumbnail Engine Path</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="edit-proj-thumb">
+                        <button class="btn" style="background:var(--border); color:white; padding:14px; width:auto;" onclick="launchMediaPicker('edit-proj-thumb')">Browse</button>
+                    </div>
+                </div>
+                <button class="btn" onclick="saveProjectBaseUpdate()">Sync Core Update</button>
+            </div>
+
+            <div style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4>2. Dynamic Page Modules</h4>
+                    <button class="btn" style="padding:10px; background:var(--success); color:black; width:auto;" onclick="addNewProjectPage()">+ Append Page Node</button>
+                </div>
+                <table style="margin-top:15px;">
+                    <thead><tr><th>Page Index</th><th>Module Title</th><th>Actions</th></tr></thead>
+                    <tbody id="project-pages-list"></tbody>
+                </table>
+            </div>
+
+            <div id="media-manager-block" style="display:none; background:var(--surface-accent); padding:20px; border:1px solid var(--border);">
+                <div style="display:flex; justify-content:space-between;">
+                    <h4>3. Page Media Assortment <span id="active-page-label" style="color:var(--text-muted); font-size:0.8rem;"></span></h4>
+                    <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem; width:auto; margin:0;" onclick="document.getElementById('media-manager-block').style.display='none'">Hide</button>
+                </div>
+                <input type="hidden" id="active-page-id">
+                <div style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap;">
+                    <input type="text" id="new-media-path" placeholder="URL Path Coordinate / Paste YouTube Link" style="flex:1; min-width:200px;">
+                    <button class="btn" style="background:var(--border); color:white; padding:14px; width:auto;" onclick="launchMediaPicker('new-media-path')">Browse Multi</button>
+                    <select id="new-media-type" style="width:120px;"><option value="image">Image</option><option value="video">Video (MP4 / YT)</option></select>
+                    <button class="btn" style="width:auto;" onclick="addMediaToActivePage()">Attach Asset</button>
+                </div>
+                <table style="margin-top:15px;">
+                    <thead><tr><th>Weight Sort</th><th>Preview Route</th><th>Type</th><th>Actions</th></tr></thead>
+                    <tbody id="project-media-list"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
     <script>
         let operationalToken = localStorage.getItem('sw_token') || '';
         let targetPickerFieldHook = '';
-        let selectedMediaPaths = []; // Track multi-select images globally
+        let selectedMediaPaths = []; // Track multi-select images globally for details picker
         let activeCategoryContainerIdToReload = ''; // Reloader tracking hook
         let currentProjectPages = []; // Global memory tracker to prevent JSON breaking HTML [2]
         let discoveredDeletePageRoute = ''; // Dynamic self-healing route storage [2]
@@ -531,7 +643,7 @@
                 { url: `/api/project-media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
                 { url: `/api/project-media/${mediaId}?project_id=${projectId}&page_id=${pageId}`, method: 'DELETE' },
                 { url: `/api/project-media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
-                { url: `/api/project-media/${mediaId}?page_id=${pageId}`, method: 'DELETE' },
+                { url: `/api/project-media/${mediaId}?page_id=${page_id}`, method: 'DELETE' },
                 { url: `/api/project-media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
                 { url: `/api/project-media/${mediaId}?project_id=${projectId}`, method: 'DELETE' },
 
@@ -551,7 +663,7 @@
                 { url: `/api/media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
                 { url: `/api/media/${mediaId}?project_id=${projectId}&page_id=${pageId}`, method: 'DELETE' },
                 { url: `/api/media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
-                { url: `/api/media/${mediaId}?page_id=${pageId}`, method: 'DELETE' },
+                { url: `/api/media/${mediaId}?page_id=${page_id}`, method: 'DELETE' },
                 { url: `/api/media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
                 { url: `/api/media/${mediaId}?project_id=${projectId}`, method: 'DELETE' },
                 { url: `/api/project-media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
@@ -646,7 +758,7 @@
             }
             
             const logSummary = triedLogs.map(log => `• ${log}`).join("\n");
-            throw new Error(`Route Probe Exhausted on your Render Server.\n\nSummary of Tried Endpoints:\n${logSummary}`);
+            throw new Error(`Route Probe Failed on your Render Server.\n\nSummary of Tried Endpoints:\n${logSummary}`);
         }
 
         // Theme switching logic inside CMS
@@ -858,7 +970,8 @@
                                 ${hasVideo}
                             </td>
                             <td>
-                                <button class="btn" style="padding:5px 10px; font-size:0.7rem;" onclick="openProjectManager(${p.id})">Details</button>
+                                <!-- High-contrast details button prevents black-on-black text visually -->
+                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:var(--bg);" onclick="openProjectManager(${p.id})">Details</button>
                                 <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
                             </td>
                         </tr>
@@ -868,40 +981,51 @@
         }
 
         // FORM CAPTURE INTERCEPT PIPELINE
-        document.getElementById('advanced-portfolio-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const payload = {
-                category: document.getElementById('proj-category').value,
-                title: document.getElementById('proj-title').value,
-                display_order: parseInt(document.getElementById('proj-order').value) || 0,
-                description: document.getElementById('proj-description').value,
-                image_path: document.getElementById('proj-image-path').value,
-                video_path: document.getElementById('proj-video-path').value
-            };
+        const formObj = document.getElementById('advanced-portfolio-form');
+        if (formObj) {
+            formObj.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const payload = {
+                    category: document.getElementById('proj-category').value,
+                    title: document.getElementById('proj-title').value,
+                    display_order: parseInt(document.getElementById('proj-order').value) || 0,
+                    status: document.getElementById('proj-status').value, // Dynamic status designated
+                };
 
-            try {
-                const result = await safeFetchJson('/api/projects', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': `Bearer ${operationalToken}` 
-                    },
-                    body: JSON.stringify(payload)
-                });
-                if(result.success || result.id) {
-                    alert('Structural project entity successfully mapped into runtime cluster.');
-                    document.getElementById('proj-title').value = '';
-                    document.getElementById('proj-description').value = '';
-                    document.getElementById('proj-image-path').value = '';
-                    document.getElementById('proj-video-path').value = '';
-                    synchronizePortfolioTable();
-                    pullAdminContextMetrics();
-                } else {
-                    alert('Transmission Failed: ' + (result.error || 'System operational fallback error.'));
-                }
-            } catch(err) { alert("Failed to add project: " + err.message); }
-        });
+                try {
+                    const result = await safeFetchJson('/api/projects', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if(result.success || result.id) {
+                        await safeFetchJson(`/api/projects/${result.id}/advanced`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                            body: JSON.stringify({
+                                description: document.getElementById('proj-description').value,
+                                image_path: document.getElementById('proj-image-path').value,
+                                video_path: document.getElementById('proj-video-path').value,
+                                brochure_url: document.getElementById('proj-brochure-url').value // Brochure URL link
+                            })
+                        });
+
+                        alert('Structural project entity successfully mapped into runtime cluster.');
+                        document.getElementById('proj-title').value = '';
+                        document.getElementById('proj-description').value = '';
+                        document.getElementById('proj-image-path').value = '';
+                        document.getElementById('proj-video-path').value = '';
+                        document.getElementById('proj-brochure-url').value = '';
+                        synchronizePortfolioTable();
+                        pullAdminContextMetrics();
+                    } else {
+                        alert('Transmission Failed: ' + (result.error || 'System fallback error.'));
+                    }
+                } catch(err) { alert("Failed to add project: " + err.message); }
+            });
+        }
 
         async function executeDeleteProjectNode(id) {
             if(confirm('Terminate active portfolio project entry completely?')) {
@@ -966,6 +1090,88 @@
             }
         }
 
+        // --- NEW WORKABLE BATCH MEDIA DELETION PIPELINE ---
+        let isMultiDeleteModeActive = false;
+        let selectedVaultAssetIds = [];
+
+        function toggleMultiDeleteMode() {
+            isMultiDeleteModeActive = !isMultiDeleteModeActive;
+            const toggleBtn = document.getElementById('toggle-multi-delete-btn');
+            const actionBar = document.getElementById('multi-delete-actions-bar');
+            
+            if (isMultiDeleteModeActive) {
+                toggleBtn.innerHTML = '<i class="fas fa-times"></i> Exit Multi-Select Mode';
+                toggleBtn.style.background = 'var(--danger)';
+                toggleBtn.style.color = 'white';
+                actionBar.style.display = 'flex';
+                selectedVaultAssetIds = [];
+                document.getElementById('selected-assets-count').innerText = "0";
+            } else {
+                toggleBtn.innerHTML = '<i class="fas fa-tasks"></i> Enable Multi-Select Mode';
+                toggleBtn.style.background = 'var(--surface-accent)';
+                toggleBtn.style.color = 'var(--text)';
+                actionBar.style.display = 'none';
+                selectedVaultAssetIds = [];
+            }
+            synchronizeMediaGridEngine(); 
+        }
+
+        function selectAllVaultAssets(selectAll) {
+            const items = document.querySelectorAll('#media-catalog-box .media-item');
+            selectedVaultAssetIds = [];
+            items.forEach(item => {
+                const id = parseInt(item.getAttribute('data-id'));
+                const badge = item.querySelector('.chk-badge');
+                if (selectAll) {
+                    item.classList.add('multi-selected');
+                    badge.style.display = 'flex';
+                    selectedVaultAssetIds.push(id);
+                } else {
+                    item.classList.remove('multi-selected');
+                    badge.style.display = 'none';
+                }
+            });
+            document.getElementById('selected-assets-count').innerText = selectedVaultAssetIds.length;
+        }
+
+        async function executeBatchPurge() {
+            if (selectedVaultAssetIds.length === 0) return alert('Select at least one asset to purge.');
+            if (!confirm(`Purge all ${selectedVaultAssetIds.length} selected assets from database storage?`)) return;
+
+            try {
+                for (const id of selectedVaultAssetIds) {
+                    await safeFetchJson(`/api/media/${id}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${operationalToken}` }
+                    });
+                }
+                alert('Successfully deleted selected assets.');
+                toggleMultiDeleteMode(); 
+                pullAdminContextMetrics();
+            } catch (e) {
+                alert('Failed to delete some assets: ' + e.message);
+                synchronizeMediaGridEngine();
+            }
+        }
+
+        window.handleVaultItemClick = function(element, id, filepath) {
+            if (isMultiDeleteModeActive) {
+                element.classList.toggle('multi-selected');
+                const badge = element.querySelector('.chk-badge');
+                if (element.classList.contains('multi-selected')) {
+                    badge.style.display = 'flex';
+                    selectedVaultAssetIds.push(id);
+                } else {
+                    badge.style.display = 'none';
+                    selectedVaultAssetIds = selectedVaultAssetIds.filter(v => v !== id);
+                }
+                document.getElementById('selected-assets-count').innerText = selectedVaultAssetIds.length;
+            } else {
+                navigator.clipboard.writeText(filepath); 
+                alert('Resource path copied to clipboard architecture pipeline.');
+            }
+        };
+
         async function synchronizeMediaGridEngine() {
             try {
                 const payload = await safeFetchJson('/api/media/library', { headers: { 'Authorization': `Bearer ${operationalToken}` } });
@@ -973,10 +1179,12 @@
                 const container = document.getElementById('media-catalog-box');
                 container.innerHTML = '';
                 data.forEach(item => {
+                    const isSelected = selectedVaultAssetIds.includes(item.id);
                     container.innerHTML += `
-                        <div class="media-item">
-                            <img src="${item.filepath}" onclick="navigator.clipboard.writeText('${item.filepath}'); alert('Resource path copied to clipboard architecture pipeline.');">
-                            <button class="delete-asset-btn" onclick="executeDeleteAsset(${item.id}, event)"><i class="fas fa-trash-alt"></i></button>
+                        <div class="media-item ${isSelected ? 'multi-selected' : ''}" data-id="${item.id}" onclick="handleVaultItemClick(this, ${item.id}, '${item.filepath}')">
+                            <img src="${item.filepath}">
+                            <div class="chk-badge" style="position: absolute; top:5px; right:5px; background:var(--success); color:#000; width:24px; height:24px; border-radius:50%; display:${isSelected ? 'flex' : 'none'}; align-items:center; justify-content:center; z-index:4;"><i class="fas fa-check"></i></div>
+                            ${!isMultiDeleteModeActive ? `<button class="delete-asset-btn" onclick="executeDeleteAsset(${item.id}, event)"><i class="fas fa-trash-alt"></i></button>` : ''}
                         </div>
                     `;
                 });
@@ -1150,62 +1358,6 @@
                 });
             }
 
-            // 2. Inject Deep Project Management Modal Layer directly into DOM
-            document.body.insertAdjacentHTML('beforeend', `
-                <div id="project-manage-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:10004; padding:40px; overflow-y:auto;">
-                    <div style="background:var(--surface); border:1px solid var(--border); width:100%; max-width:900px; margin:0 auto; padding:40px; border-radius:4px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:30px;">
-                            <h3 style="font-size:1.5rem;">Deep Project Specifications Management</h3>
-                            <button class="btn btn-danger" onclick="document.getElementById('project-manage-modal').style.display='none'">Close Node</button>
-                        </div>
-                        
-                        <div style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
-                            <h4>1. Primary Configuration Node</h4>
-                            <input type="hidden" id="edit-proj-id">
-                            <div class="form-row" style="margin-top:15px;"><label>Title Identity</label><input type="text" id="edit-proj-title"></div>
-                            <div class="form-row"><label>Structural Description Base</label><textarea id="edit-proj-desc" rows="3"></textarea></div>
-                            <div class="form-row"><label>Active Thumbnail Engine Path</label>
-                                <div style="display:flex; gap:10px;">
-                                    <input type="text" id="edit-proj-thumb">
-                                    <button class="btn" style="background:var(--border); color:white; padding:14px;" onclick="launchMediaPicker('edit-proj-thumb')">Browse</button>
-                                </div>
-                            </div>
-                            <button class="btn" onclick="saveProjectBaseUpdate()">Sync Core Update</button>
-                        </div>
-
-                        <div style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <h4>2. Dynamic Page Modules</h4>
-                                <button class="btn" style="padding:10px; background:var(--success); color:black;" onclick="addNewProjectPage()">+ Append Page Node</button>
-                            </div>
-                            <table style="margin-top:15px;">
-                                <thead><tr><th>Page Index</th><th>Module Title</th><th>Actions</th></tr></thead>
-                                <tbody id="project-pages-list"></tbody>
-                            </table>
-                        </div>
-
-                        <div id="media-manager-block" style="display:none; background:var(--surface-accent); padding:20px; border:1px solid var(--border);">
-                            <div style="display:flex; justify-content:space-between;">
-                                <h4>3. Page Media Assortment <span id="active-page-label" style="color:var(--text-muted); font-size:0.8rem;"></span></h4>
-                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="document.getElementById('media-manager-block').style.display='none'">Hide</button>
-                            </div>
-                            <input type="hidden" id="active-page-id">
-                            <div style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap;">
-                                <input type="text" id="new-media-path" placeholder="URL Path Coordinate / Paste YouTube Link">
-                                <button class="btn" style="background:var(--border); color:white; padding:14px;" onclick="launchMediaPicker('new-media-path')">Browse Multi</button>
-                                <select id="new-media-type" style="width:120px;"><option value="image">Image</option><option value="video">Video (MP4 / YT)</option></select>
-                                <button class="btn" onclick="addMediaToActivePage()">Attach Asset</button>
-                            </div>
-                            <table style="margin-top:15px;">
-                                <thead><tr><th>Weight Sort</th><th>Preview Route</th><th>Type</th><th>Actions</th></tr></thead>
-                                <tbody id="project-media-list"></tbody>
-                            </table>
-                        </div>
-
-                    </div>
-                </div>
-            `);
-
             const originalPullAdminContextMetrics = window.pullAdminContextMetrics;
             window.pullAdminContextMetrics = async function() {
                 await originalPullAdminContextMetrics(); 
@@ -1215,52 +1367,6 @@
                     document.getElementById('current-admin-email').value = profile.email;
                 } catch(e) {}
             };
-            
-            const formObj = document.getElementById('advanced-portfolio-form');
-            if (formObj) {
-                const oldFormListener = formObj.cloneNode(true);
-                formObj.parentNode.replaceChild(oldFormListener, formObj);
-                
-                oldFormListener.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    
-                    const payload = {
-                        category: document.getElementById('proj-category').value,
-                        title: document.getElementById('proj-title').value,
-                        display_order: parseInt(document.getElementById('proj-order').value) || 0,
-                    };
-                    
-                    try {
-                        const result = await safeFetchJson('/api/projects', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                            body: JSON.stringify(payload)
-                        });
-
-                        if(result.success || result.id) {
-                            await safeFetchJson(`/api/projects/${result.id}/advanced`, {
-                                method: 'PATCH',
-                                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                                body: JSON.stringify({
-                                    description: document.getElementById('proj-description').value,
-                                    image_path: document.getElementById('proj-image-path').value,
-                                    video_path: document.getElementById('proj-video-path').value
-                                })
-                            });
-
-                            alert('Structural project entity successfully mapped into runtime cluster.');
-                            document.getElementById('proj-title').value = '';
-                            document.getElementById('proj-description').value = '';
-                            document.getElementById('proj-image-path').value = '';
-                            document.getElementById('proj-video-path').value = '';
-                            synchronizePortfolioTable();
-                            pullAdminContextMetrics();
-                        } else {
-                            alert('Transmission Failed: ' + (result.error || 'System operational fallback error.'));
-                        }
-                    } catch(err) { alert("Failed to add portfolio item: " + err.message); }
-                });
-            }
         });
 
         window.synchronizePortfolioTable = async function() {
@@ -1281,7 +1387,7 @@
                             <td>
                                 <strong>${p.title}</strong>
                                 <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; max-width:400px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                    ${p.description || 'No Base Description Context Array.'}
+                                    ${p.description || 'No Base Description.'}
                                 </div>
                             </td>
                             <td>
@@ -1289,7 +1395,7 @@
                                 ${hasVideo}
                             </td>
                             <td>
-                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:black;" onclick="openProjectManager(${p.id})">Details</button>
+                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:var(--bg);" onclick="openProjectManager(${p.id})">Details</button>
                                 <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem; margin-left:5px;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
                                 <a href="/project-details.html?project=${p.id}" target="_blank" class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--success); color:black; margin-left:5px; text-decoration:none;">Preview</a>
                             </td>
@@ -1306,6 +1412,8 @@
                 document.getElementById('edit-proj-title').value = proj.title;
                 document.getElementById('edit-proj-desc').value = proj.description || '';
                 document.getElementById('edit-proj-thumb').value = proj.image_path || '';
+                document.getElementById('edit-proj-status').value = proj.status || 'Ongoing';
+                document.getElementById('edit-proj-brochure-url').value = proj.brochure_url || '';
                 
                 currentProjectPages = proj.pages || []; 
                 renderProjectPages(currentProjectPages);
@@ -1323,7 +1431,9 @@
                     body: JSON.stringify({
                         title: document.getElementById('edit-proj-title').value,
                         description: document.getElementById('edit-proj-desc').value,
-                        image_path: document.getElementById('edit-proj-thumb').value
+                        image_path: document.getElementById('edit-proj-thumb').value,
+                        status: document.getElementById('edit-proj-status').value, 
+                        brochure_url: document.getElementById('edit-proj-brochure-url').value
                     })
                 });
                 alert('Project core matrix synced.');
@@ -1476,6 +1586,7 @@
             console.log('Order update ready.');
         }
 
+        // --- NEW ADDITIVE CMS DIRECT CATEGORY PORTFOLIO LOADER LOGIC ---
         async function loadCategoryPortfolio(categoryName, containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -1498,7 +1609,7 @@
                         <div style="background:var(--surface-accent); padding:30px; text-align:center; border-radius:4px; border:1px solid var(--border);">
                             <i class="fas fa-folder-open" style="font-size:2.5rem; color:var(--text-muted); margin-bottom:15px; display:block;"></i>
                             <p style="color:var(--text-muted); margin-bottom:20px;">No registered projects under "${categoryName}" yet.</p>
-                            <button class="btn" style="background:var(--success); color:#000;" onclick="switchControlView('projects-panel', document.querySelector('[onclick*=\\'projects-panel\\']'))">Add Your First Project</button>
+                            <button class="btn" style="background:var(--success); color:#000; width:auto;" onclick="switchControlView('projects-panel', document.querySelector('[onclick*=\\'projects-panel\\']'))">Add Your First Project</button>
                         </div>`;
                     return;
                 }
@@ -1539,10 +1650,10 @@
                                             <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Page Module Segment ${p.page_number}</div>
                                         </div>
                                         <div style="display:flex; gap:8px;">
-                                            <button class="btn btn-success" style="padding:6px 12px; font-size:0.75rem;" onclick="openCategoryMediaPicker(${p.id}, '${containerId}')">
+                                            <button class="btn btn-success" style="padding:6px 12px; font-size:0.75rem; width:auto;" onclick="openCategoryMediaPicker(${p.id}, '${containerId}')">
                                                 <i class="fas fa-images"></i> Add/Change Pics
                                             </button>
-                                            <button class="btn btn-danger" style="padding:6px 12px; font-size:0.75rem;" onclick="deleteCategoryPageNode(${p.id}, ${proj.id}, '${categoryName}', '${containerId}')">
+                                            <button class="btn btn-danger" style="padding:6px 12px; font-size:0.75rem; width:auto;" onclick="deleteCategoryPageNode(${p.id}, ${proj.id}, '${categoryName}', '${containerId}')">
                                                 <i class="fas fa-trash"></i> Delete Page
                                             </button>
                                         </div>
@@ -1558,14 +1669,14 @@
                         <div style="background:var(--surface-accent); border:1px solid var(--border); border-radius:6px; padding:25px; margin-bottom:30px;">
                             <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:15px; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:15px;">
                                 <div>
-                                    <span style="font-size:0.75rem; font-weight:700; color:var(--success); letter-spacing:1px; text-transform:uppercase;">${proj.category}</span>
+                                    <span style="font-size:0.75rem; font-weight:700; color:var(--success); letter-spacing:1px; text-transform:uppercase;">${proj.category} (${proj.status || 'Ongoing'})</span>
                                     <h3 style="font-size:1.3rem; margin-top:5px; font-weight:700;">${proj.title}</h3>
                                 </div>
                                 <div style="display:flex; gap:8px;">
-                                    <button class="btn" style="background:var(--accent); color:var(--bg); padding:8px 15px; font-size:0.75rem;" onclick="addCategoryPageNode(${proj.id}, '${categoryName}', '${containerId}')">
+                                    <button class="btn" style="background:var(--accent); color:var(--bg); padding:8px 15px; font-size:0.75rem; width:auto;" onclick="addCategoryPageNode(${proj.id}, '${categoryName}', '${containerId}')">
                                         <i class="fas fa-plus"></i> Add New Page
                                     </button>
-                                    <button class="btn btn-danger" style="padding:8px 15px; font-size:0.75rem;" onclick="executeDeleteProjectNode(${proj.id})">
+                                    <button class="btn btn-danger" style="padding:8px 15px; font-size:0.75rem; width:auto;" onclick="executeDeleteProjectNode(${proj.id})">
                                         <i class="fas fa-trash"></i> Purge Project
                                     </button>
                                 </div>
