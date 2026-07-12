@@ -64,6 +64,7 @@ ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_path TEXT;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS video_path TEXT;
 
 -- Safe non-destructive additions for CMS Status Filters and Google Drive Brochure Redirection
+-- Decouples Status (Ongoing, Completed, Upcoming) from Category (Modern Facade, etc.)
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'Ongoing';
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS brochure_url TEXT;
 
