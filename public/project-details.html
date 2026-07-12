@@ -87,7 +87,7 @@
             height: 480px;
             z-index: 1;
             overflow: hidden;
-            display: none; /* Enabled dynamically in single project mode only */
+            display: none;
         }
         .slider-slide {
             position: absolute;
@@ -133,7 +133,7 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.05);
             position: relative;
             z-index: 10;
-            display: none; /* Enabled dynamically in single project mode only */
+            display: none;
         }
         .specs-grid {
             display: grid;
@@ -235,7 +235,6 @@
             }
         }
 
-        /* 3D Blueprint Skyline Sketch Wrapper */
         .bottom-blueprint-sketch {
             width: 100%;
             overflow: hidden;
@@ -265,7 +264,6 @@
             text-transform: uppercase;
         }
 
-        /* Back to Top floating button */
         .back-to-top-btn {
             position: fixed;
             bottom: 40px;
@@ -304,11 +302,9 @@
 </head>
 <body>
 
-    <!-- Autoplay cross-fading hero image slider in background (Enabled in single-project mode) -->
     <div class="project-hero-slider" id="hero-slider-bg"></div>
 
     <div class="back-nav">
-        <!-- Safely return based on entry routing -->
         <a href="index.html#projects" id="dyn-back-link"><i class="fas fa-arrow-left"></i> Return to Studio</a>
     </div>
 
@@ -318,13 +314,8 @@
         <p class="project-desc" id="render-desc"></p>
     </div>
 
-    <!-- Appended technical specifications specs card grid -->
     <div class="specs-section-box">
-        <div class="specs-grid" id="dyn-specs-grid">
-            <!-- Dynamically populated from CMS specifications description parser -->
-        </div>
-        
-        <!-- CMS-Editable Google Drive / direct PDF Brochure Download CTA -->
+        <div class="specs-grid" id="dyn-specs-grid"></div>
         <div id="brochure-container" style="text-align: center; margin-top: 35px; display: none;">
             <a href="#" id="dyn-brochure-link" class="page-btn active" target="_blank" style="padding: 12px 35px; font-size: 0.8rem; letter-spacing: 1.5px;">
                 <i class="fas fa-file-pdf"></i> Download Brochure
@@ -335,52 +326,40 @@
     <div id="pages-wrapper"></div>
     <div class="pagination-controls" id="pagination-wrapper"></div>
 
-    <!-- Shaded Blueprint Construction Sketch -->
     <div class="bottom-blueprint-sketch">
         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
             <line x1="0" y1="110" x2="1200" y2="110" stroke="currentColor" stroke-width="1" opacity="0.3" stroke-dasharray="5 5" />
             <line x1="0" y1="115" x2="1200" y2="115" stroke="currentColor" stroke-width="0.5" opacity="0.2" />
-            
-            <!-- Shaded Skyscraper Blocks (Deep Background Silhouette) -->
             <rect x="80" y="30" width="60" height="80" fill="currentColor" opacity="0.05" />
             <rect x="220" y="10" width="80" height="100" fill="currentColor" opacity="0.07" />
             <polygon points="400,110 400,40 450,20 500,40 500,110" fill="currentColor" opacity="0.05" />
             <rect x="680" y="25" width="90" height="85" fill="currentColor" opacity="0.06" />
             <rect x="850" y="15" width="70" height="95" fill="currentColor" opacity="0.08" />
             <polygon points="1000,110 1000,50 1050,30 1100,50 1100,110" fill="currentColor" opacity="0.05" />
-
-            <!-- Detailed Wireframes & Structural Outlines (Midground) -->
             <path d="M 50,110 L 50,20 L 120,5 M 50,30 L 120,30 M 50,20 L 30,25 M 45,110 L 45,20 M 55,110 L 55,20" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.25" />
             <path d="M 100,30 L 100,60 L 95,60 L 95,110" fill="none" stroke="currentColor" stroke-width="1" opacity="0.25" />
-            
             <rect x="150" y="40" width="80" height="70" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
             <line x1="150" y1="40" x2="230" y2="110" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
             <line x1="230" y1="40" x2="150" y2="110" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
-            
             <path d="M 280,110 L 280,10 L 310,0 L 340,10 L 340,110 Z" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4" />
             <line x1="310" y1="0" x2="310" y2="110" stroke="currentColor" stroke-width="0.6" opacity="0.2" stroke-dasharray="2 2" />
             <rect x="290" y="20" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
             <rect x="320" y="20" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
             <rect x="290" y="45" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
             <rect x="320" y="45" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
-            
             <path d="M 390,110 L 390,50 L 470,25 L 470,110 Z" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
             <line x1="390" y1="65" x2="470" y2="65" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
             <line x1="390" y1="80" x2="470" y2="80" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
-            
             <rect x="520" y="30" width="90" height="80" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
             <line x1="520" y1="30" x2="565" y2="70" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
             <line x1="565" y1="70" x2="610" y2="30" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
             <line x1="520" y1="70" x2="565" y2="30" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
             <line x1="565" y1="30" x2="610" y2="70" stroke="currentColor" stroke-width="0.6" opacity="0.15" />
-            
             <path d="M 640,110 L 640,15 L 720,0 M 640,25 L 720,25 M 640,15 L 610,20 M 635,110 L 635,15 M 645,110 L 645,15" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
             <path d="M 690,25 L 690,50 L 685,50 L 685,110" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" />
-            
             <rect x="740" y="30" width="70" height="90" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
             <path d="M 850,120 L 850,40 L 900,40 L 900,120" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
             <path d="M 940,120 L 940,50 Q 975,20 1010,50 L 1010,120 Z" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
-            
             <circle cx="1120" cy="60" r="15" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
             <line x1="1120" y1="40" x2="1120" y2="80" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
             <line x1="1100" y1="60" x2="1140" y2="60" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
@@ -405,7 +384,14 @@
             
             const isLocalPreview = window.location.protocol === 'file:';
 
-            // Helper to safely extract arrays from various API formats
+            function getSafeImagePath(path) {
+                if (!path) return 'images/unnamed1.jpg';
+                if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/') || path.startsWith('images/') || path.startsWith('media/')) {
+                    return path;
+                }
+                return `media/uploads/${path}`;
+            }
+
             function getSafeArray(payload) {
                 if (Array.isArray(payload)) return payload;
                 if (payload && typeof payload === 'object') {
@@ -414,8 +400,8 @@
                 return [];
             }
 
-            // Helper to cleanly render images, local videos, or YouTube links
             function renderMediaAsset(m) {
+                const checkedPath = getSafeImagePath(m.media_path);
                 if (m.media_type === 'video') {
                     const path = m.media_path || '';
                     if (path.includes('youtube.com') || path.includes('youtu.be')) {
@@ -432,28 +418,38 @@
                         }
                         return `<iframe class="media-asset" style="aspect-ratio:16/9; width:100%; border:none; min-height:280px;" src="https://www.youtube.com/embed/${videoId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                     } else {
-                        return `<video class="media-asset" src="${m.media_path}" controls autoplay muted loop></video>`;
+                        return `<video class="media-asset" src="${checkedPath}" controls autoplay muted loop></video>`;
                     }
                 } else {
-                    return `<img class="media-asset" src="${m.media_path || 'images/unnamed1.jpg'}" alt="Asset">`;
+                    return `<img class="media-asset" src="${checkedPath}" alt="Asset" onerror="this.src='images/unnamed1.jpg'">`;
                 }
             }
 
             try {
                 let proj = null;
-                let prevProjNode = null;
-                let nextProjNode = null;
                 let pages = [];
 
                 if (projectId) {
                     // --- DUAL-FLOW MODE B: SINGLE PROJECT SPECIFICATION VIEW ---
                     document.getElementById('dyn-back-link').href = 'projects.html';
                     
-                    const res = await fetch(`/api/projects/${projectId}/details`);
+                    let res;
+                    try {
+                        // Attempt to load from the separate status-projects endpoint first, fallback to projects
+                        res = await fetch(`/api/status-projects/${projectId}/details`);
+                        if (!res.ok) throw new Error("Endpoint shifted");
+                    } catch(e) {
+                        res = await fetch(`/api/projects/${projectId}/details`);
+                    }
+                    
                     proj = await res.json();
                     pages = proj.pages || [];
 
-                    // 1. Renders the automated fading header image slider in background
+                    // FIX: Populate the main loading parameters immediately with dynamic data [1]
+                    document.getElementById('render-category').innerText = proj.category || 'Architecture';
+                    document.getElementById('render-title').innerText = proj.title || 'South Wind Signature Project';
+                    
+                    // Background cross-fader image slider configuration
                     const sliderBg = document.getElementById('hero-slider-bg');
                     if (sliderBg) {
                         sliderBg.style.display = 'block';
@@ -470,8 +466,9 @@
                         const uniqueImages = [...new Set(slideImages)];
                         if (uniqueImages.length > 0) {
                             uniqueImages.forEach((img, idx) => {
+                                const checkedImg = getSafeImagePath(img);
                                 sliderBg.innerHTML += `
-                                    <div class="slider-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(to bottom, rgba(var(--slider-linear, 0,0,0), 0.5), rgba(var(--slider-linear, 0,0,0), 0.85)), url('${img}');"></div>
+                                    <div class="slider-slide ${idx === 0 ? 'active' : ''}" style="background-image: linear-gradient(to bottom, rgba(var(--slider-linear, 0,0,0), 0.5), rgba(var(--slider-linear, 0,0,0), 0.85)), url('${checkedImg}');"></div>
                                 `;
                             });
 
@@ -489,7 +486,7 @@
                         }
                     }
 
-                    // 2. Renders Aronnok-Inspired Technical Specifications Cards
+                    // Render Specs Card Grid
                     const specsGrid = document.getElementById('dyn-specs-grid');
                     const specsBox = document.querySelector('.specs-section-box');
                     if (specsGrid && specsBox) {
@@ -505,7 +502,6 @@
                             </div>
                         `;
 
-                        // Parse standard description block for key:value technical properties
                         if (proj.description) {
                             const lines = proj.description.split('\n');
                             let parsedAny = false;
@@ -535,14 +531,12 @@
                         }
                     }
 
-                    // 3. Renders the Brochure Download redirect node if configured
                     if (proj.brochure_url) {
                         const brochureLink = document.getElementById('dyn-brochure-link');
                         brochureLink.href = proj.brochure_url;
                         document.getElementById('brochure-container').style.display = 'block';
                     }
 
-                    // Render subpages list in grid below specs box
                     const wrapper = document.getElementById('pages-wrapper');
                     wrapper.innerHTML = '';
                     if (pages.length > 0) {
@@ -570,11 +564,10 @@
                     const targetCategory = categoryParam || "Residential Elite";
 
                     if (isLocalPreview) {
-                        // Offline mockup data fallback
                         proj = {
                             category: targetCategory,
                             title: targetCategory,
-                            description: "Local File Preview. Run Node Server on Termux/PC to connect database API.",
+                            description: "Local File Preview. Run Node Server on Render to connect database API.",
                             pages: [
                                 {
                                     title: "Primary Structural Design",
@@ -582,19 +575,11 @@
                                         { media_type: "image", media_path: "images/unnamed1.jpg" },
                                         { media_type: "image", media_path: "images/unnamed2.jpg" }
                                     ]
-                                },
-                                {
-                                    title: "Interior Layout Concept",
-                                    media: [
-                                        { media_type: "image", media_path: "images/unnamed3.jpg" },
-                                        { media_type: "image", media_path: "images/unnamed4.jpg" }
-                                    ]
                                 }
                             ]
                         };
                         pages = proj.pages;
                     } else {
-                        // Online database category lookup
                         const resAllProjects = await fetch('/api/projects');
                         const allProjectsPayload = await resAllProjects.json();
                         const allProjects = getSafeArray(allProjectsPayload);
@@ -605,7 +590,6 @@
                             proj = await res.json();
                             pages = proj.pages || [];
                         } else {
-                            // Empty Lookbook Fallback
                             proj = { category: targetCategory, title: targetCategory, description: 'No active portfolio layouts currently listed in this category.' };
                             pages = [];
                         }
@@ -619,10 +603,11 @@
                     wrapper.innerHTML = '';
 
                     if (pages.length === 0) {
+                        const checkedBaseImg = getSafeImagePath(proj.image_path);
                         wrapper.innerHTML = `
                             <div class="page-container active" style="opacity: 1; display: block;">
                                 <div class="media-grid">
-                                    <img class="media-asset" src="${proj.image_path || 'images/unnamed1.jpg'}">
+                                    <img class="media-asset" src="${checkedBaseImg}" onerror="this.src='images/unnamed1.jpg'">
                                 </div>
                             </div>`;
                     } else {
@@ -640,12 +625,10 @@
                             `;
                         });
 
-                        // Standard multi-page pagination controls setup
                         const paginator = document.getElementById('pagination-wrapper');
                         
                         function drawPagination(currentIdx) {
                             paginator.innerHTML = '';
-                            
                             const leftSpacer = document.createElement('div');
                             leftSpacer.style.width = "100px";
                             paginator.appendChild(leftSpacer);
@@ -681,9 +664,9 @@
 
             } catch (err) {
                 document.getElementById('render-title').innerText = 'Data Sync Timeout';
+                console.error("Error drawing specification canvas:", err);
             }
 
-            /* Back to Top button logic */
             const btt = document.getElementById('back-to-top');
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 300) {
