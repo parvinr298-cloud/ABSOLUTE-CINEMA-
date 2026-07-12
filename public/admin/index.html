@@ -33,7 +33,7 @@
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
         body { background: var(--bg); color: var(--text); padding-bottom: 60px; transition: background 0.3s, color 0.3s; }
         
-        /* Auth Screen Styling footprint */
+        /* Auth Screen Styling */
         #auth-gateway { position:fixed; inset:0; background:var(--bg); z-index:9999; display:flex; align-items:center; justify-content:center; }
         .auth-card { background:var(--surface); border:1px solid var(--border); padding:40px; width:100%; max-width:420px; border-radius:4px; }
         .auth-logo { font-size:1.5rem; font-weight:700; letter-spacing:3px; text-align:center; margin-bottom:30px; }
@@ -47,33 +47,33 @@
         .menu-btn { background:none; border:none; color:var(--text-muted); text-align:left; padding:12px 20px; font-size:0.9rem; cursor:pointer; font-weight:500; border-radius:4px; transition:0.3s; }
         .menu-btn.active, .menu-btn:hover { background:var(--surface); color:var(--text); border-left:2px solid var(--accent); }
         
-        /* Module Sections */
+        /* Module Panels */
         .panel { background:var(--surface); border:1px solid var(--border); padding:40px; border-radius:4px; display:none; }
         .panel.active { display:block; }
         
-        /* Forms & Inputs mapping matrix */
+        /* Forms & Inputs */
         h2 { font-size:1.8rem; font-weight:600; margin-bottom:30px; letter-spacing:-0.5px; border-bottom:1px solid var(--border); padding-bottom:15px; }
         .form-row { margin-bottom:25px; }
         label { display:block; font-size:0.8rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); margin-bottom:10px; }
         input, textarea, select { width:100%; padding:14px; background:var(--bg); border:1px solid var(--border); color:var(--text); font-size:0.95rem; border-radius:4px; }
         input:focus, textarea:focus { outline:1px solid var(--accent); }
         
-        /* Actions Execution Footprints */
+        /* Actions Execution buttons */
         .btn { background:var(--accent); color:var(--bg); border:none; padding:14px 30px; font-weight:600; text-transform:uppercase; font-size:0.8rem; letter-spacing:1.5px; cursor:pointer; border-radius:4px; transition:0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;}
         .btn:hover { opacity:0.9; }
         .btn-danger { background:var(--danger); color:white; }
         
-        /* Matrix Grid Layout Components */
+        /* Metrics Grid Layout */
         .metrics-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-bottom:40px; }
         .metric-card { background:var(--surface-accent); padding:25px; border:1px solid var(--border); border-radius:4px; }
         .metric-val { font-size:2.2rem; font-weight:700; margin-top:10px; }
         
-        /* Data Interfaces Mapping */
+        /* Table Layout */
         table { width:100%; border-collapse:collapse; margin-top:20px; display: block; overflow-x: auto; }
         th, td { padding:15px; text-align:left; border-bottom:1px solid var(--border); font-size:0.9rem; white-space: nowrap; }
         th { color:var(--text-muted); text-transform:uppercase; font-size:0.75rem; letter-spacing:1px; }
         
-        /* Media Matrix Library Interface Block */
+        /* Media Vault Grid Layout */
         .media-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:15px; margin-top:20px; }
         .media-item { border:1px solid var(--border); position:relative; aspect-ratio:1; background:var(--bg); border-radius:4px; overflow:hidden; cursor:pointer; transition: transform 0.2s, border-color 0.2s; }
         .media-item img { width:100%; height:100%; object-fit:cover; pointer-events: none;}
@@ -104,7 +104,7 @@
             display: flex;
         }
 
-        /* --- ANDROID MOBILE RATIO SCALING & MENU STACKING --- */
+        /* Responsive Layout Overrides */
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -141,7 +141,7 @@
                 padding: 20px;
             }
             input, textarea, select {
-                font-size: 16px; /* Prevents auto-zoom on Android */
+                font-size: 16px; /* Prevents auto-zoom on mobile fields */
             }
             #project-manage-modal, #media-modal-picker {
                 padding: 15px !important;
@@ -195,7 +195,6 @@
             <button class="menu-btn" onclick="switchControlView('about-panel', this)"><i class="fas fa-user-tie"></i> Studio Leadership</button>
             <button class="menu-btn" onclick="switchControlView('services-panel', this)"><i class="fas fa-drafting-compass"></i> Competencies</button>
             
-            <!-- SEPARATE DIRECT PORTFOLIO CHANNELS FOR ANDROID MOBILE -->
             <div style="border-top: 1px solid var(--border); margin: 5px 0; padding-top: 5px;"></div>
             <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); padding: 5px 12px; display: block; text-transform: uppercase;">Direct Categories</span>
             <button class="menu-btn" onclick="switchControlView('facade-panel', this)"><i class="fas fa-building"></i> Modern Facade</button>
@@ -205,7 +204,7 @@
             <div style="border-bottom: 1px solid var(--border); margin: 5px 0; padding-bottom: 5px;"></div>
 
             <button class="menu-btn" onclick="switchControlView('projects-panel', this)"><i class="fas fa-images"></i> Manage Master Projects</button>
-            <button class="menu-btn" onclick="switchControlView('contact-panel', this)"><i class="fas fa-map-marked-alt"></i> Corporate Info</button>
+            <button class="menu-btn" onclick="switchControlView('contact-panel', this)"><i class="fas fa-map-marked-alt"></i> Contact & Social Settings</button>
             <button class="menu-btn" onclick="switchControlView('inbox-panel', this)"><i class="fas fa-envelope"></i> Communications</button>
             <button class="menu-btn" onclick="switchControlView('media-panel', this)"><i class="fas fa-folder-open"></i> Media Vault</button>
             <button class="menu-btn" onclick="switchControlView('security-panel', this)"><i class="fas fa-shield-alt"></i> Security Gate</button>
@@ -349,7 +348,7 @@
             </div>
 
             <div id="contact-panel" class="panel">
-                <h2>Manage Corporate Contact Specifications</h2>
+                <h2>Manage Corporate Contact & Social Specifications</h2>
                 <form id="contact-sync-form">
                     <div class="form-row"><label>Physical Structural Address Matrix Layout</label><textarea id="set-contact_address" rows="3"></textarea></div>
                     <div class="form-row"><label>Global Satellite Nav System Plus Code</label><input type="text" id="set-contact_plus_code"></div>
@@ -357,7 +356,16 @@
                     <div class="form-row"><label>Backup Voice Communication Channel Phone Line 2</label><input type="text" id="set-contact_phone_2"></div>
                     <div class="form-row"><label>Corporate Electronic Mailing Hub Coordinates</label><input type="email" id="set-contact_email"></div>
                     <div class="form-row"><label>Instant Messenger Protocol WhatsApp Target Base Value</label><input type="text" id="set-contact_whatsapp"></div>
-                    <div class="form-row"><label>Google Maps Embed Frame Resource Location (Src Endpoint Link Only)</label><input type="text" id="set-contact_map_url"></div>
+                    <div class="form-row"><label>Google Maps Embed Frame Resource Location (Src Link Only)</label><input type="text" id="set-contact_map_url"></div>
+                    <div class="form-row"><label>Google Maps External Redirect Navigation Link</label><input type="text" id="set-contact_map_redirect_url" placeholder="https://maps.app.goo.gl/..."></div>
+                    
+                    <h3 style="font-size:1.2rem; margin:30px 0 15px 0; padding-bottom:5px; border-bottom:1px solid var(--border);">Social Platform Integrations</h3>
+                    <div class="form-row"><label>Facebook Profile Target URL Link</label><input type="text" id="set-social_facebook"></div>
+                    <div class="form-row"><label>Instagram Profile Target URL Link</label><input type="text" id="set-social_instagram"></div>
+                    <div class="form-row"><label>LinkedIn Corporate Target URL Link</label><input type="text" id="set-social_linkedin"></div>
+                    <div class="form-row"><label>YouTube Channel Target URL Link</label><input type="text" id="set-social_youtube"></div>
+                    
+                    <h3 style="font-size:1.2rem; margin:30px 0 15px 0; padding-bottom:5px; border-bottom:1px solid var(--border);">Global SEO Properties</h3>
                     <div class="form-row"><label>Global Index SEO Page Structural Title Mapping</label><input type="text" id="set-seo_meta_title"></div>
                     <div class="form-row"><label>Global Index SEO Page Index Crawler Brief Summary Description</label><textarea id="set-seo_meta_description" rows="2"></textarea></div>
                     <button type="submit" class="btn">Deploy System Packing Matrix Synchronization</button>
@@ -378,7 +386,6 @@
                     <label style="cursor:pointer;">
                         <i class="fas fa-cloud-upload-alt" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
                         <span>Transmit Binary Asset Track Into Optimized Web Target File</span>
-                        <!-- Upgraded to allow multiple file uploads at once directly from Android -->
                         <input type="file" id="media-upload-node" style="display:none;" multiple onchange="executeServerUpload(this)">
                     </label>
                 </div>
@@ -456,13 +463,11 @@
 
         // Self-healing page deletion router [2]
         async function executeDeletePageRoute(pageId, projectId) {
-            // Dynamic projectId injector fixes empty mock values from parent categories [2]
             if (!projectId) {
                 projectId = document.getElementById('edit-proj-id').value;
             }
 
             if (discoveredDeletePageRoute) {
-                // Safely swap both pageId and optional parent projectId placeholders [2]
                 const cachedRoute = discoveredDeletePageRoute.replace('{id}', pageId);
                 return await safeFetchJson(projectId ? cachedRoute.replace('{projectId}', projectId) : cachedRoute, {
                     method: 'DELETE',
@@ -479,7 +484,6 @@
                 `/api/pages/${pageId}`
             ];
 
-            // Only append nested structures if a valid parent projectId is supplied [2]
             if (projectId) {
                 potentialRoutes.push(`/api/projects/${projectId}/pages/${pageId}`);
                 potentialRoutes.push(`/api/projects/${projectId}/project-pages/${pageId}`);
@@ -493,7 +497,6 @@
                         headers: { 'Authorization': `Bearer ${operationalToken}` }
                     });
                     if (res.ok) {
-                        // Cache the discovered path mapping for rapid reuse [2]
                         if (projectId && route.includes(projectId)) {
                             discoveredDeletePageRoute = route.replace(pageId, '{id}').replace(projectId, '{projectId}');
                         } else {
@@ -521,12 +524,10 @@
                 });
             }
 
-            const pageId = document.getElementById('active-page-id') ? document.getElementById('active-page-id').value : ''; // Fetch active page context [2]
+            const pageId = document.getElementById('active-page-id') ? document.getElementById('active-page-id').value : ''; 
             const projectId = document.getElementById('edit-proj-id') ? document.getElementById('edit-proj-id').value : '';
 
-            // Dynamic routes incorporating payload-scoping adjustments for 403 / 400 validations
             const potentialRoutes = [
-                // 1. Context query parameters on primary routes (prevents ownership 403 Forbidden blocks)
                 { url: `/api/project-media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
                 { url: `/api/project-media/${mediaId}?project_id=${projectId}&page_id=${pageId}`, method: 'DELETE' },
                 { url: `/api/project-media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
@@ -537,18 +538,16 @@
                 { url: `/api/project_media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
                 { url: `/api/project_media/${mediaId}?project_id=${projectId}&page_id=${pageId}`, method: 'DELETE' },
                 { url: `/api/project_media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
-                { url: `/api/project_media/${mediaId}?page_id=${pageId}`, method: 'DELETE' },
+                { url: `/api/project_media/${mediaId}?page_id=${page_id}`, method: 'DELETE' },
                 { url: `/api/project_media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
                 { url: `/api/project_media/${mediaId}?project_id=${projectId}`, method: 'DELETE' },
 
-                // 2. Direct routes
                 { url: `/api/project-media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project-medium/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_medium/${mediaId}`, method: 'DELETE' },
                 { url: `/api/media/${mediaId}`, method: 'DELETE' },
 
-                // 3. Media library routes with payload verification mapping (prevents 400 Bad Request blocks)
                 { url: `/api/media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
                 { url: `/api/media/${mediaId}?project_id=${projectId}&page_id=${pageId}`, method: 'DELETE' },
                 { url: `/api/media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
@@ -559,7 +558,6 @@
                 { url: `/api/project_media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
                 { url: `/api/media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
 
-                // 4. Nested Page Modules where ID is passed in query or body (highly common in POST/DELETE dual routes)
                 { url: `/api/project-pages/${pageId}/media?mediaId=${mediaId}`, method: 'DELETE' },
                 { url: `/api/project-pages/${pageId}/media?media_id=${mediaId}`, method: 'DELETE' },
                 { url: `/api/project-pages/${pageId}/media?id=${mediaId}`, method: 'DELETE' },
@@ -570,29 +568,24 @@
                 { url: `/api/project_pages/${pageId}/media?id=${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_pages/${pageId}/media`, method: 'DELETE', body: { mediaId, id: mediaId, media_id: mediaId } },
 
-                // 5. Nested Page Modules (Singular form)
                 { url: `/api/project-page/${pageId}/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_page/${pageId}/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/page/${pageId}/media/${mediaId}`, method: 'DELETE' },
 
-                // 6. Nested Page Modules (Plural form)
                 { url: `/api/project-pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
 
-                // 7. Plural alternative nested paths
                 { url: `/api/project-pages/${pageId}/project-media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_pages/${pageId}/project_media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project-pages/${pageId}/project-medium/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_pages/${pageId}/project_medium/${mediaId}`, method: 'DELETE' },
 
-                // 8. Singular alternative nested paths
                 { url: `/api/project-page/${pageId}/project-media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_page/${pageId}/project_media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project-page/${pageId}/project-medium/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_page/${pageId}/project_medium/${mediaId}`, method: 'DELETE' },
 
-                // 9. General scoped endpoints
                 { url: `/api/project-pages/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_pages/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/pages/media/${mediaId}`, method: 'DELETE' },
@@ -601,7 +594,6 @@
                 { url: `/api/project-page-medium/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_page_medium/${mediaId}`, method: 'DELETE' },
                 
-                // 10. Scoped endpoints with delete prefix
                 { url: `/api/project-media/delete/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_media/delete/${mediaId}`, method: 'DELETE' },
                 { url: `/api/media/delete/${mediaId}`, method: 'DELETE' }
@@ -641,7 +633,6 @@
                     }
 
                     const res = await fetch(r.url, fetchOptions);
-                    
                     triedLogs.push(`${r.url} -> Status: ${res.status}`);
 
                     if (res.ok) {
@@ -654,9 +645,8 @@
                 }
             }
             
-            // Format dynamic troubleshooting overview
             const logSummary = triedLogs.map(log => `• ${log}`).join("\n");
-            throw new Error(`Route Probe Exhausted on your Render Server.\n\nSummary of Tried Endpoints:\n${logSummary}\n\nPlease check if your backend has this route implemented or if a server error occurred.`);
+            throw new Error(`Route Probe Exhausted on your Render Server.\n\nSummary of Tried Endpoints:\n${logSummary}`);
         }
 
         // Theme switching logic inside CMS
@@ -664,7 +654,7 @@
             const current = document.documentElement.getAttribute('data-theme') || 'dark';
             const next = current === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('sw_theme', next); // Unified key across all files
+            localStorage.setItem('sw_theme', next); 
             updateThemeButtonUI(next);
         }
 
@@ -677,7 +667,6 @@
         }
 
         function verifyIdentityTokenPresence() {
-            // Adopt theme setting early
             const activeTheme = localStorage.getItem('sw_theme') || 'dark';
             document.documentElement.setAttribute('data-theme', activeTheme);
             updateThemeButtonUI(activeTheme);
@@ -731,13 +720,11 @@
             document.getElementById(panelId).classList.add('active');
             element.classList.add('active');
             
-            // Context triggers depending on tab state mapping choices
             if(panelId === 'services-panel') synchronizeCompetencyTable();
             if(panelId === 'projects-panel') synchronizePortfolioTable();
             if(panelId === 'inbox-panel') synchronizeInboxTable();
             if(panelId === 'media-panel') synchronizeMediaGridEngine();
 
-            // Dynamic Category Panel Triggers
             if(panelId === 'facade-panel') loadCategoryPortfolio('Modern Facade', 'facade-container');
             if(panelId === 'residential-panel') loadCategoryPortfolio('Residential Elite', 'residential-container');
             if(panelId === 'luxury-panel') loadCategoryPortfolio('Luxury Living', 'luxury-container');
@@ -798,7 +785,7 @@
         async function synchronizeCompetencyTable() {
             try {
                 const payload = await safeFetchJson('/api/services');
-                const data = getSafeArray(payload); // Safety wrap integration
+                const data = getSafeArray(payload); 
                 const container = document.getElementById('services-table-body');
                 container.innerHTML = '';
                 data.forEach(s => {
@@ -847,11 +834,10 @@
         async function synchronizePortfolioTable() {
             try {
                 const payload = await safeFetchJson('/api/projects');
-                const data = getSafeArray(payload); // Safety wrap integration
+                const data = getSafeArray(payload); 
                 const container = document.getElementById('projects-table-body');
                 container.innerHTML = '';
                 
-                // Sort array natively by Category then structural weighting values
                 data.sort((a, b) => a.category.localeCompare(b.category) || a.display_order - b.display_order);
                 
                 data.forEach(p => {
@@ -872,7 +858,6 @@
                                 ${hasVideo}
                             </td>
                             <td>
-                                <!-- Details button color explicitly fixed to prevent black-on-black [2] -->
                                 <button class="btn" style="padding:5px 10px; font-size:0.7rem;" onclick="openProjectManager(${p.id})">Details</button>
                                 <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
                             </td>
@@ -934,7 +919,7 @@
         async function synchronizeInboxTable() {
             try {
                 const payload = await safeFetchJson('/api/messages', { headers: { 'Authorization': `Bearer ${operationalToken}` } });
-                const data = getSafeArray(payload); // Safety wrap integration
+                const data = getSafeArray(payload); 
                 const container = document.getElementById('inbox-table-body');
                 container.innerHTML = '';
                 data.forEach(m => {
@@ -945,7 +930,6 @@
                             <td>${m.email}<br>${m.phone || 'N/A'}</td>
                             <td>${m.message}</td>
                             <td>
-                                <!-- Detailed read modal popup for Android -->
                                 <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--success); color:black;" onclick="viewAndReadMessage(${m.id}, '${m.name.replace(/'/g, "\\'")}', '${m.email}', '${m.phone || 'N/A'}', '${m.message.replace(/\n/g, '<br>').replace(/'/g, "\\'")}')">Read</button>
                                 <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteMessage(${m.id})">Delete</button>
                             </td>
@@ -955,7 +939,6 @@
             } catch(e) { console.error("Inbox sync failed", e); }
         }
 
-        // View and read dispatch payload popup fix
         window.viewAndReadMessage = async function(id, name, email, phone, msg) {
             alert(`SENDER DETAILS:\\n-------------------------\\nName: ${name}\\nEmail: ${email}\\nPhone: ${phone}\\n\\nMESSAGE:\\n${msg.replace(/<br>/g, '\\n')}`);
             try {
@@ -986,7 +969,7 @@
         async function synchronizeMediaGridEngine() {
             try {
                 const payload = await safeFetchJson('/api/media/library', { headers: { 'Authorization': `Bearer ${operationalToken}` } });
-                const data = getSafeArray(payload); // Safety wrap integration
+                const data = getSafeArray(payload); 
                 const container = document.getElementById('media-catalog-box');
                 container.innerHTML = '';
                 data.forEach(item => {
@@ -1000,7 +983,6 @@
             } catch(e) { console.error("Media sync failed", e); }
         }
 
-        // Updated Upload System allowing multiple uploads sequentially on Android
         async function executeServerUpload(inputNode) {
             if(inputNode.files.length === 0) return;
             let successCount = 0;
@@ -1044,11 +1026,11 @@
         async function hydrateMediaPickerGrid() {
             try {
                 const payload = await safeFetchJson('/api/media/library', { headers: { 'Authorization': `Bearer ${operationalToken}` } });
-                const data = getSafeArray(payload); // Safety wrap integration
+                const data = getSafeArray(payload); 
                 const container = document.getElementById('modal-picker-catalog-box');
                 container.innerHTML = '';
                 
-                selectedMediaPaths = []; // reset batch selections
+                selectedMediaPaths = []; 
                 
                 const isMultiSelect = (targetPickerFieldHook === 'new-media-path');
                 const batchBar = document.getElementById('modal-batch-action-bar');
@@ -1109,7 +1091,6 @@
                     fetch('/api/auth/profile', { headers: { 'Authorization': `Bearer ${operationalToken}` } }).then(r => r.json())
                 ]);
 
-                // Safe array wraps prevents "undefined" layout metrics crash on startup
                 const p = getSafeArray(pPayload);
                 const s = getSafeArray(sPayload);
                 const m = getSafeArray(mPayload);
@@ -1127,7 +1108,6 @@
             } catch(e) {}
         }
 
-        // Initialize Authorization Matrix Gate on Document Manifest Loop Activation
         verifyIdentityTokenPresence();
     </script>
     
@@ -1164,7 +1144,7 @@
                             body: JSON.stringify({ newEmail })
                         });
                         alert(data.success || 'Email changed successfully');
-                        pullAdminContextMetrics(); // Refresh active session identity
+                        pullAdminContextMetrics(); 
                         document.getElementById('new-sys-email').value = '';
                     } catch(err) { alert("Email shift failed: " + err.message); }
                 });
@@ -1226,10 +1206,9 @@
                 </div>
             `);
 
-            // 3. Intercept original Profile metric pull to hydrate custom Email box
             const originalPullAdminContextMetrics = window.pullAdminContextMetrics;
             window.pullAdminContextMetrics = async function() {
-                await originalPullAdminContextMetrics(); // Exec original
+                await originalPullAdminContextMetrics(); 
                 try {
                     const profileRes = await fetch('/api/auth/profile', { headers: { 'Authorization': `Bearer ${operationalToken}` } });
                     const profile = await profileRes.json();
@@ -1237,7 +1216,6 @@
                 } catch(e) {}
             };
             
-            // 4. Safely hook the original form submission to push advanced attributes instantly
             const formObj = document.getElementById('advanced-portfolio-form');
             if (formObj) {
                 const oldFormListener = formObj.cloneNode(true);
@@ -1285,11 +1263,10 @@
             }
         });
 
-        // 5. Append CMS Advanced Override Render Logic Array Elements 
         window.synchronizePortfolioTable = async function() {
             try {
                 const payload = await safeFetchJson('/api/projects');
-                const data = getSafeArray(payload); // Safety wrap integration
+                const data = getSafeArray(payload); 
                 const container = document.getElementById('projects-table-body');
                 container.innerHTML = '';
                 
@@ -1312,8 +1289,7 @@
                                 ${hasVideo}
                             </td>
                             <td>
-                                <!-- Details button color explicitly fixed to prevent black-on-black [2] -->
-                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:var(--bg);" onclick="openProjectManager(${p.id})">Details</button>
+                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:black;" onclick="openProjectManager(${p.id})">Details</button>
                                 <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem; margin-left:5px;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
                                 <a href="/project-details.html?project=${p.id}" target="_blank" class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--success); color:black; margin-left:5px; text-decoration:none;">Preview</a>
                             </td>
@@ -1323,7 +1299,6 @@
             } catch(e) { console.error("Portfolio table sync failed", e); }
         };
 
-        // NEW LOGIC ENGINE FOR DEEP PROJECT MANAGEMENT OVERRIDE
         async function openProjectManager(projectId) {
             try {
                 const proj = await safeFetchJson(`/api/projects/${projectId}/details`);
@@ -1332,7 +1307,7 @@
                 document.getElementById('edit-proj-desc').value = proj.description || '';
                 document.getElementById('edit-proj-thumb').value = proj.image_path || '';
                 
-                currentProjectPages = proj.pages || []; // Safe global array mapping to prevent JSON breaking HTML [2]
+                currentProjectPages = proj.pages || []; 
                 renderProjectPages(currentProjectPages);
                 document.getElementById('media-manager-block').style.display = 'none';
                 document.getElementById('project-manage-modal').style.display = 'block';
@@ -1365,7 +1340,6 @@
                         <td>Page ${p.page_number}</td>
                         <td>${p.title || 'Module Segment'}</td>
                         <td>
-                            <!-- Referencing globally by array index to prevent quote serialization crashes on mobile [2] -->
                             <button class="btn" style="padding:5px; font-size:0.7rem;" onclick="openPageMediaManagerByIndex(${idx})">Media Logic</button>
                             <button class="btn btn-danger" style="padding:5px; font-size:0.7rem;" onclick="deleteProjectPage(${p.id})">Del</button>
                         </td>
@@ -1391,14 +1365,13 @@
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
                     body: JSON.stringify({ title, page_number: document.getElementById('project-pages-list').children.length + 1 })
                 });
-                openProjectManager(id); // Reload modal node mapping
+                openProjectManager(id); 
             } catch(e) { alert("Failed to add page: " + e.message); }
         }
 
         async function deleteProjectPage(pageId) {
             if(!confirm('Delete page module?')) return;
             try {
-                // Invoking the self-healing page deletion router [2]
                 await executeDeletePageRoute(pageId);
                 openProjectManager(document.getElementById('edit-proj-id').value);
             } catch(e) { alert("Failed to delete page: " + e.message); }
@@ -1440,7 +1413,6 @@
             } catch(e) { alert("Failed to attach media: " + e.message); }
         }
 
-        // BATCH ASSET ATTACHMENT EXECUTION FROM MULTI-SELECT WINDOW
         async function executeBatchMediaAttachment() {
             if (selectedMediaPaths.length === 0) return alert("Select at least one image.");
             const pageId = document.getElementById('active-page-id').value;
@@ -1460,7 +1432,6 @@
             
             closeMediaPickerWindow();
             
-            // Reload the respective category container on Android if the media was attached from a direct category view
             if (activeCategoryContainerIdToReload) {
                 const currentPanel = document.querySelector('.panel.active');
                 if (currentPanel) {
@@ -1496,17 +1467,15 @@
         async function deleteMedia(mediaId) {
             if(!confirm('Purge asset track?')) return;
             try {
-                // Invoking the self-healing media deletion router [2]
                 await executeDeleteMediaRoute(mediaId);
                 openProjectManager(document.getElementById('edit-proj-id').value);
             } catch(e) { alert("Purge failed: " + e.message); }
         }
         
         async function updateMediaOrder(inputNode, mediaId) {
-            console.log('Order update ready. Use full sync matrix to save weights.');
+            console.log('Order update ready.');
         }
 
-        // --- NEW ADDITIVE CMS DIRECT CATEGORY PORTFOLIO LOADER LOGIC ---
         async function loadCategoryPortfolio(categoryName, containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -1521,7 +1490,6 @@
                 const payload = await safeFetchJson('/api/projects');
                 const allProjects = getSafeArray(payload);
                 
-                // Filter strictly for this category and sort
                 const filtered = allProjects.filter(p => p.category === categoryName);
                 filtered.sort((a, b) => a.display_order - b.display_order);
                 
@@ -1538,7 +1506,6 @@
                 container.innerHTML = '';
                 
                 for (const proj of filtered) {
-                    // Fetch deep page/media details for this specific project
                     const deepProj = await safeFetchJson(`/api/projects/${proj.id}/details`);
                     const pages = deepProj.pages || [];
                     
@@ -1549,7 +1516,6 @@
                                 No pages created. Tap the button above to add your first page!
                             </div>`;
                     } else {
-                        // Store pages globally when rendering the visual grid
                         currentProjectPages = pages;
                         pages.forEach((p, idx) => {
                             let mediaThumbnails = '';
@@ -1576,7 +1542,6 @@
                                             <button class="btn btn-success" style="padding:6px 12px; font-size:0.75rem;" onclick="openCategoryMediaPicker(${p.id}, '${containerId}')">
                                                 <i class="fas fa-images"></i> Add/Change Pics
                                             </button>
-                                            <!-- Fixed page deletion parameter map to bypass modal validation block [2] -->
                                             <button class="btn btn-danger" style="padding:6px 12px; font-size:0.75rem;" onclick="deleteCategoryPageNode(${p.id}, ${proj.id}, '${categoryName}', '${containerId}')">
                                                 <i class="fas fa-trash"></i> Delete Page
                                             </button>
@@ -1628,7 +1593,6 @@
             if (!title) return;
             
             try {
-                // Get current pages count to set page number dynamically
                 const proj = await safeFetchJson(`/api/projects/${projectId}/details`);
                 const pageNum = (proj.pages || []).length + 1;
 
@@ -1638,23 +1602,22 @@
                     body: JSON.stringify({ title, page_number: pageNum })
                 });
                 
-                loadCategoryPortfolio(categoryName, containerId); // Reload category view
+                loadCategoryPortfolio(categoryName, containerId); 
             } catch(e) { alert("Failed to add page: " + e.message); }
         }
 
         async function deleteCategoryPageNode(pageId, projectId, categoryName, containerId) {
             if (!confirm("Are you sure you want to delete this page and all its attached media?")) return;
             try {
-                // Safely passing both pageId and project context to resolve nested deletion routing [2]
                 await executeDeletePageRoute(pageId, projectId);
-                loadCategoryPortfolio(categoryName, containerId); // Reload category view
+                loadCategoryPortfolio(categoryName, containerId); 
             } catch(e) { alert("Failed to delete page: " + e.message); }
         }
 
         function openCategoryMediaPicker(pageId, containerId) {
             document.getElementById('active-page-id').value = pageId;
-            activeCategoryContainerIdToReload = containerId; // set active category target
-            targetPickerFieldHook = 'new-media-path'; // triggers multi-select badge mode
+            activeCategoryContainerIdToReload = containerId; 
+            targetPickerFieldHook = 'new-media-path'; 
             document.getElementById('media-modal-picker').style.display = 'block';
             hydrateMediaPickerGrid();
         }
