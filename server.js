@@ -22,9 +22,14 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 🔥 CRITICAL FIX FOR RENDER: Tells Express to look past Render's reverse proxy.
+// This prevents one user's loop from blocking everyone or locking you out completely.
+app.set('trust proxy', 1);
+
+// Relaxed rate-limiter threshold for dashboards that execute multiple API fetches on load.
 const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 300,
+    max: 2000, // Increased from 300 to 2000 to safely allow heavy internal dashboard traffic
     message: { error: 'Traffic overload from this IP. Please try again in 15 minutes.' }
 });
 app.use('/api/', globalLimiter);
