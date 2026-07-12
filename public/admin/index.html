@@ -520,62 +520,110 @@
             const pageId = document.getElementById('active-page-id') ? document.getElementById('active-page-id').value : ''; // Fetch active page context [2]
             const projectId = document.getElementById('edit-proj-id') ? document.getElementById('edit-proj-id').value : '';
 
+            // Dynamic routes incorporating payload-scoping adjustments for 403 / 400 validations
             const potentialRoutes = [
-                `/api/project-media/${mediaId}`,
-                `/api/project_media/${mediaId}`,
-                `/api/project-medium/${mediaId}`,
-                `/api/project_medium/${mediaId}`,
-                `/api/media/${mediaId}`,
-                // Added safe parent-child nested media routes [2]
-                `/api/project-pages/${pageId}/media/${mediaId}`,
-                `/api/project_pages/${pageId}/media/${mediaId}`,
-                `/api/pages/${pageId}/media/${mediaId}`,
-                // Expanded self-healing route discovery mappings:
-                `/api/project-pages/media/${mediaId}`,
-                `/api/project_pages/media/${mediaId}`,
-                `/api/pages/media/${mediaId}`,
-                `/api/project-page-media/${mediaId}`,
-                `/api/project_page_media/${mediaId}`,
-                `/api/project-page-medium/${mediaId}`,
-                `/api/project_page_medium/${mediaId}`,
-                `/api/project-pages/${pageId}/project-media/${mediaId}`,
-                `/api/project_pages/${pageId}/project_media/${mediaId}`,
-                `/api/project-pages/${pageId}/project-medium/${mediaId}`,
-                `/api/project_pages/${pageId}/project_medium/${mediaId}`,
-                `/api/project-media/delete/${mediaId}`,
-                `/api/project_media/delete/${mediaId}`,
-                `/api/media/delete/${mediaId}`
+                // 1. Context query parameters on primary routes (prevents ownership 403 Forbidden blocks)
+                { url: `/api/project-media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/project_media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/project-media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/project_media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/project-media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
+                { url: `/api/project_media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
+
+                // 2. Direct routes
+                { url: `/api/project-media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project-medium/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_medium/${mediaId}`, method: 'DELETE' },
+                { url: `/api/media/${mediaId}`, method: 'DELETE' },
+
+                // 3. Media library routes with payload verification mapping (prevents 400 Bad Request blocks)
+                { url: `/api/media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
+                { url: `/api/project-media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId } },
+                { url: `/api/project_media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId } },
+                { url: `/api/media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId } },
+
+                // 4. Nested Page Modules (Singular form)
+                { url: `/api/project-page/${pageId}/media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_page/${pageId}/media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/page/${pageId}/media/${mediaId}`, method: 'DELETE' },
+
+                // 5. Nested Page Modules (Plural form)
+                { url: `/api/project-pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
+
+                // 6. Plural alternative nested paths
+                { url: `/api/project-pages/${pageId}/project-media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_pages/${pageId}/project_media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project-pages/${pageId}/project-medium/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_pages/${pageId}/project_medium/${mediaId}`, method: 'DELETE' },
+
+                // 7. Singular alternative nested paths
+                { url: `/api/project-page/${pageId}/project-media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_page/${pageId}/project_media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project-page/${pageId}/project-medium/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_page/${pageId}/project_medium/${mediaId}`, method: 'DELETE' },
+
+                // 8. General scoped endpoints
+                { url: `/api/project-pages/media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_pages/media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/pages/media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project-page-media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_page_media/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project-page-medium/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_page_medium/${mediaId}`, method: 'DELETE' },
+                
+                // 9. Scoped endpoints with delete prefix
+                { url: `/api/project-media/delete/${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_media/delete/${mediaId}`, method: 'DELETE' },
+                { url: `/api/media/delete/${mediaId}`, method: 'DELETE' }
             ];
 
             if (projectId) {
-                potentialRoutes.push(`/api/projects/${projectId}/pages/${pageId}/media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project-pages/${pageId}/media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project_pages/${pageId}/media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project-media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project_media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project-medium/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project_medium/${mediaId}`);
+                potentialRoutes.push(
+                    { url: `/api/projects/${projectId}/pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
+                    { url: `/api/projects/${projectId}/project-pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
+                    { url: `/api/projects/${projectId}/project_pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
+                    { url: `/api/projects/${projectId}/project-page/${pageId}/media/${mediaId}`, method: 'DELETE' },
+                    { url: `/api/projects/${projectId}/project_page/${pageId}/media/${mediaId}`, method: 'DELETE' },
+                    { url: `/api/projects/${projectId}/media/${mediaId}`, method: 'DELETE' },
+                    { url: `/api/projects/${projectId}/project-media/${mediaId}`, method: 'DELETE' },
+                    { url: `/api/projects/${projectId}/project_media/${mediaId}`, method: 'DELETE' },
+                    { url: `/api/projects/${projectId}/project-medium/${mediaId}`, method: 'DELETE' },
+                    { url: `/api/projects/${projectId}/project_medium/${mediaId}`, method: 'DELETE' }
+                );
             }
 
             const triedLogs = [];
 
-            for (const route of potentialRoutes) {
+            for (const r of potentialRoutes) {
                 try {
-                    const res = await fetch(route, {
-                        method: 'DELETE',
-                        headers: { 'Authorization': `Bearer ${operationalToken}` }
-                    });
+                    const fetchOptions = {
+                        method: r.method,
+                        headers: { 
+                            'Authorization': `Bearer ${operationalToken}`
+                        }
+                    };
+
+                    if (r.body) {
+                        fetchOptions.headers['Content-Type'] = 'application/json';
+                        fetchOptions.body = JSON.stringify(r.body);
+                    }
+
+                    const res = await fetch(r.url, fetchOptions);
                     
-                    triedLogs.push(`${route} -> Status: ${res.status}`);
+                    triedLogs.push(`${r.url} -> Status: ${res.status}`);
 
                     if (res.ok) {
-                        discoveredDeleteMediaRoute = route.replace(mediaId, '{id}');
+                        discoveredDeleteMediaRoute = r.url.replace(mediaId, '{id}');
                         return { success: true };
                     }
                 } catch (e) {
-                    triedLogs.push(`${route} -> Network Error: ${e.message}`);
-                    console.warn(`Route ${route} failed during probe:`, e);
+                    triedLogs.push(`${r.url} -> Network Error: ${e.message}`);
+                    console.warn(`Route ${r.url} failed during probe:`, e);
                 }
             }
             
@@ -593,6 +641,7 @@
             updateThemeButtonUI(next);
         }
 
+        // Theme button UI updating helper
         function updateThemeButtonUI(theme) {
             const btn = document.getElementById('cms-theme-toggle');
             if (btn) {
