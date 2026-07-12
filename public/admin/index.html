@@ -513,7 +513,11 @@
             if (discoveredDeleteMediaRoute) {
                 return await safeFetchJson(discoveredDeleteMediaRoute.replace('{id}', mediaId), {
                     method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${operationalToken}` }
+                    headers: { 
+                        'Authorization': `Bearer ${operationalToken}`,
+                        'x-access-token': operationalToken,
+                        'token': operationalToken
+                    }
                 });
             }
 
@@ -524,11 +528,18 @@
             const potentialRoutes = [
                 // 1. Context query parameters on primary routes (prevents ownership 403 Forbidden blocks)
                 { url: `/api/project-media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
-                { url: `/api/project_media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/project-media/${mediaId}?project_id=${projectId}&page_id=${pageId}`, method: 'DELETE' },
                 { url: `/api/project-media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
-                { url: `/api/project_media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/project-media/${mediaId}?page_id=${pageId}`, method: 'DELETE' },
                 { url: `/api/project-media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
+                { url: `/api/project-media/${mediaId}?project_id=${projectId}`, method: 'DELETE' },
+
+                { url: `/api/project_media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/project_media/${mediaId}?project_id=${projectId}&page_id=${pageId}`, method: 'DELETE' },
+                { url: `/api/project_media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/project_media/${mediaId}?page_id=${pageId}`, method: 'DELETE' },
                 { url: `/api/project_media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
+                { url: `/api/project_media/${mediaId}?project_id=${projectId}`, method: 'DELETE' },
 
                 // 2. Direct routes
                 { url: `/api/project-media/${mediaId}`, method: 'DELETE' },
@@ -539,35 +550,49 @@
 
                 // 3. Media library routes with payload verification mapping (prevents 400 Bad Request blocks)
                 { url: `/api/media/${mediaId}?projectId=${projectId}&pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/media/${mediaId}?project_id=${projectId}&page_id=${pageId}`, method: 'DELETE' },
                 { url: `/api/media/${mediaId}?pageId=${pageId}`, method: 'DELETE' },
+                { url: `/api/media/${mediaId}?page_id=${pageId}`, method: 'DELETE' },
                 { url: `/api/media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
-                { url: `/api/project-media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId } },
-                { url: `/api/project_media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId } },
-                { url: `/api/media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId } },
+                { url: `/api/media/${mediaId}?project_id=${projectId}`, method: 'DELETE' },
+                { url: `/api/project-media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
+                { url: `/api/project_media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
+                { url: `/api/media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
 
-                // 4. Nested Page Modules (Singular form)
+                // 4. Nested Page Modules where ID is passed in query or body (highly common in POST/DELETE dual routes)
+                { url: `/api/project-pages/${pageId}/media?mediaId=${mediaId}`, method: 'DELETE' },
+                { url: `/api/project-pages/${pageId}/media?media_id=${mediaId}`, method: 'DELETE' },
+                { url: `/api/project-pages/${pageId}/media?id=${mediaId}`, method: 'DELETE' },
+                { url: `/api/project-pages/${pageId}/media`, method: 'DELETE', body: { mediaId, id: mediaId, media_id: mediaId } },
+
+                { url: `/api/project_pages/${pageId}/media?mediaId=${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_pages/${pageId}/media?media_id=${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_pages/${pageId}/media?id=${mediaId}`, method: 'DELETE' },
+                { url: `/api/project_pages/${pageId}/media`, method: 'DELETE', body: { mediaId, id: mediaId, media_id: mediaId } },
+
+                // 5. Nested Page Modules (Singular form)
                 { url: `/api/project-page/${pageId}/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_page/${pageId}/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/page/${pageId}/media/${mediaId}`, method: 'DELETE' },
 
-                // 5. Nested Page Modules (Plural form)
+                // 6. Nested Page Modules (Plural form)
                 { url: `/api/project-pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/pages/${pageId}/media/${mediaId}`, method: 'DELETE' },
 
-                // 6. Plural alternative nested paths
+                // 7. Plural alternative nested paths
                 { url: `/api/project-pages/${pageId}/project-media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_pages/${pageId}/project_media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project-pages/${pageId}/project-medium/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_pages/${pageId}/project_medium/${mediaId}`, method: 'DELETE' },
 
-                // 7. Singular alternative nested paths
+                // 8. Singular alternative nested paths
                 { url: `/api/project-page/${pageId}/project-media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_page/${pageId}/project_media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project-page/${pageId}/project-medium/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_page/${pageId}/project_medium/${mediaId}`, method: 'DELETE' },
 
-                // 8. General scoped endpoints
+                // 9. General scoped endpoints
                 { url: `/api/project-pages/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_pages/media/${mediaId}`, method: 'DELETE' },
                 { url: `/api/pages/media/${mediaId}`, method: 'DELETE' },
@@ -576,7 +601,7 @@
                 { url: `/api/project-page-medium/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_page_medium/${mediaId}`, method: 'DELETE' },
                 
-                // 9. Scoped endpoints with delete prefix
+                // 10. Scoped endpoints with delete prefix
                 { url: `/api/project-media/delete/${mediaId}`, method: 'DELETE' },
                 { url: `/api/project_media/delete/${mediaId}`, method: 'DELETE' },
                 { url: `/api/media/delete/${mediaId}`, method: 'DELETE' }
@@ -604,7 +629,9 @@
                     const fetchOptions = {
                         method: r.method,
                         headers: { 
-                            'Authorization': `Bearer ${operationalToken}`
+                            'Authorization': `Bearer ${operationalToken}`,
+                            'x-access-token': operationalToken,
+                            'token': operationalToken
                         }
                     };
 
