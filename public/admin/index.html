@@ -476,15 +476,12 @@
                 `/api/project-page/${pageId}`,
                 `/api/project_page/${pageId}`,
                 `/api/projects/pages/${pageId}`,
-                `/api/pages/${pageId}`
+                `/api/pages/${pageId}`,
+                // Added high-probability parent-child nested routes [2]
+                `/api/projects/${projectId}/pages/${pageId}`,
+                `/api/projects/${projectId}/project-pages/${pageId}`,
+                `/api/projects/${projectId}/project_pages/${pageId}`
             ];
-
-            // Only append nested structures if a valid parent projectId is supplied [2]
-            if (projectId) {
-                potentialRoutes.push(`/api/projects/${projectId}/pages/${pageId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project-pages/${pageId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project_pages/${pageId}`);
-            }
 
             for (const route of potentialRoutes) {
                 try {
@@ -505,7 +502,7 @@
                     console.warn(`Route ${route} failed during probe:`, e);
                 }
             }
-            throw new Error("No active delete route found on your server. Checked: /api/project-pages, /api/project_pages, and /api/pages.");
+            throw new Error("No active delete route found on your server. Checked standard and nested parent-child paths.");
         }
 
         // Self-healing media deletion router [2]
@@ -517,43 +514,30 @@
                 });
             }
 
-            const pageId = document.getElementById('active-page-id') ? document.getElementById('active-page-id').value : ''; // Fetch active page context [2]
-            const projectId = document.getElementById('edit-proj-id') ? document.getElementById('edit-proj-id').value : '';
-
+            const pageId = document.getElementById('active-page-id').value; // Fetch active page context [2]
+            const projectId = document.getElementById('edit-proj-id').value; // Fetch project context securely [2]
+            
             const potentialRoutes = [
                 `/api/project-media/${mediaId}`,
                 `/api/project_media/${mediaId}`,
                 `/api/project-medium/${mediaId}`,
                 `/api/project_medium/${mediaId}`,
                 `/api/media/${mediaId}`,
+                // Flat deletion deletes with action keys [2]
+                `/api/project-media/delete/${mediaId}`,
+                `/api/project_media/delete/${mediaId}`,
+                `/api/media/delete/${mediaId}`,
                 // Added safe parent-child nested media routes [2]
                 `/api/project-pages/${pageId}/media/${mediaId}`,
                 `/api/project_pages/${pageId}/media/${mediaId}`,
                 `/api/pages/${pageId}/media/${mediaId}`,
-                // Expanded self-healing route discovery mappings:
-                `/api/project-pages/media/${mediaId}`,
-                `/api/project_pages/media/${mediaId}`,
-                `/api/pages/media/${mediaId}`,
-                `/api/project-page-media/${mediaId}`,
-                `/api/project_page_media/${mediaId}`,
-                `/api/project-page-medium/${mediaId}`,
-                `/api/project_page_medium/${mediaId}`,
-                `/api/project-pages/${pageId}/project-media/${mediaId}`,
-                `/api/project_pages/${pageId}/project_media/${mediaId}`,
-                `/api/project-pages/${pageId}/project-medium/${mediaId}`,
-                `/api/project_pages/${pageId}/project_medium/${mediaId}`
+                `/api/project-page/${pageId}/media/${mediaId}`,
+                `/api/project_page/${pageId}/media/${mediaId}`,
+                // Project-level parent nested media routes [2]
+                `/api/projects/${projectId}/pages/${pageId}/media/${mediaId}`,
+                `/api/projects/${projectId}/project-pages/${pageId}/media/${mediaId}`,
+                `/api/projects/${projectId}/project_pages/${pageId}/media/${mediaId}`
             ];
-
-            if (projectId) {
-                potentialRoutes.push(`/api/projects/${projectId}/pages/${pageId}/media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project-pages/${pageId}/media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project_pages/${pageId}/media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project-media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project_media/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project-medium/${mediaId}`);
-                potentialRoutes.push(`/api/projects/${projectId}/project_medium/${mediaId}`);
-            }
 
             for (const route of potentialRoutes) {
                 try {
@@ -785,7 +769,7 @@
                             </td>
                             <td>
                                 <!-- Details button color explicitly fixed to prevent black-on-black [2] -->
-                                <button class="btn" style="padding:5px 10px; font-size:0.7rem;" onclick="openProjectManager(${p.id})">Details</button>
+                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:var(--bg);" onclick="openProjectManager(${p.id})">Details</button>
                                 <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
                             </td>
                         </tr>
@@ -1571,5 +1555,6 @@
             hydrateMediaPickerGrid();
         }
     </script>
+    <!-- END APPENDED ENTERPRISE CMS PROJECT DETAILS UPGRADE & EMAIL MOD -->
 </body>
 </html>
