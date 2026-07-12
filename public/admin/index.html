@@ -413,13 +413,13 @@
                 
                 <div style="display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap;">
                     <!-- Batch selection controls inside Media Vault -->
-                    <button class="btn" id="toggle-multi-delete-btn" onclick="toggleMultiDeleteMode()" style="background: var(--surface-accent); color: var(--text);">
+                    <button class="btn" id="toggle-multi-delete-btn" onclick="toggleMultiDeleteMode()" style="background: var(--surface-accent); color: var(--text); width: auto;">
                         <i class="fas fa-tasks"></i> Enable Multi-Select Mode
                     </button>
                     <div id="multi-delete-actions-bar" style="display: none; gap: 10px; align-items: center;">
-                        <button class="btn btn-danger" onclick="executeBatchPurge()">Purge Selected (<span id="selected-assets-count">0</span>)</button>
-                        <button class="btn" style="background: var(--surface-accent); color: var(--text);" onclick="selectAllVaultAssets(true)">Select All</button>
-                        <button class="btn" style="background: var(--surface-accent); color: var(--text);" onclick="selectAllVaultAssets(false)">Clear Selection</button>
+                        <button class="btn btn-danger" style="width: auto;" onclick="executeBatchPurge()">Purge Selected (<span id="selected-assets-count">0</span>)</button>
+                        <button class="btn" style="background: var(--surface-accent); color: var(--text); width: auto;" onclick="selectAllVaultAssets(true)">Select All</button>
+                        <button class="btn" style="background: var(--surface-accent); color: var(--text); width: auto;" onclick="selectAllVaultAssets(false)">Clear Selection</button>
                     </div>
                 </div>
 
@@ -513,7 +513,6 @@
                 <table style="margin-top:15px;">
                     <thead><tr><th>Page Index</th><th>Module Title</th><th>Actions</th></tr></thead>
                     <tbody id="project-pages-list"></tbody>
-                </div>
                 </table>
             </div>
 
@@ -667,7 +666,7 @@
                 { url: `/api/media/${mediaId}?page_id=${page_id}`, method: 'DELETE' },
                 { url: `/api/media/${mediaId}?projectId=${projectId}`, method: 'DELETE' },
                 { url: `/api/media/${mediaId}?project_id=${projectId}`, method: 'DELETE' },
-                { url: `/api/project-media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
+                { url: `/api/project-media/${mediaId}`, method: 'DELETE', body: { Math, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
                 { url: `/api/project_media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
                 { url: `/api/media/${mediaId}`, method: 'DELETE', body: { projectId, pageId, mediaId, project_id: projectId, page_id: pageId, media_id: mediaId } },
 
@@ -981,9 +980,9 @@
         }
 
         // FORM CAPTURE INTERCEPT PIPELINE
-        const formObj = document.getElementById('advanced-portfolio-form');
-        if (formObj) {
-            formObj.addEventListener('submit', async (e) => {
+        const advancedForm = document.getElementById('advanced-portfolio-form');
+        if (advancedForm) {
+            advancedForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
                 const payload = {
@@ -1286,7 +1285,6 @@
         }
 
         function closeMediaPickerWindow() {
-            document.getElementById('media-modal-picker').style.none = 'block';
             document.getElementById('media-modal-picker').style.display = 'none';
         }
 
@@ -1451,8 +1449,8 @@
                         <td>Page ${p.page_number}</td>
                         <td>${p.title || 'Module Segment'}</td>
                         <td>
-                            <button class="btn" style="padding:5px; font-size:0.7rem;" onclick="openPageMediaManagerByIndex(${idx})">Media Logic</button>
-                            <button class="btn btn-danger" style="padding:5px; font-size:0.7rem;" onclick="deleteProjectPage(${p.id})">Del</button>
+                            <button class="btn" style="padding:5px; font-size:0.7rem; width: auto;" onclick="openPageMediaManagerByIndex(${idx})">Media Logic</button>
+                            <button class="btn btn-danger" style="padding:5px; font-size:0.7rem; width: auto;" onclick="deleteProjectPage(${p.id})">Del</button>
                         </td>
                     </tr>
                 `;
@@ -1500,7 +1498,7 @@
                         <td><input type="number" value="${m.display_order}" onchange="updateMediaOrder(this, ${m.id})" style="width:60px; padding:5px;"></td>
                         <td>${m.media_path.split('/').pop()}</td>
                         <td>${m.media_type}</td>
-                        <td><button class="btn btn-danger" style="padding:5px; font-size:0.7rem;" onclick="deleteMedia(${m.id})">Purge</button></td>
+                        <td><button class="btn btn-danger" style="padding:5px; font-size:0.7rem; width: auto;" onclick="deleteMedia(${m.id})">Purge</button></td>
                     </tr>
                 `;
             });
