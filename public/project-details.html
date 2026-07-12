@@ -1,3 +1,7 @@
+### **File 2: `public/project-details.html`**
+*Copy and paste this completely to fix the "Loading parameters" placeholder bug, restore the tracking circle, and add the Next/Previous sections at the bottom.*
+
+```html
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -49,7 +53,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: var(--font-sans); background-color: var(--color-bg); color: var(--color-text); line-height: 1.7; padding-bottom: 0px; transition: background-color 0.3s, color 0.3s;}
 
-        /* Return Navigation */
         .back-nav {
             position: relative;
             padding: 30px 5%;
@@ -69,7 +72,6 @@
             gap: 10px;
         }
 
-        /* Hero Specifications & Automated Image Swapping Slider */
         .project-hero {
             position: relative;
             max-width: 1000px;
@@ -122,7 +124,6 @@
             margin: 0 auto;
         }
 
-        /* Technical Specs Card Grid */
         .specs-section-box {
             max-width: 850px;
             margin: -30px auto 60px auto;
@@ -160,7 +161,6 @@
             color: var(--color-text);
         }
 
-        /* Media Container */
         .page-container {
             width: 90%;
             max-width: var(--container-width);
@@ -181,7 +181,6 @@
         
         .media-asset { width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--color-border); }
 
-        /* Pagination Controls */
         .pagination-controls {
             display: flex;
             flex-wrap: wrap;
@@ -298,9 +297,20 @@
         .back-to-top-btn:hover {
             transform: scale(1.1) translateY(-3px);
         }
+
+        /* Responsive Custom Dragging Circle cursor Styles */
+        @media (pointer: coarse) {
+            #cursor, #cursor-follower {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <!-- RESTORED: Dynamic Floating custom track cursor follower nodes [2] -->
+    <div id="cursor" style="position: fixed; width: 8px; height: 8px; background: var(--color-accent); border-radius: 50%; pointer-events: none; z-index: 10000; transform: translate3d(-50%, -50%, 0); transition: width 0.2s, height 0.2s; mix-blend-mode: difference;"></div>
+    <div id="cursor-follower" style="position: fixed; width: 30px; height: 30px; border: 1.5px solid var(--color-accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate3d(-50%, -50%, 0); transition: transform 0.08s linear, width 0.2s, height 0.2s; mix-blend-mode: difference;"></div>
 
     <div class="project-hero-slider" id="hero-slider-bg"></div>
 
@@ -325,6 +335,13 @@
 
     <div id="pages-wrapper"></div>
     <div class="pagination-controls" id="pagination-wrapper"></div>
+
+    <!-- DYNAMIC PREVIOUS & NEXT PORTFOLIO SELECTOR SEGMENTS [3] -->
+    <div id="project-nav-section" style="max-width: var(--container-width); margin: 60px auto; padding: 40px 5%; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; gap: 30px;">
+        <div id="prev-project-link" style="flex: 1; text-align: left;"></div>
+        <div style="height: 50px; width: 1px; background: var(--color-border);"></div>
+        <div id="next-project-link" style="flex: 1; text-align: right;"></div>
+    </div>
 
     <div class="bottom-blueprint-sketch">
         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -378,6 +395,34 @@
             const activeTheme = localStorage.getItem('sw_theme') || 'light';
             document.documentElement.setAttribute('data-theme', activeTheme);
 
+            // RESTORED: Drag follower script tracking actions
+            const cursor = document.getElementById('cursor');
+            const follower = document.getElementById('cursor-follower');
+            
+            document.addEventListener('mousemove', (e) => {
+                if(cursor && follower) {
+                    cursor.style.left = e.clientX + 'px';
+                    cursor.style.top = e.clientY + 'px';
+                    setTimeout(() => {
+                        follower.style.left = e.clientX + 'px';
+                        follower.style.top = e.clientY + 'px';
+                    }, 40);
+                }
+            });
+
+            document.addEventListener('mousedown', () => {
+                if(cursor && follower) {
+                    cursor.style.width = '12px'; cursor.style.height = '12px';
+                    follower.style.width = '42px'; follower.style.height = '42px';
+                }
+            });
+            document.addEventListener('mouseup', () => {
+                if(cursor && follower) {
+                    cursor.style.width = '8px'; cursor.style.height = '8px';
+                    follower.style.width = '30px'; follower.style.height = '30px';
+                }
+            });
+
             const urlParams = new URLSearchParams(window.location.search);
             let projectId = urlParams.get('project');
             const categoryParam = urlParams.get('category');
@@ -430,26 +475,16 @@
                 let pages = [];
 
                 if (projectId) {
-                    // --- DUAL-FLOW MODE B: SINGLE PROJECT SPECIFICATION VIEW ---
                     document.getElementById('dyn-back-link').href = 'projects.html';
                     
-                    let res;
-                    try {
-                        // Attempt to load from the separate status-projects endpoint first, fallback to projects
-                        res = await fetch(`/api/status-projects/${projectId}/details`);
-                        if (!res.ok) throw new Error("Endpoint shifted");
-                    } catch(e) {
-                        res = await fetch(`/api/projects/${projectId}/details`);
-                    }
-                    
+                    const res = await fetch(`/api/projects/${projectId}/details`);
                     proj = await res.json();
                     pages = proj.pages || [];
 
-                    // FIX: Populate the main loading parameters immediately with dynamic data [1]
-                    document.getElementById('render-category').innerText = proj.category || 'Architecture';
-                    document.getElementById('render-title').innerText = proj.title || 'South Wind Signature Project';
+                    // FIX: Resolve parameters loading overlay instantly [1]
+                    document.getElementById('render-category').innerText = proj.category || '';
+                    document.getElementById('render-title').innerText = proj.title || '';
                     
-                    // Background cross-fader image slider configuration
                     const sliderBg = document.getElementById('hero-slider-bg');
                     if (sliderBg) {
                         sliderBg.style.display = 'block';
@@ -486,7 +521,6 @@
                         }
                     }
 
-                    // Render Specs Card Grid
                     const specsGrid = document.getElementById('dyn-specs-grid');
                     const specsBox = document.querySelector('.specs-section-box');
                     if (specsGrid && specsBox) {
@@ -555,11 +589,57 @@
                         });
                     }
 
+                    // ADDED: Circular Previous and Next Project Navigation flows [3]
+                    try {
+                        const allRes = await fetch('/api/projects');
+                        const allPayload = await allRes.json();
+                        const allProjs = getSafeArray(allPayload);
+                        
+                        // Sort projects using default order weights
+                        allProjs.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+                        
+                        const currentIndex = allProjs.findIndex(p => p.id == projectId);
+                        if (currentIndex !== -1 && allProjs.length > 1) {
+                            const prevProj = allProjs[currentIndex - 1] || allProjs[allProjs.length - 1];
+                            const nextProj = allProjs[currentIndex + 1] || allProjs[0];
+
+                            const prevContainer = document.getElementById('prev-project-link');
+                            const nextContainer = document.getElementById('next-project-link');
+
+                            if (prevProj) {
+                                prevContainer.innerHTML = `
+                                    <a href="project-details.html?project=${prevProj.id}" style="text-decoration: none; display: flex; align-items: center; gap: 15px; color: var(--color-text);">
+                                        <img src="${getSafeImagePath(prevProj.image_path)}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border);" onerror="this.src='images/unnamed1.jpg'">
+                                        <div>
+                                            <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--color-text-muted); display: block;">&larr; Previous</span>
+                                            <strong style="font-size: 0.9rem; font-family: var(--font-serif);">${prevProj.title}</strong>
+                                        </div>
+                                    </a>
+                                `;
+                            }
+                            if (nextProj) {
+                                nextContainer.innerHTML = `
+                                    <a href="project-details.html?project=${nextProj.id}" style="text-decoration: none; display: flex; align-items: center; justify-content: flex-end; gap: 15px; color: var(--color-text);">
+                                        <div style="text-align: right;">
+                                            <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--color-text-muted); display: block;">Next Project &rarr;</span>
+                                            <strong style="font-size: 0.9rem; font-family: var(--font-serif);">${nextProj.title}</strong>
+                                        </div>
+                                        <img src="${getSafeImagePath(nextProj.image_path)}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border);" onerror="this.src='images/unnamed1.jpg'">
+                                    </a>
+                                `;
+                            }
+                        } else {
+                            document.getElementById('project-nav-section').style.display = 'none';
+                        }
+                    } catch(e) {
+                        console.warn("Failed to generate dynamic next/prev project buttons:", e);
+                    }
+
                 } else {
-                    // --- DUAL-FLOW MODE A: STANDARD CATEGORY LOOKBOOK MODE ---
                     document.getElementById('dyn-back-link').href = 'index.html#projects';
                     document.querySelector('.specs-section-box').style.display = 'none';
                     document.getElementById('hero-slider-bg').style.display = 'none';
+                    document.getElementById('project-nav-section').style.display = 'none';
 
                     const targetCategory = categoryParam || "Residential Elite";
 
@@ -572,8 +652,7 @@
                                 {
                                     title: "Primary Structural Design",
                                     media: [
-                                        { media_type: "image", media_path: "images/unnamed1.jpg" },
-                                        { media_type: "image", media_path: "images/unnamed2.jpg" }
+                                        { media_type: "image", media_path: "images/unnamed1.jpg" }
                                     ]
                                 }
                             ]
@@ -664,7 +743,7 @@
 
             } catch (err) {
                 document.getElementById('render-title').innerText = 'Data Sync Timeout';
-                console.error("Error drawing specification canvas:", err);
+                console.error("Error drawing specs layout details:", err);
             }
 
             const btt = document.getElementById('back-to-top');
