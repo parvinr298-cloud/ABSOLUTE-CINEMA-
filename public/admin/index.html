@@ -513,6 +513,7 @@
                 <table style="margin-top:15px;">
                     <thead><tr><th>Page Index</th><th>Module Title</th><th>Actions</th></tr></thead>
                     <tbody id="project-pages-list"></tbody>
+                </div>
                 </table>
             </div>
 
@@ -970,7 +971,6 @@
                                 ${hasVideo}
                             </td>
                             <td>
-                                <!-- High-contrast details button prevents black-on-black text visually -->
                                 <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--accent); color:var(--bg);" onclick="openProjectManager(${p.id})">Details</button>
                                 <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteProjectNode(${p.id})">Purge</button>
                             </td>
@@ -1286,6 +1286,7 @@
         }
 
         function closeMediaPickerWindow() {
+            document.getElementById('media-modal-picker').style.none = 'block';
             document.getElementById('media-modal-picker').style.display = 'none';
         }
 
@@ -1467,7 +1468,7 @@
 
         async function addNewProjectPage() {
             const id = document.getElementById('edit-proj-id').value;
-            const title = prompt("Enter Module Display Title:");
+            const title = prompt("Enter New Module Display Title:");
             if (!title) return;
             try {
                 await safeFetchJson(`/api/projects/${id}/pages`, {
@@ -1510,7 +1511,7 @@
             const pageId = document.getElementById('active-page-id').value;
             const path = document.getElementById('new-media-path').value;
             const type = document.getElementById('new-media-type').value;
-            if(!path) return alert("Select media asset framework first.");
+            if(!path) return alert("Select media asset first.");
             
             try {
                 await safeFetchJson(`/api/project-pages/${pageId}/media`, {
