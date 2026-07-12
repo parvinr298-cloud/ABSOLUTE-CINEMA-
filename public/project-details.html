@@ -34,7 +34,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-sans); background-color: var(--color-bg); color: var(--color-text); line-height: 1.7; padding-bottom: 0px;}
+        body { font-family: var(--font-sans); background-color: var(--color-bg); color: var(--color-text); line-height: 1.7; padding-bottom: 0px; transition: background-color 0.3s, color 0.3s;}
 
         /* Return Navigation */
         .back-nav {
@@ -186,6 +186,42 @@
             letter-spacing: 2px;
             text-transform: uppercase;
         }
+
+        /* Back to Top floating button */
+        .back-to-top-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--color-text);
+            font-size: 1.2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        [data-theme="dark"] .back-to-top-btn {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .back-to-top-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .back-to-top-btn:hover {
+            transform: scale(1.1) translateY(-3px);
+        }
     </style>
 </head>
 <body>
@@ -260,6 +296,8 @@
         <p class="footer-copyright">© 2024 SOUTH WIND ENGINEERING. ALL RIGHTS RESERVED.</p>
     </footer>
 
+    <button class="back-to-top-btn" id="back-to-top" title="Back to Top"><i class="fas fa-arrow-up"></i></button>
+
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const activeTheme = localStorage.getItem('sw_theme') || 'light';
@@ -312,7 +350,6 @@
                 let pages = [];
 
                 // --- ONLINE CATEGORY BACKEND LOOKUP AUTO-RESOLVER ---
-                // If we are online but landed on a category string link, look up the database automatically [1]
                 if (!isLocalPreview && !projectId && categoryParam) {
                     try {
                         const resAll = await fetch('/api/projects');
@@ -320,7 +357,7 @@
                         const allProjs = getSafeArray(payload);
                         const matchedProj = allProjs.find(p => p.category === categoryParam);
                         if (matchedProj) {
-                            projectId = matchedProj.id; // Map category redirect seamlessly to real database id [1, 2]
+                            projectId = matchedProj.id; 
                         }
                     } catch (e) {
                         console.error("Online category lookup resolution failed", e);
@@ -471,6 +508,19 @@
             } catch (err) {
                 document.getElementById('render-title').innerText = 'Data Sync Timeout';
             }
+
+            /* Back to Top button logic */
+            const btt = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    btt.classList.add('visible');
+                } else {
+                    btt.classList.remove('visible');
+                }
+            });
+            btt.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         });
     </script>
 </body>
