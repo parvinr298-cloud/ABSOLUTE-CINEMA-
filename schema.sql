@@ -1,3 +1,6 @@
+-- schema.sql
+-- Database schema for South Wind Engineering CMS
+
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -60,6 +63,10 @@ ALTER TABLE projects ADD COLUMN IF NOT EXISTS description TEXT;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_path TEXT;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS video_path TEXT;
 
+-- Safe non-destructive additions for CMS Status Filters and Google Drive Brochure Redirection
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'Ongoing';
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS brochure_url TEXT;
+
 -- New Architectural Project Pages Module
 CREATE TABLE IF NOT EXISTS project_pages (
     id SERIAL PRIMARY KEY,
@@ -85,7 +92,7 @@ CREATE TABLE IF NOT EXISTS project_media (
 -- LIVE DATABASE CLEAN UP & DEDUPLICATION (PREVENTS MIGRATION ERRORS)
 -- =========================================================================
 
--- 1. Delete existing duplicates so they do not block the Unique Constraints [1]
+-- 1. Delete existing duplicates so they do not block the Unique Constraints
 DELETE FROM services a 
 USING services b 
 WHERE a.id > b.id AND a.title = b.title;
@@ -94,7 +101,7 @@ DELETE FROM projects a
 USING projects b 
 WHERE a.id > b.id AND a.title = b.title;
 
--- 2. Safely apply Unique constraints to existing live tables [2]
+-- 2. Safely apply Unique constraints to existing live tables
 ALTER TABLE projects DROP CONSTRAINT IF EXISTS unique_project_title;
 ALTER TABLE projects ADD CONSTRAINT unique_project_title UNIQUE (title);
 
@@ -111,20 +118,22 @@ INSERT INTO site_settings (key, value) VALUES
 ('hero_title', 'Architectural Excellence. Structural Integrity.'),
 ('hero_subtitle', 'Engineering the Future of Dhaka'),
 ('hero_description', 'From luxury residences to commercial landmarks, we bring world-class civil engineering and innovative design to Mirpur and beyond.'),
-('hero_image', 'Images/unnamed6.jpg'),
+('hero_image', 'images/unnamed6.jpg'),
 ('about_title', 'Visionary Leadership'),
 ('about_subtitle', 'A Message From Leadership'),
 ('about_designation', 'Managing Director, South Wind Engineering'),
 ('about_quote', '"We don''t just build houses; we construct legacies that stand the test of time and weather."'),
 ('about_p1', 'South Wind Engineering has been at the forefront of Dhaka’s urban transformation. Our approach combines rigorous civil engineering standards with aesthetic brilliance. We specialize in RAJUK-compliant designs, ensuring every project is legally sound and structurally superior.'),
 ('about_p2', 'Located in the heart of Mirpur 10, our studio serves as a hub for innovation where architects and engineers collaborate to turn your blueprints into reality.'),
-('about_director_image', 'Images/unnamed8.jpg'),
+('about_director_image', 'images/unnamed8.jpg'),
 ('contact_address', 'House #9, Road #6, Block A\nMirpur 10, Dhaka North, 1216'),
 ('contact_plus_code', 'R969+H8 Dhaka'),
 ('contact_phone_1', '+880 1775-202920'),
 ('contact_phone_2', '+880 1912-835901'),
 ('contact_email', 'southwindengineering43@gmail.com'),
 ('contact_whatsapp', '8801775202920'),
+('slider_before_image', 'images/unnamed.jpg'),
+('slider_after_image', 'images/unnamed3.jpg'),
 ('social_facebook', 'https://www.facebook.com/Southwindengineerings/'),
 ('social_instagram', 'https://www.instagram.com/southwindengineering/'),
 ('social_linkedin', '#'),
@@ -143,16 +152,16 @@ INSERT INTO services (title, description, icon_class, display_order) VALUES
 ('Interior Design', 'Luxury interior solutions that reflect your personality while maintaining practical elegance.', 'fas fa-couch', 4),
 ('Construction Mgmt.', 'End-to-end site supervision ensuring materials and workmanship meet our elite standards.', 'fas fa-hard-hat', 5),
 ('Urban Planning', 'Sustainable development strategies for modern urban environments in Bangladesh.', 'fas fa-city', 6)
-ON CONFLICT (title) DO NOTHING; -- Unique constraint will resolve this cleanly [2]
+ON CONFLICT (title) DO NOTHING;
 
 -- Seed Default Projects matching layout classes
 INSERT INTO projects (title, category, is_featured, display_order, images) VALUES
-('South Wind Project 1', 'Residential Elite', true, 1, '["Images/unnamed1.jpg"]'::jsonb),
-('South Wind Project 2', 'Modern Facade', true, 2, '["Images/unnamed2.jpg"]'::jsonb),
-('South Wind Project 3', 'Luxury Living', true, 3, '["Images/unnamed3.jpg"]'::jsonb),
-('South Wind Project 4', 'Structural Framework', true, 4, '["Images/unnamed4.jpg"]'::jsonb),
-('South Wind Project 5', 'Commercial Space', true, 5, '["Images/unnamed5.jpg"]'::jsonb),
-('South Wind Project 6', 'Construction Site', true, 6, '["Images/unnamed.jpg"]'::jsonb),
-('South Wind Project 7', 'Architectural Detail', true, 7, '["Images/unnamed9.jpg"]'::jsonb),
-('South Wind Project 8', 'Urban Landmark', true, 8, '["Images/unnamed10.jpg"]'::jsonb)
-ON CONFLICT (title) DO NOTHING; -- Unique constraint will resolve this cleanly [2]
+('South Wind Project 1', 'Residential Elite', true, 1, '["images/unnamed1.jpg"]'::jsonb),
+('South Wind Project 2', 'Modern Facade', true, 2, '["images/unnamed2.jpg"]'::jsonb),
+('South Wind Project 3', 'Luxury Living', true, 3, '["images/unnamed3.jpg"]'::jsonb),
+('South Wind Project 4', 'Structural Framework', true, 4, '["images/unnamed4.jpg"]'::jsonb),
+('South Wind Project 5', 'Commercial Space', true, 5, '["images/unnamed5.jpg"]'::jsonb),
+('South Wind Project 6', 'Construction Site', true, 6, '["images/unnamed.jpg"]'::jsonb),
+('South Wind Project 7', 'Architectural Detail', true, 7, '["images/unnamed9.jpg"]'::jsonb),
+('South Wind Project 8', 'Urban Landmark', true, 8, '["images/unnamed10.jpg"]'::jsonb)
+ON CONFLICT (title) DO NOTHING;
