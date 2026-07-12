@@ -7,8 +7,11 @@
     
     <meta name="description" id="seo-desc" content="South Wind Engineering - House #9, Road #6, Block A, Mirpur 10, Dhaka North. Professional Civil Engineering, Architecture & Construction Services.">
     
+    <!-- Open Graph SEO Metadata Configurations -->
     <meta property="og:title" id="og-title" content="South Wind Engineering">
     <meta property="og:description" id="og-desc" content="Professional Civil Engineering Solutions">
+    <meta property="og:image" id="og-image" content="images/unnamed6.jpg">
+    <meta property="og:type" content="website">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,7 +67,7 @@
             color: var(--color-text);
             line-height: 1.7;
             overflow-x: hidden;
-            cursor: none;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         /* Custom Scrollbar */
@@ -84,6 +87,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            transition: opacity 0.5s ease;
         }
 
         .loader-content {
@@ -126,34 +130,23 @@
             transition: width 0.4s ease;
         }
 
-        /* ==========================================================================
-           3. CUSTOM CURSOR
-           ========================================================================== */
-        #cursor {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: var(--color-accent);
+        /* Double Ring Loading Compass */
+        .loading-compass {
+            width: 50px;
+            height: 50px;
+            border: 2px solid transparent;
+            border-top-color: var(--color-accent);
+            border-bottom-color: var(--color-accent);
             border-radius: 50%;
-            pointer-events: none;
-            z-index: 10001;
-            mix-blend-mode: difference;
-            transition: transform 0.1s;
+            animation: spinCompass 1.5s linear infinite;
+            margin: 0 auto 25px auto;
         }
-
-        #cursor-follower {
-            position: fixed;
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--color-text-muted);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10001;
-            transition: transform 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+        @keyframes spinCompass {
+            to { transform: rotate(360deg); }
         }
 
         /* ==========================================================================
-           4. NAVIGATION
+           3. CUSTOM NAVIGATION & HAMBURGER
            ========================================================================== */
         header {
             position: fixed;
@@ -170,6 +163,9 @@
             background: var(--color-bg);
             height: 70px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--color-border);
         }
 
         .nav-inner {
@@ -188,6 +184,7 @@
             text-decoration: none;
             color: var(--color-text);
             letter-spacing: -0.5px;
+            z-index: 1100;
         }
 
         .nav-links {
@@ -226,8 +223,76 @@
             padding: 5px;
         }
 
+        /* Hamburger Styles */
+        .hamburger-btn {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 26px;
+            height: 18px;
+            cursor: pointer;
+            z-index: 1100;
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+        .hamburger-btn span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: var(--color-text);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hamburger-btn.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        .hamburger-btn.active span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+        .hamburger-btn.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Mobile Nav Slides Panel */
+        .mobile-nav-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 380px;
+            height: 100vh;
+            background: var(--color-bg);
+            z-index: 1050;
+            box-shadow: -15px 0 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            gap: 2rem;
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .mobile-nav-panel.active {
+            right: 0;
+        }
+        .mobile-nav-panel a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid transparent;
+            padding-bottom: 5px;
+            transition: all 0.3s;
+        }
+        .mobile-nav-panel a:hover {
+            color: var(--color-text-muted);
+            border-bottom-color: var(--color-accent);
+        }
+
         /* ==========================================================================
-           5. HERO SECTION
+           4. HERO SECTION & 2D BLUEPRINT CRANE ANIMATION
            ========================================================================== */
         .hero {
             height: 100vh;
@@ -239,13 +304,6 @@
             background: #000;
         }
 
-        .hero-video-bg {
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-        }
-
-        /* Using unnamed (6).jpg as the hero background */
         .hero-img-fallback {
             position: absolute;
             inset: 0;
@@ -253,16 +311,76 @@
                         url('images/unnamed6.jpg') center/cover no-repeat;
             z-index: 1;
             transform: scale(1.1);
-            animation: heroZoom 20s infinite alternate;
         }
 
-        @keyframes heroZoom {
-            to { transform: scale(1); }
+        /* Moving Blueprint Grid */
+        .blueprint-grid-pan {
+            position: absolute;
+            inset: 0;
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            z-index: 2;
+            pointer-events: none;
+            animation: gridMovingPan 90s linear infinite;
+        }
+        [data-theme="light"] .blueprint-grid-pan {
+            background-image: 
+                linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px);
+        }
+        @keyframes gridMovingPan {
+            from { background-position: 0 0; }
+            to { background-position: 500px 500px; }
+        }
+
+        /* Animated Building Drawing Outlines */
+        .building-outlines-svg {
+            position: absolute;
+            bottom: 0;
+            right: 5%;
+            width: 45%;
+            height: 55%;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+        .laser-building-line {
+            fill: none;
+            stroke: var(--color-accent);
+            stroke-width: 1.5;
+            stroke-dasharray: 1200;
+            stroke-dashoffset: 1200;
+            animation: drawBuildingWireframe 10s ease-in-out infinite alternate;
+        }
+        @keyframes drawBuildingWireframe {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* 2D Vector Lifting Crane */
+        .skyline-animated-crane {
+            position: absolute;
+            bottom: 60px;
+            left: 5%;
+            width: 140px;
+            height: 160px;
+            opacity: 0.3;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .crane-arm-jib {
+            transform-origin: 30px 45px;
+            animation: pivotJibArm 8s ease-in-out infinite alternate;
+        }
+        @keyframes pivotJibArm {
+            0% { transform: rotate(-8deg); }
+            100% { transform: rotate(12deg); }
         }
 
         .hero-content {
             position: relative;
-            z-index: 2;
+            z-index: 3;
             text-align: center;
             color: #fff;
             max-width: 1000px;
@@ -301,26 +419,25 @@
         .btn-primary {
             display: inline-block;
             padding: 18px 45px;
-            background: #fff;
-            color: #000;
+            background: var(--color-accent);
+            color: var(--color-bg);
             text-decoration: none;
             font-size: 0.9rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 2px;
             transition: all 0.3s;
-            border: 1px solid #fff;
+            border: 1px solid var(--color-accent);
             opacity: 0;
             transform: translateY(30px);
         }
-
         .btn-primary:hover {
             background: transparent;
-            color: #fff;
+            color: var(--color-text);
         }
 
         /* ==========================================================================
-           6. LEADERSHIP (BOSS SECTION)
+           5. METRICS BANNERS & LEADERSHIP
            ========================================================================== */
         .section-padding { padding: 140px 0; }
         
@@ -328,6 +445,46 @@
             width: 90%;
             max-width: var(--container-width);
             margin: 0 auto;
+        }
+
+        /* Premium Counters Row */
+        .metrics-banner {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            padding: 40px 60px;
+            margin: -60px auto 100px auto;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+        [data-theme="light"] .metrics-banner {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.03);
+        }
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .metric-val-num {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: var(--color-accent);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .metric-label-txt {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--color-text-muted);
+            font-weight: 600;
         }
 
         .leadership-grid {
@@ -372,7 +529,7 @@
         }
 
         /* ==========================================================================
-           7. SERVICES SECTION
+           6. SERVICES SECTION
            ========================================================================== */
         .services-section {
             background: var(--color-surface);
@@ -423,6 +580,105 @@
             margin-bottom: 20px;
             font-family: var(--font-serif);
         }
+
+        /* ==========================================================================
+           7. BEFORE/AFTER IMAGE COMPARISON SLIDER
+           ========================================================================== */
+        .slider-section-container {
+            max-width: 960px;
+            margin: 0 auto 120px auto;
+            padding: 0 20px;
+        }
+        .before-after-slider-box {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/10;
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+            border: 1px solid var(--color-border);
+        }
+        .slider-image-node {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .slider-image-node img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .slider-before-box {
+            z-index: 1;
+        }
+        .slider-after-box {
+            z-index: 2;
+            width: 50%;
+            overflow: hidden;
+            border-right: 2.5px solid #ffffff;
+        }
+        .slider-after-box img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+        }
+        .comp-label {
+            position: absolute;
+            bottom: 25px;
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            padding: 8px 18px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            border-radius: 2px;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .label-left-side { left: 25px; }
+        .label-right-side { right: 25px; }
+
+        .slider-drag-control {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background: #ffffff;
+            z-index: 10;
+            cursor: ew-resize;
+            transform: translateX(-50%);
+        }
+        .slider-drag-control::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        }
+        .handle-arrow-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            color: #000;
+            z-index: 11;
+            pointer-events: none;
+        }
+        .handle-arrow-btn.arrow-left { left: calc(50% - 13px); }
+        .handle-arrow-btn.arrow-right { right: calc(50% - 13px); }
 
         /* ==========================================================================
            8. PROJECT GALLERY
@@ -518,7 +774,7 @@
             height: 500px;
             width: 100%;
             border: 1px solid var(--color-border);
-            border-radius: 4px;
+            border-radius: 4px; 
             overflow: hidden;
         }
 
@@ -561,7 +817,7 @@
             padding: 80px 0;
             border-top: 1px solid var(--color-border);
             text-align: center;
-            position: relative; /* Setup absolute viewport tracking */
+            position: relative; 
             overflow: hidden;
             background: var(--color-surface-dark);
         }
@@ -608,21 +864,59 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
+            color: var(--color-text) !important;
             text-decoration: none;
             font-size: 1.4rem;
             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        [data-theme="dark"] .float-btn {
+            background: rgba(0,0,0,0.3) !important;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .float-btn:hover { transform: scale(1.1) translateY(-3px); }
+
+        .f-whatsapp { color: #25D366 !important; }
+        .f-phone { color: var(--color-accent) !important; }
+
+        /* Back to Top floating button */
+        .back-to-top-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--color-text);
+            font-size: 1.2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        [data-theme="dark"] .back-to-top-btn {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .back-to-top-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .back-to-top-btn:hover {
+            transform: scale(1.1) translateY(-3px);
         }
 
-        .f-whatsapp { background: #25D366; }
-        .f-phone { background: #000; }
-        [data-theme="dark"] .f-phone { background: #fff; color: #000; }
-
-        .float-btn:hover { transform: scale(1.1); }
-
         /* ==========================================================================
-           12. RESPONSIVE
+           12. RESPONSIVE & ANIMATIONS
            ========================================================================== */
         @media (max-width: 992px) {
             .leadership-grid { grid-template-columns: 1fr; }
@@ -630,12 +924,15 @@
             .boss-info { order: 1; text-align: center; }
             .boss-quote { border-left: none; border-top: 3px solid var(--color-text); padding: 20px 0; }
             .nav-links { display: none; }
+            .hamburger-btn { display: flex; }
             .hero h1 { font-size: 3.5rem; }
             .gi-1, .gi-2, .gi-3, .gi-4, .gi-5, .gi-6, .gi-7 { grid-column: span 12; height: 350px; }
+            .building-outlines-svg { display: none; }
         }
 
         /* Animation classes */
-        .reveal { opacity: 1 !important; transform: translateY(0) !important; transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
         /* DEEP GRAPHIC BLUEPRINT SKYLINE CONTEXT */
         .footer-skyline-bg {
@@ -647,7 +944,7 @@
             pointer-events: none;
             user-select: none;
             color: var(--color-text);
-            opacity: 0.15; /* Perfectly legible but non-blocking blend */
+            opacity: 0.15; 
             z-index: 1;
         }
         .footer-skyline-bg svg {
@@ -664,6 +961,7 @@
 
     <div id="premium-loader">
         <div class="loader-content">
+            <div class="loading-compass"></div>
             <div class="loader-logo">
                 <span>SOUTH WIND</span>
             </div>
@@ -672,9 +970,6 @@
             </div>
         </div>
     </div>
-
-    <div id="cursor"></div>
-    <div id="cursor-follower"></div>
 
     <header id="main-header">
         <div class="nav-inner">
@@ -688,26 +983,79 @@
                     <i class="fas fa-moon"></i>
                 </button>
             </nav>
+            <button class="hamburger-btn" id="hamburger-trigger" aria-label="Toggle navigation Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </header>
 
+    <div class="mobile-nav-panel" id="mobile-panel">
+        <a href="#about">The Studio</a>
+        <a href="#services">Services</a>
+        <a href="#projects">Portfolio</a>
+        <a href="#contact">Contact</a>
+    </div>
+
     <section class="hero">
         <div class="hero-img-fallback" id="hero-bg-layer"></div>
+        <div class="blueprint-grid-pan"></div>
+        
+        <!-- Interactive Building Outlines drawing animation -->
+        <svg class="building-outlines-svg" viewBox="0 0 600 400" preserveAspectRatio="none">
+            <path class="laser-building-line" d="M 50,400 L 50,150 L 150,150 L 150,80 L 250,80 L 250,400 M 150,400 L 150,220 L 350,220 L 350,120 L 480,120 L 480,400 M 350,400 L 350,280 L 550,280 L 550,400" />
+            <path class="laser-building-line" style="animation-delay: 2s;" d="M 80,150 L 80,400 M 120,150 L 120,400 M 180,80 L 180,400 M 220,80 L 220,400 M 380,120 L 380,400 M 420,120 L 420,400 M 450,120 L 450,400" />
+        </svg>
+
+        <!-- Skyline Lifting Crane Animation -->
+        <svg class="skyline-animated-crane" viewBox="0 0 100 120">
+            <!-- Tower base mast -->
+            <line x1="30" y1="120" x2="30" y2="45" stroke="var(--color-accent)" stroke-width="2" />
+            <line x1="25" y1="120" x2="35" y2="45" stroke="var(--color-accent)" stroke-width="0.75" />
+            <line x1="35" y1="120" x2="25" y2="45" stroke="var(--color-accent)" stroke-width="0.75" />
+            <!-- Jib boom (crane arm) -->
+            <g class="crane-arm-jib">
+                <line x1="-40" y1="45" x2="80" y2="45" stroke="var(--color-accent)" stroke-width="2.5" />
+                <line x1="-40" y1="45" x2="0" y2="30" stroke="var(--color-accent)" stroke-width="1" />
+                <line x1="80" y1="45" x2="0" y2="30" stroke="var(--color-accent)" stroke-width="1" />
+                <!-- Load hoist line and weight -->
+                <line x1="60" y1="45" x2="60" y2="85" stroke="var(--color-accent)" stroke-width="0.75" />
+                <rect x="57" y="85" width="6" height="6" fill="var(--color-accent)" />
+            </g>
+        </svg>
+
         <div class="hero-content">
-            <span class="hero-subtitle" id="dyn-hero-subtitle">Engineering the Future of Dhaka</span>
-            <h1 id="dyn-hero-title">Architectural Excellence. Structural Integrity.</h1>
-            <p id="dyn-hero-desc">From luxury residences to commercial landmarks, we bring world-class civil engineering and innovative design to Mirpur and beyond.</p>
-            <a href="#contact" class="btn-primary">Start a Consultation</a>
+            <span class="hero-subtitle" id="dyn-hero-subtitle" class="reveal">Engineering the Future of Dhaka</span>
+            <h1 id="dyn-hero-title" class="reveal">Architectural Excellence. Structural Integrity.</h1>
+            <p id="dyn-hero-desc" class="reveal">From luxury residences to commercial landmarks, we bring world-class civil engineering and innovative design to Mirpur and beyond.</p>
+            <a href="#contact" class="btn-primary reveal">Start a Consultation</a>
         </div>
     </section>
+
+    <!-- Appended animated metrics block -->
+    <div class="metrics-banner reveal">
+        <div class="metric-item">
+            <div class="metric-val-num" data-target="45">0</div>
+            <div class="metric-label-txt">Completed Projects</div>
+        </div>
+        <div class="metric-item">
+            <div class="metric-val-num" data-target="150">0</div>
+            <div class="metric-label-txt">Satisfied Clients</div>
+        </div>
+        <div class="metric-item">
+            <div class="metric-val-num" data-target="12">0</div>
+            <div class="metric-label-txt">Years Experience</div>
+        </div>
+    </div>
 
     <section id="about" class="section-padding">
         <div class="container">
             <div class="leadership-grid">
-                <div class="boss-image-container">
-                    <img id="dyn-about-img" src="images/unnamed8.jpg" alt="Managing Director - South Wind Engineering">
+                <div class="boss-image-container reveal">
+                    <img id="dyn-about-img" src="images/unnamed8.jpg" alt="Managing Director - South Wind Engineering" loading="lazy">
                 </div>
-                <div class="boss-info">
+                <div class="boss-info reveal">
                     <span id="dyn-about-meta">A Message From Leadership</span>
                     <h2 id="dyn-about-title">Visionary Leadership</h2>
                     <span class="designation" id="dyn-about-desig">Managing Director, South Wind Engineering</span>
@@ -723,97 +1071,91 @@
 
     <section id="services" class="section-padding services-section">
         <div class="container">
-            <div class="section-header">
+            <div class="section-header reveal">
                 <span>Core Competencies</span>
                 <h3>Our Expertise</h3>
             </div>
             <div class="services-grid" id="dyn-services-container">
-                <div class="service-card">
-                    <i class="fas fa-drafting-compass"></i>
-                    <h4>Architectural Design</h4>
-                    <p>Custom residential and commercial plans that maximize space, light, and modern functionality.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-building"></i>
-                    <h4>Structural Engineering</h4>
-                    <p>Advanced structural analysis ensuring safety and longevity using the latest construction tech.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-file-signature"></i>
-                    <h4>RAJUK Approvals</h4>
-                    <p>Expert navigation of building codes and legal documentation for seamless project approval.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-couch"></i>
-                    <h4>Interior Design</h4>
-                    <p>Luxury interior solutions that reflect your personality while maintaining practical elegance.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-hard-hat"></i>
-                    <h4>Construction Mgmt.</h4>
-                    <p>End-to-end site supervision ensuring materials and workmanship meet our elite standards.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-city"></i>
-                    <h4>Urban Planning</h4>
-                    <p>Sustainable development strategies for modern urban environments in Bangladesh.</p>
-                </div>
+                <!-- Services Cards dynamic loading structure -->
             </div>
         </div>
     </section>
 
+    <!-- Appended Before/After Image Comparison Slider Panel -->
+    <div class="slider-section-container reveal">
+        <div class="section-header" style="margin-bottom: 50px;">
+            <span>Structural Evolutions</span>
+            <h3>Before & After Slider</h3>
+        </div>
+        <div class="before-after-slider-box" id="slider-compare">
+            <div class="slider-image-node slider-before-box">
+                <img src="images/unnamed.jpg" alt="Before Project" loading="lazy">
+                <div class="comp-label label-left-side">Before Construction</div>
+            </div>
+            <div class="slider-image-node slider-after-box" id="after-image-clip">
+                <img src="images/unnamed3.jpg" alt="After Project" loading="lazy">
+                <div class="comp-label label-right-side">Completed Structure</div>
+            </div>
+            <div class="slider-drag-control" id="slider-handle">
+                <div class="handle-arrow-btn arrow-left"><i class="fas fa-chevron-left"></i></div>
+                <div class="handle-arrow-btn arrow-right"><i class="fas fa-chevron-right"></i></div>
+            </div>
+        </div>
+    </div>
+
     <section id="projects" class="section-padding">
         <div class="container">
-            <div class="section-header">
+            <div class="section-header reveal">
                 <span>Our Work</span>
                 <h3>Signature Portfolio</h3>
             </div>
             <div class="gallery-grid" id="dyn-gallery-container">
-                <div class="gallery-item gi-1">
+                <!-- Fallback items used initially before hydration finishes -->
+                <div class="gallery-item gi-1 reveal">
                     <a href="project-details.html?category=Residential%20Elite" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
-                        <img src="images/unnamed1.jpg" alt="South Wind Project">
+                        <img src="images/unnamed1.jpg" alt="South Wind Project" loading="lazy">
                         <div class="item-overlay"><span>Residential Elite</span></div>
                     </a>
                 </div>
-                <div class="gallery-item gi-2">
+                <div class="gallery-item gi-2 reveal">
                     <a href="project-details.html?category=Modern%20Facade" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
-                        <img src="images/unnamed2.jpg" alt="South Wind Project">
+                        <img src="images/unnamed2.jpg" alt="South Wind Project" loading="lazy">
                         <div class="item-overlay"><span>Modern Facade</span></div>
                     </a>
                 </div>
-                <div class="gallery-item gi-3">
+                <div class="gallery-item gi-3 reveal">
                     <a href="project-details.html?category=Luxury%20Living" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
-                        <img src="images/unnamed3.jpg" alt="South Wind Project">
+                        <img src="images/unnamed3.jpg" alt="South Wind Project" loading="lazy">
                         <div class="item-overlay"><span>Luxury Living</span></div>
                     </a>
                 </div>
-                <div class="gallery-item gi-4">
+                <div class="gallery-item gi-4 reveal">
                     <a href="project-details.html?category=Structural%20Framework" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
-                        <img src="images/unnamed4.jpg" alt="South Wind Project">
+                        <img src="images/unnamed4.jpg" alt="South Wind Project" loading="lazy">
                         <div class="item-overlay"><span>Structural Framework</span></div>
                     </a>
                 </div>
-                <div class="gallery-item gi-5">
+                <div class="gallery-item gi-5 reveal">
                     <a href="project-details.html?category=Commercial%20Space" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
-                        <img src="images/unnamed5.jpg" alt="South Wind Project">
+                        <img src="images/unnamed5.jpg" alt="South Wind Project" loading="lazy">
                         <div class="item-overlay"><span>Commercial Space</span></div>
                     </a>
                 </div>
-                <div class="gallery-item gi-6">
+                <div class="gallery-item gi-6 reveal">
                     <a href="project-details.html?category=Construction%20Site" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
-                        <img src="images/unnamed.jpg" alt="South Wind Project">
+                        <img src="images/unnamed.jpg" alt="South Wind Project" loading="lazy">
                         <div class="item-overlay"><span>Construction Site</span></div>
                     </a>
                 </div>
-                <div class="gallery-item gi-7">
+                <div class="gallery-item gi-7 reveal">
                     <a href="project-details.html?category=Architectural%20Detail" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
-                        <img src="images/unnamed9.jpg" alt="South Wind Project">
+                        <img src="images/unnamed9.jpg" alt="South Wind Project" loading="lazy">
                         <div class="item-overlay"><span>Architectural Detail</span></div>
                     </a>
                 </div>
-                <div class="gallery-item gi-1">
+                <div class="gallery-item gi-1 reveal">
                     <a href="project-details.html?category=Urban%20Landmark" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
-                        <img src="images/unnamed10.jpg" alt="South Wind Project">
+                        <img src="images/unnamed10.jpg" alt="South Wind Project" loading="lazy">
                         <div class="item-overlay"><span>Urban Landmark</span></div>
                     </a>
                 </div>
@@ -824,29 +1166,29 @@
     <section id="contact" class="section-padding contact-section">
         <div class="container">
             <div class="contact-flex">
-                <div class="section-header" style="text-align: left;">
+                <div class="section-header reveal" style="text-align: left;">
                     <span>Get in Touch</span>
                     <h3>Let's Build Something Great</h3>
                 </div>
                 
                 <div class="contact-info-grid">
-                    <div class="info-box">
+                    <div class="info-box reveal">
                         <h5>Corporate Office</h5>
                         <p id="dyn-addr">House #9, Road #6, Block A<br>Mirpur 10, Dhaka North, 1216</p>
                         <p style="margin-top:10px; font-size:0.9rem; color:var(--color-text-muted);" id="dyn-pluscode">Plus Code: R969+H8 Dhaka</p>
                     </div>
-                    <div class="info-box">
+                    <div class="info-box reveal">
                         <h5>Direct Contact</h5>
                         <a href="tel:+8801775202920" id="dyn-phone1">+880 1775-202920</a>
                         <a href="tel:+8801912835901" id="dyn-phone2">+880 1912-835901</a>
                     </div>
-                    <div class="info-box">
+                    <div class="info-box reveal">
                         <h5>Email Us</h5>
                         <a href="mailto:southwindengineering43@gmail.com" id="dyn-email">southwindengineering43@gmail.com</a>
                     </div>
                 </div>
 
-                <div class="form-wrapper">
+                <div class="form-wrapper reveal">
                     <form id="public-contact-form">
                         <div class="form-group">
                             <input type="text" id="form-name" class="form-control" placeholder="YOUR FULL NAME" required>
@@ -864,7 +1206,14 @@
                     </form>
                 </div>
 
-                <div class="map-wrapper">
+                <!-- Dynamic maps redirection button -->
+                <div style="text-align: center; margin-bottom: 20px;" class="reveal">
+                    <a href="#" id="dyn-map-redirect" class="btn-primary" target="_blank" style="display: inline-flex; align-items: center; gap: 10px; font-size: 0.85rem; padding: 12px 30px;">
+                        <i class="fas fa-map-marked-alt"></i> Open in Google Maps
+                    </a>
+                </div>
+
+                <div class="map-wrapper reveal">
                     <iframe 
                         id="dyn-iframe"
                         src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14602.434608779951!2d90.3662281!3d23.8058288!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c13915830727%3A0xe54d9241b31a24d5!2sSouth%20Wind%20Engineering!5e0!3m2!1sen!2sbd!4v1715854832545!5m2!1sen!2sbd" 
@@ -881,54 +1230,43 @@
     </section>
 
     <footer>
-        <!-- Absolute Layered Blueprint Silhouette Skyline Background Inside Footer boundaries -->
+        <!-- Shaded Blueprint Construction Skyline Background inside Footer boundaries -->
         <div class="footer-skyline-bg">
             <svg viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Layer 1: Solid shadow buildings (Deep Background) -->
-                <rect x="50" y="30" width="70" height="90" fill="currentColor" opacity="0.12" />
-                <rect x="180" y="10" width="90" height="110" fill="currentColor" opacity="0.15" />
-                <polygon points="340,120 340,40 390,20 440,40 440,120" fill="currentColor" opacity="0.12" />
-                <rect x="500" y="50" width="100" height="70" fill="currentColor" opacity="0.08" />
-                <rect x="650" y="25" width="80" height="95" fill="currentColor" opacity="0.15" />
-                <rect x="790" y="15" width="85" height="105" fill="currentColor" opacity="0.18" />
-                <polygon points="940,120 940,50 990,30 1040,50 1040,120" fill="currentColor" opacity="0.12" />
-                <rect x="1080" y="40" width="75" height="80" fill="currentColor" opacity="0.1" />
+                <!-- Deep Background Silhouette blocks -->
+                <rect x="50" y="30" width="70" height="90" fill="currentColor" opacity="0.1" />
+                <rect x="180" y="10" width="90" height="110" fill="currentColor" opacity="0.13" />
+                <polygon points="340,120 340,40 390,20 440,40 440,120" fill="currentColor" opacity="0.1" />
+                <rect x="500" y="50" width="100" height="70" fill="currentColor" opacity="0.06" />
+                <rect x="650" y="25" width="80" height="95" fill="currentColor" opacity="0.13" />
+                <rect x="790" y="15" width="85" height="105" fill="currentColor" opacity="0.15" />
+                <polygon points="940,120 940,50 990,30 1040,50 1040,120" fill="currentColor" opacity="0.1" />
+                <rect x="1080" y="40" width="75" height="80" fill="currentColor" opacity="0.08" />
 
-                <!-- Layer 2: Technical Line details & Cranes (Foreground) -->
-                <path d="M 30,120 L 30,30 L 100,15 M 30,40 L 100,40 M 30,30 L 10,35 M 25,120 L 25,30 M 35,120 L 35,30" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.25" />
-                <path d="M 80,40 L 80,70 L 75,70 L 75,120" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.25" />
+                <!-- Front detail drawing lines -->
+                <path d="M 30,120 L 30,30 L 100,15 M 30,40 L 100,40 M 30,30 L 10,35 M 25,120 L 25,30 M 35,120 L 35,30" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" />
+                <path d="M 80,40 L 80,70 L 75,70 L 75,120" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.2" />
                 
-                <rect x="130" y="50" width="80" height="70" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.25" />
-                <line x1="130" y1="50" x2="210" y2="120" stroke="currentColor" stroke-width="0.75" opacity="0.15" />
-                <line x1="210" y1="50" x2="130" y2="120" stroke="currentColor" stroke-width="0.75" opacity="0.15" />
+                <rect x="130" y="50" width="80" height="70" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" />
+                <line x1="130" y1="50" x2="210" y2="120" stroke="currentColor" stroke-width="0.5" opacity="0.1" />
+                <line x1="210" y1="50" x2="130" y2="120" stroke="currentColor" stroke-width="0.5" opacity="0.1" />
                 
-                <path d="M 260,120 L 260,20 L 290,10 L 320,20 L 320,120 Z" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.35" />
-                <line x1="290" y1="10" x2="290" y2="120" stroke="currentColor" stroke-width="0.75" opacity="0.25" stroke-dasharray="2 2" />
-                <rect x="270" y="30" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.75" opacity="0.25" />
-                <rect x="300" y="30" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.75" opacity="0.25" />
-                <rect x="270" y="55" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.75" opacity="0.25" />
-                <rect x="300" y="55" width="10" height="15" fill="none" stroke="currentColor" stroke-width="0.75" opacity="0.25" />
+                <path d="M 260,120 L 260,20 L 290,10 L 320,20 L 320,120 Z" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
+                <line x1="290" y1="10" x2="290" y2="120" stroke="currentColor" stroke-width="0.5" opacity="0.2" stroke-dasharray="2 2" />
                 
-                <path d="M 370,120 L 370,60 L 450,35 L 450,120 Z" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.25" />
-                <line x1="370" y1="75" x2="450" y2="75" stroke="currentColor" stroke-width="0.75" opacity="0.15" />
-                <line x1="370" y1="90" x2="450" y2="90" stroke="currentColor" stroke-width="0.75" opacity="0.15" />
+                <path d="M 370,120 L 370,60 L 450,35 L 450,120 Z" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" />
+                <rect x="490" y="40" width="90" height="80" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" />
                 
-                <rect x="490" y="40" width="90" height="80" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.25" />
-                <line x1="490" y1="40" x2="535" y2="80" stroke="currentColor" stroke-width="0.75" opacity="0.15" />
-                <line x1="535" y1="80" x2="580" y2="40" stroke="currentColor" stroke-width="0.75" opacity="0.15" />
-                <line x1="490" y1="80" x2="535" y2="40" stroke="currentColor" stroke-width="0.75" opacity="0.15" />
-                <line x1="535" y1="40" x2="580" y2="80" stroke="currentColor" stroke-width="0.75" opacity="0.15" />
+                <path d="M 620,120 L 620,25 L 700,10 M 620,35 L 700,35 M 620,25 L 590,30 M 615,120 L 615,25 M 625,120 L 625,25" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3" />
+                <path d="M 670,35 L 670,60 L 665,60 L 665,120" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" />
                 
-                <path d="M 620,120 L 620,25 L 700,10 M 620,35 L 700,35 M 620,25 L 590,30 M 615,120 L 615,25 M 625,120 L 625,25" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.35" />
-                <path d="M 670,35 L 670,60 L 665,60 L 665,120" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.25" />
+                <rect x="740" y="30" width="70" height="90" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" />
+                <path d="M 850,120 L 850,40 L 900,40 L 900,120" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" />
+                <path d="M 940,120 L 940,50 Q 975,20 1010,50 L 1010,120 Z" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2" />
                 
-                <rect x="740" y="30" width="70" height="90" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.25" />
-                <path d="M 850,120 L 850,40 L 900,40 L 900,120" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.25" />
-                <path d="M 940,120 L 940,50 Q 975,20 1010,50 L 1010,120 Z" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.25" />
-                
-                <circle cx="1100" cy="70" r="15" fill="none" stroke="currentColor" stroke-width="0.75" opacity="0.25" />
-                <line x1="1100" y1="50" x2="1100" y2="90" stroke="currentColor" stroke-width="0.75" opacity="0.25" />
-                <text x="1095" y="42" font-family="sans-serif" font-weight="bold" font-size="9" fill="currentColor" opacity="0.3">N</text>
+                <circle cx="1100" cy="70" r="15" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
+                <line x1="1100" y1="50" x2="1100" y2="90" stroke="currentColor" stroke-width="0.6" opacity="0.2" />
+                <text x="1095" y="42" font-family="sans-serif" font-weight="bold" font-size="9" fill="currentColor" opacity="0.25">N</text>
             </svg>
         </div>
 
@@ -938,6 +1276,7 @@
                     <a href="https://www.facebook.com/Southwindengineerings/" id="soc-fb" target="_blank"><i class="fab fa-facebook"></i></a>
                     <a href="https://www.instagram.com/southwindengineering/" id="soc-ig" target="_blank"><i class="fab fa-instagram"></i></a>
                     <a href="#" id="soc-ln" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" id="soc-yt" target="_blank"><i class="fab fa-youtube"></i></a>
                 </div>
                 <p class="copyright">© 2024 SOUTH WIND ENGINEERING. ALL RIGHTS RESERVED.</p>
             </div>
@@ -947,6 +1286,7 @@
     <div class="floating-action">
         <a href="https://wa.me/8801775202920" id="float-wa" class="float-btn f-whatsapp" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a href="tel:+8801775202920" id="float-tel" class="float-btn f-phone" title="Call Us"><i class="fas fa-phone"></i></a>
+        <button class="back-to-top-btn" id="back-to-top" title="Back to Top"><i class="fas fa-arrow-up"></i></button>
     </div>
 
     <script>
@@ -998,7 +1338,12 @@
                     }
                     if(settingsRes.contact_whatsapp) document.getElementById('float-wa').href = `https://wa.me/${settingsRes.contact_whatsapp}`;
                     
-                    // Map Routing Execution
+                    // Maps Redirect Link
+                    if(settingsRes.contact_map_redirect_url) {
+                        document.getElementById('dyn-map-redirect').href = settingsRes.contact_map_redirect_url;
+                    }
+
+                    // Map Embedding Link
                     if(settingsRes.contact_map_url) {
                         document.getElementById('dyn-iframe').src = settingsRes.contact_map_url;
                     }
@@ -1007,26 +1352,15 @@
                     if(settingsRes.social_facebook) document.getElementById('soc-fb').href = settingsRes.social_facebook;
                     if(settingsRes.social_instagram) document.getElementById('soc-ig').href = settingsRes.social_instagram;
                     if(settingsRes.social_linkedin) document.getElementById('soc-ln').href = settingsRes.social_linkedin;
-
-                    // Helper to safely extract arrays from various API formats (fixes Render wrapping issues)
-                    function getSafeArray(payload) {
-                        if (Array.isArray(payload)) return payload;
-                        if (payload && typeof payload === 'object') {
-                            return payload.projects || payload.services || payload.messages || payload.media || payload.data || [];
-                        }
-                        return [];
-                    }
-
-                    const safeServices = getSafeArray(servicesRes);
-                    const safeProjects = getSafeArray(projectsRes);
+                    if(settingsRes.social_youtube) document.getElementById('soc-yt').href = settingsRes.social_youtube;
 
                     // Hydrate Competency Services Grid ONLY if backend data exists
-                    if(safeServices && safeServices.length > 0) {
+                    if(servicesRes && servicesRes.length > 0) {
                         const servicesContainer = document.getElementById('dyn-services-container');
                         servicesContainer.innerHTML = '';
-                        safeServices.forEach(srv => {
+                        servicesRes.forEach(srv => {
                             servicesContainer.innerHTML += `
-                                <div class="service-card">
+                                <div class="service-card reveal">
                                     <i class="${srv.icon_class || 'fas fa-building'}"></i>
                                     <h4>${srv.title}</h4>
                                     <p>${srv.description}</p>
@@ -1036,21 +1370,20 @@
                     }
 
                     // Hydrate Structural Projects Grid Matrix ONLY if backend data exists
-                    if (safeProjects && safeProjects.length > 0) {
+                    if (projectsRes && projectsRes.length > 0) {
                         const galleryContainer = document.getElementById('dyn-gallery-container');
                         galleryContainer.innerHTML = '';
                         
                         // Layout pattern arrays to maintain structural design rhythm
                         const layouts = ['gi-1', 'gi-2', 'gi-3', 'gi-4', 'gi-5', 'gi-6', 'gi-7'];
-                        safeProjects.forEach((proj, idx) => {
+                        projectsRes.forEach((proj, idx) => {
                             const layoutClass = layouts[idx % layouts.length];
-                            // Using the updated single image_path schema from our new CMS logic
                             const imgSource = proj.image_path ? proj.image_path : 'images/unnamed (1).jpg';
                             
                             galleryContainer.innerHTML += `
-                                <div class="gallery-item ${layoutClass}">
+                                <div class="gallery-item ${layoutClass} reveal">
                                     <a href="project-details.html?category=${encodeURIComponent(proj.category)}" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
-                                        <img src="${imgSource}" alt="${proj.title}">
+                                        <img src="${imgSource}" alt="${proj.title}" loading="lazy">
                                         <div class="item-overlay"><span>${proj.category}</span></div>
                                     </a>
                                 </div>
@@ -1060,6 +1393,7 @@
 
                     // Re-trigger scroll element parsing once items are dynamically loaded
                     bindScrollObservers();
+                    initCounters();
 
                 } catch (err) {
                     console.error("System Hydration Context Failure:", err);
@@ -1131,7 +1465,7 @@
                 follower.style.transform = `translate3d(${e.clientX - 15}px, ${e.clientY - 15}px, 0)`;
             });
 
-            /* Header Scroll Effect */
+            /* Header Scroll Effect & Toggle Class */
             const header = document.getElementById('main-header');
             window.addEventListener('scroll', () => {
                 if(window.scrollY > 50) {
@@ -1139,6 +1473,21 @@
                 } else {
                     header.classList.remove('scrolled');
                 }
+            });
+
+            /* Mobile Hamburger Menu Drawer Trigger */
+            const hamburger = document.getElementById('hamburger-trigger');
+            const mobilePanel = document.getElementById('mobile-panel');
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                mobilePanel.classList.toggle('active');
+            });
+
+            mobilePanel.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    mobilePanel.classList.remove('active');
+                });
             });
 
             /* Theme Toggle */
@@ -1150,6 +1499,79 @@
                 themeBtn.innerHTML = next === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
             });
 
+            /* Animated Counter Script Module */
+            function initCounters() {
+                const counters = document.querySelectorAll('.metric-val-num');
+                const observer = new IntersectionObserver((entries, obs) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const target = entry.target;
+                            const limit = parseInt(target.getAttribute('data-target'));
+                            let current = 0;
+                            const increment = Math.ceil(limit / 50);
+                            const timer = setInterval(() => {
+                                current += increment;
+                                if (current >= limit) {
+                                    target.innerText = limit + '+';
+                                    clearInterval(timer);
+                                } else {
+                                    target.innerText = current + '+';
+                                }
+                            }, 30);
+                            obs.unobserve(target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                counters.forEach(c => observer.observe(c));
+            }
+
+            /* Before/After Swipe Slider Comparison Controller */
+            const sliderCompare = document.getElementById('slider-compare');
+            if (sliderCompare) {
+                const clipContainer = document.getElementById('after-image-clip');
+                const dragHandle = document.getElementById('slider-handle');
+                let isDragging = false;
+
+                function adjustSliderWidth(clientX) {
+                    const rect = sliderCompare.getBoundingClientRect();
+                    let percentage = ((clientX - rect.left) / rect.width) * 100;
+                    if (percentage < 0) percentage = 0;
+                    if (percentage > 100) percentage = 100;
+
+                    clipContainer.style.width = `${percentage}%`;
+                    dragHandle.style.left = `${percentage}%`;
+                }
+
+                dragHandle.addEventListener('mousedown', () => { isDragging = true; });
+                window.addEventListener('mouseup', () => { isDragging = false; });
+                window.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    adjustSliderWidth(e.clientX);
+                });
+
+                // Swipe Touch controls
+                dragHandle.addEventListener('touchstart', () => { isDragging = true; });
+                window.addEventListener('touchend', () => { isDragging = false; });
+                window.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    adjustSliderWidth(e.touches[0].clientX);
+                });
+            }
+
+            /* Back to Top button logic */
+            const btt = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 400) {
+                    btt.classList.add('visible');
+                } else {
+                    btt.classList.remove('visible');
+                }
+            });
+            btt.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
             /* Reveal on Scroll */
             function bindScrollObservers() {
                 const observerOptions = { threshold: 0.1 };
@@ -1157,17 +1579,15 @@
                     entries.forEach(entry => {
                         if(entry.isIntersecting) {
                             entry.target.classList.add('reveal');
+                            entry.target.classList.add('active');
                         }
                     });
                 }, observerOptions);
 
-                document.querySelectorAll('.service-card, .gallery-item, .info-box').forEach(el => {
-                    el.style.opacity = '0';
-                    el.style.transform = 'translateY(30px)';
+                document.querySelectorAll('.service-card, .gallery-item, .info-box, .reveal').forEach(el => {
                     observer.observe(el);
                 });
             }
-            // Bind initially just in case backend is slow
             bindScrollObservers();
         });
     </script>
@@ -1176,49 +1596,39 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(async () => {
-                const isLocalPreview = window.location.protocol === 'file:';
-                let activeProjects = [];
-                
                 try {
                     const res = await fetch('/api/projects');
-                    const payload = await res.json();
+                    const activeProjects = await res.json();
+                    const galleryItems = document.querySelectorAll('.gallery-item a');
                     
-                    // Safe array extractor [1]
-                    activeProjects = Array.isArray(payload) ? payload : (payload.projects || payload.data || []);
-                } catch(e) {
-                    console.warn('Offline mode enabled: Database synchronization bypassed.');
-                }
-                
-                const galleryItems = document.querySelectorAll('.gallery-item a');
-                
-                galleryItems.forEach((linkNode, idx) => {
-                    let singleClickTimeout;
+                    galleryItems.forEach((linkNode, idx) => {
+                        const targetProj = activeProjects[idx];
+                        if (!targetProj) return;
 
-                    linkNode.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const staticHref = linkNode.getAttribute('href'); // e.g. project-details.html?category=...
+                        let singleClickTimeout;
 
-                        if (singleClickTimeout) {
-                            clearTimeout(singleClickTimeout);
-                            singleClickTimeout = null;
-                            
-                            // DOUBLE CLICK EXECUTED
-                            if (!isLocalPreview && activeProjects[idx]) {
-                                window.location.href = `project-details.html?project=${activeProjects[idx].id}`;
-                            } else {
-                                // Local Preview Fallback
-                                window.location.href = staticHref;
-                            }
-                        } else {
-                            singleClickTimeout = setTimeout(() => {
+                        // Safely override the click event to distinguish single vs double tap
+                        linkNode.addEventListener('click', (e) => {
+                            e.preventDefault();
+
+                            if (singleClickTimeout) {
+                                clearTimeout(singleClickTimeout);
                                 singleClickTimeout = null;
-                                // SINGLE CLICK EXECUTED (Redirect to category)
-                                window.location.href = staticHref;
-                            }, 300);
-                        }
+                                // DOUBLE CLICK EXECUTED
+                                window.location.href = `project-details.html?project=${targetProj.id}`;
+                            } else {
+                                singleClickTimeout = setTimeout(() => {
+                                    singleClickTimeout = null;
+                                    // SINGLE CLICK EXECUTED (Original Behavior)
+                                    window.location.href = linkNode.getAttribute('href');
+                                }, 300);
+                            }
+                        });
                     });
-                });
-            }, 1000); 
+                } catch(e) {
+                    console.error('Project interception node mapping failed:', e);
+                }
+            }, 2500); 
         });
     </script>
     <!-- END APPENDED PROJECT DETAILS DOUBLE-CLICK INTERCEPT ENGINE -->
