@@ -27,14 +27,13 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage,
     fileFilter: (req, file, cb) => {
-        // APPENDED MP4 SUPPORT
         const allowedTypes = /jpeg|jpg|png|webp|mp4/;
         const mimeCheck = allowedTypes.test(file.mimetype);
         const extCheck = allowedTypes.test(path.extname(file.originalname).toLowerCase());
         if (mimeCheck && extCheck) return cb(null, true);
         cb(new Error('Media file rejected. Format structural support constrained to JPEG, PNG, WEBP, or MP4 maps.'));
     },
-    limits: { fileSize: 50 * 1024 * 1024 } // APPENDED: 50MB Base restriction limit for videos
+    limits: { fileSize: 50 * 1024 * 1024 } 
 });
 
 router.post('/upload', auth, upload.single('file'), async (req, res) => {
@@ -48,26 +47,30 @@ router.post('/upload', auth, upload.single('file'), async (req, res) => {
         let finalMimeType;
         let finalSize;
 
-        // APPENDED: Detect video matrix bypass
         const isVideo = req.file.mimetype.startsWith('video/');
 
+        // FIXED: Graceful fallback added to prevent server crashing on Render's memory limits
         if (!isVideo && sharp) {
-            // High-end server-side processing image compression engine execution
-            finalFilename = 'optimized-' + req.file.filename.split('.')[0] + '.webp';
-            const optimizedPath = path.join(__dirname, '../public/uploads/', finalFilename);
+            try {
+                finalFilename = 'optimized-' + req.file.filename.split('.')[0] + '.webp';
+                const optimizedPath = path.join(__dirname, '../public/uploads/', finalFilename);
 
-            await sharp(originalPath)
-                .resize({ width: 1920, height: 1080, fit: 'inside', withoutEnlargement: true })
-                .toFormat('webp', { quality: 82 })
-                .toFile(optimizedPath);
+                await sharp(originalPath)
+                    .resize({ width: 1920, height: 1080, fit: 'inside', withoutEnlargement: true })
+                    .toFormat('webp', { quality: 82 })
+                    .toFile(optimizedPath);
 
-            // Delete raw uncompressed file
-            fs.unlinkSync(originalPath);
+                if (fs.existsSync(originalPath)) fs.unlinkSync(originalPath);
 
-            finalMimeType = 'image/webp';
-            finalSize = fs.statSync(optimizedPath).size;
+                finalMimeType = 'image/webp';
+                finalSize = fs.statSync(optimizedPath).size;
+            } catch (sharpError) {
+                console.warn("Sharp optimization bypassed due to RAM limit. Uploading original file.");
+                finalFilename = req.file.filename;
+                finalMimeType = req.file.mimetype;
+                finalSize = req.file.size;
+            }
         } else {
-            // Fallback for environments lacking sharp OR processing Video formats directly
             finalFilename = req.file.filename;
             finalMimeType = req.file.mimetype;
             finalSize = req.file.size;
