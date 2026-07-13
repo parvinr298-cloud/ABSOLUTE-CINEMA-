@@ -482,8 +482,11 @@
                 <div class="media-grid" id="media-catalog-box"></div>
             </div>
 
+            <!-- SECURITY PANEL INTERFACES -->
             <div id="security-panel" class="panel">
                 <h2>Reinforce Access Cryptography Authentication Controls</h2>
+                
+                <!-- PASSWORD CHANGER -->
                 <form id="password-reinforce-form">
                     <div class="form-row">
                         <label>Target Security Access Passkey Alteration Metric</label>
@@ -491,6 +494,25 @@
                     </div>
                     <button type="submit" class="btn">Re-encrypt Verification Pipeline</button>
                 </form>
+
+                <!-- NEW: SYSTEM REGISTERED ADMINISTRATIVE CORRESPONDENT OVERRIDE FORM [1] -->
+                <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border);">
+                    <h3>Change Operational Identity Contact Coordinate</h3>
+                    <form id="email-change-form" style="margin-top: 15px;">
+                        <div class="form-row">
+                            <label>Updated Primary Correspondent Address Mail Identity</label>
+                            <input type="email" id="new-sys-email" placeholder="active-address@yourdomain.com" required>
+                        </div>
+                        <button type="submit" class="btn">Update identity address parameters</button>
+                    </form>
+                </div>
+
+                <!-- NEW: RE-ENCRYPT KEYRING REVOCATIONS TO SYSTEM DEVICE HANDLES [2] -->
+                <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border);">
+                    <h3>Alternative Browser Controls (Session Termination Area)</h3>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px; line-height: 1.6;">If there are other devices currently logged into this admin identity, click the toggle below to immediately cancel and sign out those operators across all platforms. Your active browser interface session will safely remain connected.</p>
+                    <button type="button" class="btn btn-danger" style="background:var(--danger);" onclick="kickAllAlternativeSystemsActiveLogins()">Kick and invalidate parallel credentials devices</button>
+                </div>
             </div>
 
         </div>
@@ -784,6 +806,46 @@
             } catch(err) { alert("Password shift failed: " + err.message); }
         });
 
+        // --- NEW IMPLEMENTATION HANDLER: CORRESPONDING ADRESSED CHANGE OVERRIDES ---
+        document.getElementById('email-change-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newEmail = document.getElementById('new-sys-email').value;
+            try {
+                const res = await safeFetchJson('/api/auth/change-email', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                    body: JSON.stringify({ newEmail })
+                });
+                if(res.success) {
+                    alert('Correspondence tracking target mail shifted successfully. Initiating operational lock logout cycle verify verification criteria...');
+                    terminateSessionContext();
+                }
+            } catch(err) {
+                alert('Verification modification validation block detected: ' + err.message);
+            }
+        });
+
+        // --- NEW IMPLEMENTATION HANDLER: FORCED PARALLEL SESSIONS KILL INTERCEPT ---
+        async function kickAllAlternativeSystemsActiveLogins() {
+            if (!confirm('Kick off alternative operational configurations signed into database architecture currently?')) return;
+            try {
+                const resObj = await safeFetchJson('/api/auth/kick-others', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${operationalToken}` }
+                });
+                if (resObj.success) {
+                    alert('Command validated. Dynamic authorizations matching alternatives expired successfully.');
+                    if (resObj.token) {
+                        operationalToken = resObj.token;
+                        localStorage.setItem('sw_token', resObj.token);
+                    }
+                    pullAdminContextMetrics();
+                }
+            } catch(err) {
+                alert('Forced revocation target query cycle issue context trace failed: ' + err.message);
+            }
+        }
+
         async function synchronizeCompetencyTable() {
             try {
                 const payload = await safeFetchJson('/api/services');
@@ -930,7 +992,7 @@
         document.getElementById('sig-portfolio-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const payload = {
-                category: 'Signature', // Removed selector, permanently set category to 'Signature' for projects page database separation
+                category: 'Signature', 
                 title: document.getElementById('sig-proj-title').value,
                 display_order: parseInt(document.getElementById('sig-proj-order').value) || 0
             };
