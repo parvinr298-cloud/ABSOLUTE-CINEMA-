@@ -56,6 +56,14 @@ async function initializeDatabaseAdmin() {
             console.log('>>> Warning: schema.sql file not found in root directory.');
         }
 
+        // --- AUTOMATIC SESSION UPDATE STRUCTURAL MATRIX INJECTION ---
+        try {
+            await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS token_version INT DEFAULT 0;');
+            console.log('>>> DB: Verified Token Session tracker parameter matrix configured.');
+        } catch(colErr) {
+            console.warn('>>> DB Version Verification Bypassed.');
+        }
+
         // 2. Now check if the admin user exists
         const checkUser = await pool.query('SELECT * FROM users LIMIT 1');
         if (checkUser.rows.length === 0) {
@@ -65,7 +73,7 @@ async function initializeDatabaseAdmin() {
             const hashed = await bcrypt.hash(rawPassword, salt);
             
             await pool.query(
-                'INSERT INTO users (email, password_hash, must_change_password) VALUES ($1, $2, true)',
+                'INSERT INTO users (email, password_hash, must_change_password, token_version) VALUES ($1, $2, true, 0)',
                 [defaultEmail, hashed]
             );
             console.log('=====================================================');
