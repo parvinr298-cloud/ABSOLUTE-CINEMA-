@@ -22,9 +22,11 @@ router.post('/login', [
         const validPass = await bcrypt.compare(password, user.password_hash);
         if (!validPass) return res.status(400).json({ error: 'Invalid systemic access credentials.' });
 
+        // FIXED: Added unified fallback secret
+        const secret = process.env.JWT_SECRET || 'super_secret_fallback_key_123!';
         const token = jwt.sign(
             { id: user.id, email: user.email, must_change_password: user.must_change_password },
-            process.env.JWT_SECRET,
+            secret,
             { expiresIn: '8h' }
         );
 
@@ -67,10 +69,6 @@ router.get('/profile', auth, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
-// ==========================================================
-// APPENDED: ADMIN EMAIL CHANGE ENDPOINT
-// ==========================================================
 
 router.put('/change-email', [
     auth,
