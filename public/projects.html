@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -484,6 +483,10 @@
 </head>
 <body>
 
+    <!-- RESTORED: Dynamic Floating custom track cursor follower nodes -->
+    <div id="cursor" style="position: fixed; width: 8px; height: 8px; background: var(--color-accent); border-radius: 50%; pointer-events: none; z-index: 10000; transform: translate3d(-50%, -50%, 0); transition: width 0.2s, height 0.2s; mix-blend-mode: difference;"></div>
+    <div id="cursor-follower" style="position: fixed; width: 30px; height: 30px; border: 1.5px solid var(--color-accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate3d(-50%, -50%, 0); transition: transform 0.08s linear, width 0.2s, height 0.2s; mix-blend-mode: difference;"></div>
+
     <div id="premium-loader">
         <div class="loader-content">
             <div class="loading-compass"></div>
@@ -523,19 +526,21 @@
         <div style="display: flex; justify-content: flex-end; width: 100%; margin-bottom: 15px;">
             <button id="mobile-menu-close" style="background: none; border: none; font-size: 1.5rem; color: var(--color-text); cursor: pointer;"><i class="fas fa-times"></i></button>
         </div>
-        <a href="index.html#about">The Studio</a>
-        <a href="index.html#services">Services</a>
-        <a href="projects.html">Projects</a>
-        <a href="index.html#contact">Contact</a>
-        
-        <div style="margin-top: auto; border-top: 1px solid var(--color-border); padding-top: 20px; width: 100%;">
-            <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--color-text-muted); display: block; margin-bottom: 12px;">Active Theme</span>
+
+        <!-- Mobile dynamic theme select-selector (Moved Upwards) -->
+        <div style="width: 100%; margin-bottom: 20px; border-bottom: 1px solid var(--color-border); padding-bottom: 15px;">
+            <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--color-text-muted); display: block; margin-bottom: 8px;">Active Theme</span>
             <select id="mobile-theme-selector" style="width: 100%; padding: 12px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); border-radius: 4px; font-weight: 600; cursor: pointer; outline: none;">
                 <option value="light">Classic Studio (Light)</option>
                 <option value="dark">Midnight Executive (Dark)</option>
                 <option value="blueprint">Engineering Blueprint (Blue)</option>
             </select>
         </div>
+
+        <a href="index.html#about">The Studio</a>
+        <a href="index.html#services">Services</a>
+        <a href="projects.html">Projects</a>
+        <a href="index.html#contact">Contact</a>
     </div>
 
     <div class="intro-header-block container">
@@ -554,7 +559,6 @@
         <div class="gallery-grid" id="dyn-gallery-container"></div>
     </section>
 
-    <!-- Static Social Buttons are completely removed from footer as requested [2] -->
     <footer>
         <div class="footer-inner-content">
             <div class="container">
@@ -573,6 +577,59 @@
         document.addEventListener('DOMContentLoaded', () => {
             let activeProjectsList = []; 
             
+            /* Custom Cursor and Smooth Follower tracking */
+            const cursor = document.getElementById('cursor');
+            const follower = document.getElementById('cursor-follower');
+            
+            function updateCursorPositions(x, y) {
+                if(cursor && follower) {
+                    cursor.style.left = x + 'px';
+                    cursor.style.top = y + 'px';
+                    setTimeout(() => {
+                        follower.style.left = x + 'px';
+                        follower.style.top = y + 'px';
+                    }, 40);
+                }
+            }
+
+            document.addEventListener('mousemove', (e) => {
+                updateCursorPositions(e.clientX, e.clientY);
+            });
+
+            document.addEventListener('mousedown', (e) => {
+                if(cursor && follower) {
+                    cursor.style.width = '12px'; cursor.style.height = '12px';
+                    follower.style.width = '42px'; follower.style.height = '42px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if(cursor && follower) {
+                    cursor.style.width = '8px'; cursor.style.height = '8px';
+                    follower.style.width = '30px'; follower.style.height = '30px';
+                }
+            });
+
+            // Touch support for smooth mobile coordinate glide on click/tap
+            document.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches[0]) {
+                    const x = e.touches[0].clientX;
+                    const y = e.touches[0].clientY;
+                    updateCursorPositions(x, y);
+                    if(cursor && follower) {
+                        cursor.style.width = '12px'; cursor.style.height = '12px';
+                        follower.style.width = '42px'; follower.style.height = '42px';
+                    }
+                }
+            }, { passive: true });
+
+            document.addEventListener('touchend', () => {
+                if(cursor && follower) {
+                    cursor.style.width = '8px'; cursor.style.height = '8px';
+                    follower.style.width = '30px'; follower.style.height = '30px';
+                }
+            }, { passive: true });
+
             function getSafeImagePath(path) {
                 if (!path) return 'images/unnamed1.jpg';
                 if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/') || path.startsWith('images/') || path.startsWith('media/')) {
@@ -585,9 +642,7 @@
                 try {
                     let projectsRes;
                     try {
-                        // Dynamically pull status signature projects, fall back gracefully to raw projects
-                        projectsRes = await fetch('/api/status-projects');
-                        if (!projectsRes.ok) throw new Error("Endpoint shifted");
+                        projectsRes = await fetch('/api/projects');
                     } catch(e) {
                         projectsRes = await fetch('/api/projects');
                     }
@@ -601,7 +656,8 @@
                         return [];
                     }
 
-                    const safeProjects = getSafeArray(payload);
+                    // SEGREGATION FIX: Filter to fetch only database items marked with 'Signature' category
+                    const safeProjects = getSafeArray(payload).filter(p => p.category === 'Signature');
 
                     if (safeProjects && safeProjects.length > 0) {
                         activeProjectsList = safeProjects;
@@ -639,7 +695,7 @@
                         <div class="gallery-item ${layoutClass} reveal active">
                             <a href="project-details.html?project=${proj.id}" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
                                 <img src="${imgSource}" alt="${proj.title}" loading="lazy" onerror="this.src='images/unnamed1.jpg'">
-                                <div class="item-overlay"><span>${proj.title} (${proj.category})</span></div>
+                                <div class="item-overlay"><span>${proj.title} (${proj.status})</span></div>
                             </a>
                         </div>
                     `;
