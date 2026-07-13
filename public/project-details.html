@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -176,7 +175,18 @@
         }
         @media (max-width: 768px) { .media-grid { grid-template-columns: 1fr; } }
         
-        .media-asset { width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--color-border); }
+        .media-asset { 
+            width: 100%; 
+            height: auto; 
+            border-radius: 4px; 
+            border: 1px solid var(--color-border); 
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+        }
+        .media-asset:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
 
         .pagination-controls {
             display: flex;
@@ -249,7 +259,7 @@
         }
 
         footer {
-            background: var(--color-surface-dark);
+            background: var(--surface-dark, var(--color-surface-dark));
             padding: 40px 0;
             text-align: center;
             border-top: 1px solid var(--color-border);
@@ -295,7 +305,119 @@
             transform: scale(1.1) translateY(-3px);
         }
 
-        /* Responsive Custom Dragging Circle cursor Styles */
+        /* ==========================================================================
+           MODERN IMMERSIVE GALLERY LIGHTBOX
+           ========================================================================== */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            inset: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-content-wrapper {
+            position: relative;
+            max-width: 85%;
+            max-height: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox-img, .lightbox-video {
+            max-width: 100%;
+            max-height: 75vh;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            animation: swZoom 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes swZoom {
+            from { transform: scale(0.96); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 300;
+            cursor: pointer;
+            z-index: 10010;
+            transition: transform 0.3s ease, opacity 0.3s;
+            opacity: 0.8;
+        }
+        .lightbox-close:hover {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            z-index: 10005;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .lightbox-nav:hover {
+            background: #ffffff;
+            color: #000000;
+            transform: translateY(-50%) scale(1.08);
+            border-color: #ffffff;
+        }
+        .lightbox-prev { left: 40px; }
+        .lightbox-next { right: 40px; }
+        .lightbox-caption {
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 20px;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .lightbox-nav {
+                width: 44px;
+                height: 44px;
+                font-size: 1.1rem;
+            }
+            .lightbox-prev { left: 15px; }
+            .lightbox-next { right: 15px; }
+            .lightbox-close {
+                top: 20px;
+                right: 20px;
+                font-size: 1.8rem;
+            }
+            .lightbox-content-wrapper {
+                max-width: 92%;
+            }
+        }
+
         @media (pointer: coarse) {
             #cursor, #cursor-follower {
                 display: none !important;
@@ -305,7 +427,6 @@
 </head>
 <body>
 
-    <!-- RESTORED: Dynamic Floating custom track cursor follower nodes [2] -->
     <div id="cursor" style="position: fixed; width: 8px; height: 8px; background: var(--color-accent); border-radius: 50%; pointer-events: none; z-index: 10000; transform: translate3d(-50%, -50%, 0); transition: width 0.2s, height 0.2s; mix-blend-mode: difference;"></div>
     <div id="cursor-follower" style="position: fixed; width: 30px; height: 30px; border: 1.5px solid var(--color-accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate3d(-50%, -50%, 0); transition: transform 0.08s linear, width 0.2s, height 0.2s; mix-blend-mode: difference;"></div>
 
@@ -333,11 +454,23 @@
     <div id="pages-wrapper"></div>
     <div class="pagination-controls" id="pagination-wrapper"></div>
 
-    <!-- DYNAMIC PREVIOUS & NEXT PORTFOLIO SELECTOR SEGMENTS [3] -->
+    <!-- DYNAMIC PREVIOUS & NEXT PORTFOLIO SELECTOR SEGMENTS -->
     <div id="project-nav-section" style="max-width: var(--container-width); margin: 60px auto; padding: 40px 5%; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; gap: 30px;">
         <div id="prev-project-link" style="flex: 1; text-align: left;"></div>
         <div style="height: 50px; width: 1px; background: var(--color-border);"></div>
         <div id="next-project-link" style="flex: 1; text-align: right;"></div>
+    </div>
+
+    <!-- Dynamic Full-screen Lightbox Gallery -->
+    <div id="sw-lightbox" class="lightbox-modal">
+        <span class="lightbox-close" aria-label="Close Lightbox">&times;</span>
+        <button class="lightbox-nav lightbox-prev" aria-label="Previous Image"><i class="fas fa-chevron-left"></i></button>
+        <div class="lightbox-content-wrapper">
+            <img class="lightbox-img" id="lightbox-img" src="" alt="Expanded View" onerror="this.src='images/unnamed6.jpg'">
+            <video class="lightbox-video" id="lightbox-video" controls autoplay muted loop style="display:none;"></video>
+            <div class="lightbox-caption" id="lightbox-caption"></div>
+        </div>
+        <button class="lightbox-nav lightbox-next" aria-label="Next Image"><i class="fas fa-chevron-right"></i></button>
     </div>
 
     <div class="bottom-blueprint-sketch">
@@ -388,11 +521,15 @@
     <button class="back-to-top-btn" id="back-to-top" title="Back to Top"><i class="fas fa-arrow-up"></i></button>
 
     <script>
+        // Global lightbox state variables
+        let lightboxAssets = [];
+        let currentLightboxIdx = 0;
+
         document.addEventListener('DOMContentLoaded', async () => {
             const activeTheme = localStorage.getItem('sw_theme') || 'light';
             document.documentElement.setAttribute('data-theme', activeTheme);
 
-            // RESTORED: Drag follower script tracking actions
+            // Drag follower cursor mapping script
             const cursor = document.getElementById('cursor');
             const follower = document.getElementById('cursor-follower');
             
@@ -427,7 +564,7 @@
             const isLocalPreview = window.location.protocol === 'file:';
 
             function getSafeImagePath(path) {
-                if (!path) return 'images/unnamed1.jpg';
+                if (!path) return 'images/unnamed6.jpg';
                 if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/') || path.startsWith('images/') || path.startsWith('media/')) {
                     return path;
                 }
@@ -463,9 +600,148 @@
                         return `<video class="media-asset" src="${checkedPath}" controls autoplay muted loop></video>`;
                     }
                 } else {
-                    return `<img class="media-asset" src="${checkedPath}" alt="Asset" onerror="this.src='images/unnamed1.jpg'">`;
+                    return `<img class="media-asset" src="${checkedPath}" alt="Asset" onerror="this.onerror=null; this.src='images/unnamed6.jpg'">`;
                 }
             }
+
+            /* setup lightbox event listeners and coordinates once */
+            function setupLightboxEventListeners() {
+                const lightbox = document.getElementById('sw-lightbox');
+                const lightboxImg = document.getElementById('lightbox-img');
+                const lightboxVideo = document.getElementById('lightbox-video');
+                const lightboxCaption = document.getElementById('lightbox-caption');
+                const closeBtn = document.querySelector('.lightbox-close');
+                const prevBtn = document.querySelector('.lightbox-prev');
+                const nextBtn = document.querySelector('.lightbox-next');
+
+                if (!lightbox) return;
+
+                function updateLightboxContent() {
+                    const activeAsset = lightboxAssets[currentLightboxIdx];
+                    if (!activeAsset) return;
+
+                    lightboxImg.style.display = 'none';
+                    lightboxVideo.style.display = 'none';
+                    lightboxVideo.pause();
+                    lightboxVideo.src = '';
+
+                    let iframeContainer = document.getElementById('lightbox-iframe');
+                    if (iframeContainer) {
+                        iframeContainer.src = '';
+                        iframeContainer.style.display = 'none';
+                    }
+
+                    const tagName = activeAsset.tagName.toLowerCase();
+                    const src = activeAsset.getAttribute('src') || activeAsset.src;
+
+                    if (tagName === 'iframe') {
+                        if (!iframeContainer) {
+                            iframeContainer = document.createElement('iframe');
+                            iframeContainer.id = 'lightbox-iframe';
+                            iframeContainer.className = 'media-asset';
+                            iframeContainer.style.cssText = "aspect-ratio:16/9; width:100%; max-width:850px; border:none; min-height:420px; display:none; border-radius:4px;";
+                            lightboxVideo.parentNode.insertBefore(iframeContainer, lightboxVideo);
+                        }
+                        iframeContainer.style.display = 'block';
+                        iframeContainer.src = src;
+                        lightboxCaption.innerText = `Interactive Media ${currentLightboxIdx + 1} of ${lightboxAssets.length}`;
+                    } else if (tagName === 'video') {
+                        lightboxVideo.style.display = 'block';
+                        lightboxVideo.src = src;
+                        lightboxVideo.play();
+                        lightboxCaption.innerText = `Video Playback ${currentLightboxIdx + 1} of ${lightboxAssets.length}`;
+                    } else {
+                        lightboxImg.style.display = 'block';
+                        lightboxImg.src = src;
+                        lightboxCaption.innerText = `Image ${currentLightboxIdx + 1} of ${lightboxAssets.length}`;
+                    }
+                }
+
+                window.openLightbox = function(idx, assetsArray) {
+                    lightboxAssets = assetsArray;
+                    currentLightboxIdx = idx;
+                    lightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden'; 
+                    updateLightboxContent();
+                };
+
+                function closeLightbox() {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = ''; 
+                    lightboxVideo.pause();
+                    lightboxVideo.src = '';
+                    const iframeContainer = document.getElementById('lightbox-iframe');
+                    if (iframeContainer) {
+                        iframeContainer.src = '';
+                        iframeContainer.style.display = 'none';
+                    }
+                }
+
+                function navigateLightbox(direction) {
+                    if (lightboxAssets.length <= 1) return;
+                    currentLightboxIdx = (currentLightboxIdx + direction + lightboxAssets.length) % lightboxAssets.length;
+                    updateLightboxContent();
+                }
+
+                closeBtn.onclick = closeLightbox;
+                prevBtn.onclick = (e) => { e.stopPropagation(); navigateLightbox(-1); };
+                nextBtn.onclick = (e) => { e.stopPropagation(); navigateLightbox(1); };
+
+                lightbox.onclick = (e) => {
+                    if (e.target === lightbox || e.target.classList.contains('lightbox-content-wrapper')) {
+                        closeLightbox();
+                    }
+                };
+
+                // Global Keyboard Handlers
+                document.addEventListener('keydown', (e) => {
+                    if (!lightbox.classList.contains('active')) return;
+                    if (e.key === 'Escape') closeLightbox();
+                    if (e.key === 'ArrowRight') navigateLightbox(1);
+                    if (e.key === 'ArrowLeft') navigateLightbox(-1);
+                });
+
+                // Swipe Gestures Handlers
+                let touchStartX = 0;
+                let touchEndX = 0;
+                lightbox.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+                lightbox.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    if (touchEndX < touchStartX - 50) navigateLightbox(1); 
+                    if (touchEndX > touchStartX + 50) navigateLightbox(-1); 
+                }, { passive: true });
+            }
+
+            /* Event delegation on page-container assets */
+            function initLightbox() {
+                const wrapper = document.getElementById('pages-wrapper');
+                if (!wrapper) return;
+
+                if (!wrapper.dataset.lightboxBound) {
+                    wrapper.dataset.lightboxBound = "true";
+                    wrapper.addEventListener('click', (e) => {
+                        const target = e.target.closest('.media-asset');
+                        if (!target) return;
+
+                        e.preventDefault();
+
+                        // dynamically fetch active elements currently shown in lookbook grids
+                        const activeContainers = document.querySelectorAll('.page-container.active .media-asset, .page-container[style*="display: block"] .media-asset, .page-container:not([style*="display: none"]) .media-asset');
+                        const assetsArray = Array.from(activeContainers).filter(el => {
+                            return el.tagName.toLowerCase() === 'img' || el.tagName.toLowerCase() === 'video' || el.tagName.toLowerCase() === 'iframe';
+                        });
+
+                        const index = assetsArray.indexOf(target);
+                        if (index !== -1) {
+                            window.openLightbox(index, assetsArray);
+                        }
+                    });
+                }
+            }
+
+            setupLightboxEventListeners();
 
             try {
                 let proj = null;
@@ -478,7 +754,6 @@
                     proj = await res.json();
                     pages = proj.pages || [];
 
-                    // FIX: Resolve parameters loading overlay instantly [1]
                     document.getElementById('render-category').innerText = proj.category || '';
                     document.getElementById('render-title').innerText = proj.title || '';
                     
@@ -586,13 +861,12 @@
                         });
                     }
 
-                    // ADDED: Circular Previous and Next Project Navigation flows [3]
+                    // Dynamically generate navigation controls inside project specs
                     try {
                         const allRes = await fetch('/api/projects');
                         const allPayload = await allRes.json();
                         const allProjs = getSafeArray(allPayload);
                         
-                        // Sort projects using default order weights
                         allProjs.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
                         
                         const currentIndex = allProjs.findIndex(p => p.id == projectId);
@@ -606,7 +880,7 @@
                             if (prevProj) {
                                 prevContainer.innerHTML = `
                                     <a href="project-details.html?project=${prevProj.id}" style="text-decoration: none; display: flex; align-items: center; gap: 15px; color: var(--color-text);">
-                                        <img src="${getSafeImagePath(prevProj.image_path)}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border);" onerror="this.src='images/unnamed1.jpg'">
+                                        <img src="${getSafeImagePath(prevProj.image_path)}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border);" onerror="this.onerror=null; this.src='images/unnamed6.jpg'">
                                         <div>
                                             <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--color-text-muted); display: block;">&larr; Previous</span>
                                             <strong style="font-size: 0.9rem; font-family: var(--font-serif);">${prevProj.title}</strong>
@@ -621,7 +895,7 @@
                                             <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--color-text-muted); display: block;">Next Project &rarr;</span>
                                             <strong style="font-size: 0.9rem; font-family: var(--font-serif);">${nextProj.title}</strong>
                                         </div>
-                                        <img src="${getSafeImagePath(nextProj.image_path)}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border);" onerror="this.src='images/unnamed1.jpg'">
+                                        <img src="${getSafeImagePath(nextProj.image_path)}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border);" onerror="this.onerror=null; this.src='images/unnamed6.jpg'">
                                     </a>
                                 `;
                             }
@@ -631,6 +905,9 @@
                     } catch(e) {
                         console.warn("Failed to generate dynamic next/prev project buttons:", e);
                     }
+
+                    // Run delegator check after building specific pages
+                    initLightbox();
 
                 } else {
                     document.getElementById('dyn-back-link').href = 'index.html#projects';
@@ -683,9 +960,10 @@
                         wrapper.innerHTML = `
                             <div class="page-container active" style="opacity: 1; display: block;">
                                 <div class="media-grid">
-                                    <img class="media-asset" src="${checkedBaseImg}" onerror="this.src='images/unnamed1.jpg'">
+                                    <img class="media-asset" src="${checkedBaseImg}" onerror="this.onerror=null; this.src='images/unnamed6.jpg'">
                                 </div>
                             </div>`;
+                        initLightbox();
                     } else {
                         pages.forEach((page, idx) => {
                             let mediaHTML = '';
@@ -730,6 +1008,9 @@
                             const rightSpacer = document.createElement('div');
                             rightSpacer.style.width = "100px";
                             paginator.appendChild(rightSpacer);
+
+                            // Dynamically refresh coordinates for our delegation script on page change
+                            initLightbox();
                         }
 
                         document.querySelectorAll('.page-container').forEach(el => el.classList.remove('active'));
