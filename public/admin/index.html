@@ -191,7 +191,6 @@
             <button class="menu-btn" onclick="switchControlView('commercial-panel', this)"><i class="fas fa-city"></i> Commercial Infra</button>
             <div style="border-bottom: 1px solid var(--border); margin: 5px 0; padding-bottom: 5px;"></div>
 
-            <!-- UI separated Lookbooks and Status Signature sections [2] -->
             <button class="menu-btn" onclick="switchControlView('projects-panel', this)"><i class="fas fa-images"></i> Manage Front Lookbooks</button>
             <button class="menu-btn" onclick="switchControlView('signature-projects-panel', this)"><i class="fas fa-project-diagram"></i> Manage Signature Projects (Status page)</button>
             
@@ -298,6 +297,11 @@
                                     <option value="Residential Elite">Residential Elite</option>
                                     <option value="Luxury Living">Luxury Living</option>
                                     <option value="Commercial Infrastructure">Commercial Infrastructure</option>
+                                    <option value="Architectural Detail">Architectural Detail</option>
+                                    <option value="Commercial Space">Commercial Space</option>
+                                    <option value="Construction Site">Construction Site</option>
+                                    <option value="Structural Framework">Structural Framework</option>
+                                    <option value="Urban Landmark">Urban Landmark</option>
                                 </select>
                             </div>
                             <div class="form-row" style="margin-bottom: 0;">
@@ -326,8 +330,8 @@
                             <div class="form-row" style="margin-bottom: 0;">
                                 <label>Dynamic Video Core Target Path (Optional / YouTube / MP4 File)</label>
                                 <div style="display: flex; gap: 10px;">
-                                    <input type="text" id="proj-video-path" placeholder="media/uploads/drone_cinematic.mp4">
-                                    <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('proj-video-path')">Browse</button>
+                                    <input type="text" id="sig-proj-video-path" placeholder="media/uploads/drone_cinematic.mp4">
+                                    <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('sig-proj-video-path')">Browse</button>
                                 </div>
                             </div>
                             <div class="form-row" style="margin-bottom: 0;">
@@ -354,23 +358,13 @@
                 </table>
             </div>
 
-            <!-- Status Projects Section - FIX: Maps directly to projects table to avoid 404 database crashes [2] -->
+            <!-- Status Projects Section -->
             <div id="signature-projects-panel" class="panel">
                 <h2>Manage Signature Status Projects (Projects Page)</h2>
                 
                 <div style="background: var(--surface-accent); border: 1px solid var(--border); padding: 30px; margin-bottom: 40px; border-radius: 4px;">
                     <form id="sig-portfolio-form">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
-                            <div class="form-row" style="margin-bottom: 0;">
-                                <label>Status Page Portfolio Group</label>
-                                <select id="sig-proj-category" required>
-                                    <option value="Architectural Detail">Architectural Detail</option>
-                                    <option value="Commercial Space">Commercial Space</option>
-                                    <option value="Construction Site">Construction Site</option>
-                                    <option value="Structural Framework">Structural Framework</option>
-                                    <option value="Urban Landmark">Urban Landmark</option>
-                                </select>
-                            </div>
                             <div class="form-row" style="margin-bottom: 0;">
                                 <label>Signature System Title</label>
                                 <input type="text" id="sig-proj-title" placeholder="e.g., Al-Noor Tower Complex" required>
@@ -531,7 +525,7 @@
                 <div class="form-row" style="margin-top:15px;"><label>Title Identity</label><input type="text" id="edit-proj-title"></div>
                 <div class="form-row"><label>Structural Description Base</label><textarea id="edit-proj-desc" rows="3"></textarea></div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div id="status-brochure-fields" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div class="form-row" style="margin-bottom: 0;">
                         <label>Project Status</label>
                         <select id="edit-proj-status">
@@ -846,9 +840,8 @@
                 const container = document.getElementById('projects-table-body');
                 container.innerHTML = '';
                 
-                // Keep lookbook panel strictly clean [2]
-                const lookbookCategories = ["Modern Facade", "Residential Elite", "Luxury Living", "Commercial Infrastructure"];
-                const filteredData = data.filter(p => lookbookCategories.includes(p.category));
+                // Filter out 'Signature' projects to keep lookbook clean
+                const filteredData = data.filter(p => p.category !== 'Signature');
                 
                 filteredData.sort((a, b) => a.category.localeCompare(b.category) || a.display_order - b.display_order);
                 
@@ -892,7 +885,7 @@
                         body: JSON.stringify({
                             description: document.getElementById('proj-description').value,
                             image_path: document.getElementById('proj-image-path').value,
-                            video_path: document.getElementById('proj-video-path').value,
+                            video_path: document.getElementById('sig-proj-video-path').value,
                             brochure_url: document.getElementById('proj-brochure-url').value
                         })
                     });
@@ -904,7 +897,7 @@
             } catch(err) { alert("Add Lookbook failed: " + err.message); }
         });
 
-        // --- SIGNATURE PROJECTS (Status Page Categories ONLY) - FIX: No 404 database crashes [1] ---
+        // --- SIGNATURE PROJECTS (Status Page Categories ONLY) ---
         async function synchronizeSignaturePortfolioTable() {
             try {
                 const payload = await safeFetchJson('/api/projects');
@@ -912,9 +905,8 @@
                 const container = document.getElementById('sig-projects-table-body');
                 container.innerHTML = '';
                 
-                // Filters by target status lists to separate CMS configurations cleanly
-                const sigCategories = ["Architectural Detail", "Commercial Space", "Construction Site", "Structural Framework", "Urban Landmark"];
-                const filteredData = data.filter(p => sigCategories.includes(p.category));
+                // Filters by 'Signature' category to cleanly separate them
+                const filteredData = data.filter(p => p.category === 'Signature');
                 
                 filteredData.sort((a, b) => a.display_order - b.display_order);
                 
@@ -938,13 +930,12 @@
         document.getElementById('sig-portfolio-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const payload = {
-                category: document.getElementById('sig-proj-category').value,
+                category: 'Signature', // Removed selector, permanently set category to 'Signature' for projects page database separation
                 title: document.getElementById('sig-proj-title').value,
                 display_order: parseInt(document.getElementById('sig-proj-order').value) || 0
             };
 
             try {
-                // Post directly to projects table to avoid 404 errors [1]
                 const result = await safeFetchJson('/api/projects', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
@@ -995,6 +986,14 @@
                 document.getElementById('edit-proj-thumb').value = proj.image_path || '';
                 document.getElementById('edit-proj-status').value = proj.status || 'Ongoing';
                 document.getElementById('edit-proj-brochure-url').value = proj.brochure_url || '';
+                
+                // Dynamically toggle fields based on context type
+                const statusBrochureWrapper = document.getElementById('status-brochure-fields');
+                if (type === 'master') {
+                    statusBrochureWrapper.style.display = 'none';
+                } else {
+                    statusBrochureWrapper.style.display = 'grid';
+                }
                 
                 currentProjectPages = proj.pages || []; 
                 renderProjectPages(currentProjectPages);
