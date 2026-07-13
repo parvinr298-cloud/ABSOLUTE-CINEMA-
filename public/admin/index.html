@@ -1500,5 +1500,47 @@
 
         verifyIdentityTokenPresence();
     </script>
+    <script>
+(function() {
+    // We hook into the browser's global fetch network layer
+    const originalFetch = window.fetch;
+    window.fetch = async function(...args) {
+        const response = await originalFetch.apply(this, args);
+        
+        // If the dashboard is fetching messages from the API endpoint
+        if (args[0] && args[0].includes('/api/messages')) {
+            const clone = response.clone();
+            try {
+                const data = await clone.json();
+                
+                // Deep scan the incoming messages array to neutralize malicious tags
+                const sanitize = (obj) => {
+                    if (Array.isArray(obj)) {
+                        obj.forEach(sanitize);
+                    } else if (obj && typeof obj === 'object') {
+                        if (typeof obj.phone === 'string') {
+                            // Converts <script> tags to harmless plain text strings
+                            obj.phone = obj.phone
+                                .replace(/</g, "&lt;")
+                                .replace(/>/g, "&gt;")
+                                .replace(/"/g, "&quot;")
+                                .replace(/'/g, "&#x27;");
+                        }
+                        Object.values(obj).forEach(v => typeof v === 'object' && sanitize(v));
+                    }
+                };
+                
+                sanitize(data);
+                // Serves the sanitized data directly to your original rendering loops
+                response.json = async () => data;
+            } catch (e) {
+                // Failsafe: if JSON parsing falls through, return unmodified response
+            }
+        }
+        return response;
+    };
+})();
+</script>
+
 </body>
 </html>
