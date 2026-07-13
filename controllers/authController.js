@@ -24,8 +24,17 @@ router.post('/login', [
 
         // FIXED: Added unified fallback secret
         const secret = process.env.JWT_SECRET || 'super_secret_fallback_key_123!';
+        
+        // Tracks state validations sequence for the assigned target operator record in system
+        const activeTokenSessionKeyVal = user.token_version || 0;
+        
         const token = jwt.sign(
-            { id: user.id, email: user.email, must_change_password: user.must_change_password },
+            { 
+                id: user.id, 
+                email: user.email, 
+                must_change_password: user.must_change_password,
+                token_version: activeTokenSessionKeyVal 
+            },
             secret,
             { expiresIn: '8h' }
         );
@@ -86,6 +95,39 @@ router.put('/change-email', [
 
         await db.query('UPDATE users SET email = $1 WHERE id = $2', [newEmail, req.user.id]);
         res.json({ success: 'Operational comm identity successfully updated.' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ==========================================
+// KICK OUT SESSION OVERRIDES ENDPOINT [2]
+// ==========================================
+router.post('/kick-others', auth, async (req, res) => {
+    const db = req.app.get('db');
+    try {
+        // Instantly increment our dynamic token tracker matrix internally 
+        const updatedTargetMetaRecordSet = await db.query(
+            'UPDATE users SET token_version = COALESCE(token_version, 0) + 1 WHERE id = $1 RETURNING token_version, email',
+            [req.user.id]
+        );
+        
+        const freshUserReferenceResult = updatedTargetMetaRecordSet.rows[0];
+        
+        // Re-authenticate system state configuration matrix exclusively back onto requesting controller view.
+        const secret = process.env.JWT_SECRET || 'super_secret_fallback_key_123!';
+        const validatedUniqueAuthorizationFreshJWT = jwt.sign(
+            { 
+                id: req.user.id, 
+                email: freshUserReferenceResult.email, 
+                must_change_password: false,
+                token_version: freshUserReferenceResult.token_version
+            },
+            secret,
+            { expiresIn: '8h' }
+        );
+
+        res.json({ success: 'Session termination successful across alternative platforms.', token: validatedUniqueAuthorizationFreshJWT });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
