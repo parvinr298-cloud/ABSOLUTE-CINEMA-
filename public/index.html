@@ -264,7 +264,7 @@
             transform: translateY(-8px) rotate(-45deg);
         }
 
-        /* Mobile Nav Slides Panel (Links shifted upwards) */
+        /* Mobile Nav Slides Panel */
         .mobile-nav-panel {
             position: fixed;
             top: 0;
@@ -541,7 +541,7 @@
         }
 
         /* ==========================================================================
-           7. BEFORE/AFTER IMAGE COMPARISON SLIDER (DYNAMIC CANVASES ACCESSIBLE)
+           7. BEFORE/AFTER IMAGE COMPARISON SLIDER
            ========================================================================== */
         .slider-section-container {
             max-width: 960px;
@@ -767,7 +767,7 @@
             overflow: hidden;
         }
 
-        /* Contact Form Layout Enhancement */
+        /* Contact Form Layout */
         .form-wrapper {
             background: var(--color-bg);
             padding: 40px;
@@ -926,6 +926,10 @@
 </head>
 <body>
 
+    <!-- RESTORED: Dynamic Floating custom track cursor follower nodes -->
+    <div id="cursor" style="position: fixed; width: 8px; height: 8px; background: var(--color-accent); border-radius: 50%; pointer-events: none; z-index: 10000; transform: translate3d(-50%, -50%, 0); transition: width 0.2s, height 0.2s; mix-blend-mode: difference;"></div>
+    <div id="cursor-follower" style="position: fixed; width: 30px; height: 30px; border: 1.5px solid var(--color-accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate3d(-50%, -50%, 0); transition: transform 0.08s linear, width 0.2s, height 0.2s; mix-blend-mode: difference;"></div>
+
     <div id="premium-loader">
         <div class="loader-content">
             <div class="loading-compass"></div>
@@ -966,21 +970,22 @@
         <div style="display: flex; justify-content: flex-end; width: 100%; margin-bottom: 15px;">
             <button id="mobile-menu-close" style="background: none; border: none; font-size: 1.5rem; color: var(--color-text); cursor: pointer;"><i class="fas fa-times"></i></button>
         </div>
-        <a href="#about">The Studio</a>
-        <a href="#services">Services</a>
-        <!-- Points directly to dedicated projects status filtering page -->
-        <a href="projects.html">Projects</a>
-        <a href="#contact">Contact</a>
         
-        <!-- Mobile dynamic theme select-selector -->
-        <div style="margin-top: auto; border-top: 1px solid var(--color-border); padding-top: 20px; width: 100%;">
-            <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--color-text-muted); display: block; margin-bottom: 12px;">Active Theme</span>
+        <!-- Mobile dynamic theme select-selector (Moved Upwards) -->
+        <div style="width: 100%; margin-bottom: 20px; border-bottom: 1px solid var(--color-border); padding-bottom: 15px;">
+            <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--color-text-muted); display: block; margin-bottom: 8px;">Active Theme</span>
             <select id="mobile-theme-selector" style="width: 100%; padding: 12px; background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); border-radius: 4px; font-weight: 600; cursor: pointer; outline: none;">
                 <option value="light">Classic Studio (Light)</option>
                 <option value="dark">Midnight Executive (Dark)</option>
                 <option value="blueprint">Engineering Blueprint (Blue)</option>
             </select>
         </div>
+
+        <a href="#about">The Studio</a>
+        <a href="#services">Services</a>
+        <!-- Points directly to dedicated projects status filtering page -->
+        <a href="projects.html">Projects</a>
+        <a href="#contact">Contact</a>
     </div>
 
     <section class="hero">
@@ -1062,13 +1067,18 @@
                 <h3>Signature Portfolio</h3>
             </div>
             
-            <!-- Category-Based Portfolio Filters (Reverted like before) -->
+            <!-- Category-Based Portfolio Filters -->
             <div class="portfolio-filters-bar reveal">
                 <button class="filter-btn active" data-category="All">All</button>
                 <button class="filter-btn" data-category="Modern Facade">Modern Facade</button>
                 <button class="filter-btn" data-category="Residential Elite">Residential Elite</button>
                 <button class="filter-btn" data-category="Luxury Living">Luxury Living</button>
                 <button class="filter-btn" data-category="Commercial Infrastructure">Commercial Infra</button>
+                <button class="filter-btn" data-category="Architectural Detail">Architectural Detail</button>
+                <button class="filter-btn" data-category="Commercial Space">Commercial Space</button>
+                <button class="filter-btn" data-category="Construction Site">Construction Site</button>
+                <button class="filter-btn" data-category="Structural Framework">Structural Framework</button>
+                <button class="filter-btn" data-category="Urban Landmark">Urban Landmark</button>
             </div>
 
             <div class="gallery-grid" id="dyn-gallery-container">
@@ -1167,6 +1177,59 @@
         document.addEventListener('DOMContentLoaded', () => {
             let activeProjectsList = []; 
             
+            /* Custom Cursor and Smooth Follower tracking */
+            const cursor = document.getElementById('cursor');
+            const follower = document.getElementById('cursor-follower');
+            
+            function updateCursorPositions(x, y) {
+                if(cursor && follower) {
+                    cursor.style.left = x + 'px';
+                    cursor.style.top = y + 'px';
+                    setTimeout(() => {
+                        follower.style.left = x + 'px';
+                        follower.style.top = y + 'px';
+                    }, 40);
+                }
+            }
+
+            document.addEventListener('mousemove', (e) => {
+                updateCursorPositions(e.clientX, e.clientY);
+            });
+
+            document.addEventListener('mousedown', (e) => {
+                if(cursor && follower) {
+                    cursor.style.width = '12px'; cursor.style.height = '12px';
+                    follower.style.width = '42px'; follower.style.height = '42px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if(cursor && follower) {
+                    cursor.style.width = '8px'; cursor.style.height = '8px';
+                    follower.style.width = '30px'; follower.style.height = '30px';
+                }
+            });
+
+            // Touch support for smooth mobile coordinate glide on click/tap
+            document.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches[0]) {
+                    const x = e.touches[0].clientX;
+                    const y = e.touches[0].clientY;
+                    updateCursorPositions(x, y);
+                    if(cursor && follower) {
+                        cursor.style.width = '12px'; cursor.style.height = '12px';
+                        follower.style.width = '42px'; follower.style.height = '42px';
+                    }
+                }
+            }, { passive: true });
+
+            document.addEventListener('touchend', () => {
+                if(cursor && follower) {
+                    cursor.style.width = '8px'; cursor.style.height = '8px';
+                    follower.style.width = '30px'; follower.style.height = '30px';
+                }
+            }, { passive: true });
+
             /* 1. System Synchronization (Dynamic Hydration Engine) */
             async function pullDynamicContent() {
                 try {
@@ -1233,7 +1296,7 @@
                     if(settingsRes.social_linkedin) document.getElementById('soc-ln').href = settingsRes.social_linkedin;
                     if(settingsRes.social_youtube) document.getElementById('soc-yt').href = settingsRes.social_youtube;
 
-                    // Helper to safely extract arrays from various API formats (fixes Render wrapping issues)
+                    // Helper to safely extract arrays from various API formats
                     function getSafeArray(payload) {
                         if (Array.isArray(payload)) return payload;
                         if (payload && typeof payload === 'object') {
@@ -1243,7 +1306,9 @@
                     }
 
                     const safeServices = getSafeArray(servicesRes);
-                    const safeProjects = getSafeArray(projectsRes);
+                    
+                    // SEGREGATION FIX: Filter out status signature projects to keep front page lookbook clean
+                    const safeProjects = getSafeArray(projectsRes).filter(p => p.category !== 'Signature');
 
                     // Hydrate Competency Services Grid ONLY if backend data exists
                     if(safeServices && safeServices.length > 0) {
@@ -1369,15 +1434,6 @@
                     setTimeout(() => el.classList.add('reveal'), i * 200);
                 });
             }
-
-            /* Custom Cursor */
-            const cursor = document.getElementById('cursor');
-            const follower = document.getElementById('cursor-follower');
-            
-            document.addEventListener('mousemove', (e) => {
-                cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-                follower.style.transform = `translate3d(${e.clientX - 15}px, ${e.clientY - 15}px, 0)`;
-            });
 
             /* Header Scroll Effect & Toggle Class */
             const header = document.getElementById('main-header');
