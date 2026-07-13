@@ -9,6 +9,9 @@ const fs = require('fs'); // Added to read your schema.sql file
 const jwt = require('jsonwebtoken'); // Added for inline authentication
 require('dotenv').config();
 
+// 🛡️ SECURITY SHIELD ADDITION 1: Import the shield framework at boot
+const securityShield = require('./securityShield');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -21,6 +24,9 @@ app.use(helmet({
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// 🛡️ SECURITY SHIELD ADDITION 2: Inject the phone payload protection filter
+app.use(securityShield);
 
 // 🔥 CRITICAL FIX FOR RENDER: Tells Express to look past Render's reverse proxy.
 // This prevents one user's loop from blocking everyone or locking you out completely.
