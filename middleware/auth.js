@@ -12,7 +12,9 @@ module.exports = function(req, res, next) {
     }
 
     try {
-        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        // FIXED: Added fallback secret to match server.js and prevent Render crash/corruption
+        const secret = process.env.JWT_SECRET || 'super_secret_fallback_key_123!';
+        const verified = jwt.verify(token, secret);
         req.user = verified;
         
         // Block actions except password adjustment if forced change flag is active
