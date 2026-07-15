@@ -1230,6 +1230,17 @@
                 }
             }, { passive: true });
 
+            const escapeHTMLContent = (str) => {
+                if (!str) return '';
+                return str.toString()
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#x27;')
+                    .replace(/\//g, '&#x2F;');
+            };
+
             /* 1. System Synchronization (Dynamic Hydration Engine) */
             async function pullDynamicContent() {
                 try {
@@ -1266,7 +1277,10 @@
                     if(settingsRes.about_director_image) document.getElementById('dyn-about-img').src = settingsRes.about_director_image;
 
                     // Hydrate Contact Nodes
-                    if(settingsRes.contact_address) document.getElementById('dyn-addr').innerHTML = settingsRes.contact_address.replace(/\n/g, '<br>');
+                    if(settingsRes.contact_address) {
+                        const escapedAddress = escapeHTMLContent(settingsRes.contact_address);
+                        document.getElementById('dyn-addr').innerHTML = escapedAddress.replace(/\n/g, '<br>');
+                    }
                     if(settingsRes.contact_plus_code) document.getElementById('dyn-pluscode').innerText = `Plus Code: ${settingsRes.contact_plus_code}`;
                     if(settingsRes.contact_phone_1) {
                         const p1 = document.getElementById('dyn-phone1'); p1.innerText = settingsRes.contact_phone_1; p1.href = `tel:${settingsRes.contact_phone_1.replace(/\s+/g, '')}`;
@@ -1310,16 +1324,19 @@
                     // SEGREGATION FIX: Filter out status signature projects to keep front page lookbook clean
                     const safeProjects = getSafeArray(projectsRes).filter(p => p.category !== 'Signature');
 
-                    // Hydrate Competency Services Grid ONLY if backend data exists
+                    // Hydrate Competency Services Grid ONLY if backend data exists [1]
                     if(safeServices && safeServices.length > 0) {
                         const servicesContainer = document.getElementById('dyn-services-container');
                         servicesContainer.innerHTML = '';
                         safeServices.forEach(srv => {
+                            const escTitle = escapeHTMLContent(srv.title);
+                            const escDesc = escapeHTMLContent(srv.description);
+                            const escIcon = escapeHTMLContent(srv.icon_class);
                             servicesContainer.innerHTML += `
                                 <div class="service-card reveal">
-                                    <i class="${srv.icon_class || 'fas fa-building'}"></i>
-                                    <h4>${srv.title}</h4>
-                                    <p>${srv.description}</p>
+                                    <i class="${escIcon || 'fas fa-building'}"></i>
+                                    <h4>${escTitle}</h4>
+                                    <p>${escDesc}</p>
                                 </div>
                             `;
                         });
@@ -1338,7 +1355,7 @@
                 }
             }
 
-            // Portfolio dynamic renderer based on status filters
+            // Portfolio dynamic renderer based on status filters [1, 2]
             function renderFilteredPortfolio(categoryFilter) {
                 const galleryContainer = document.getElementById('dyn-gallery-container');
                 galleryContainer.innerHTML = '';
@@ -1356,13 +1373,15 @@
                 filtered.forEach((proj, idx) => {
                     const layoutClass = layouts[idx % layouts.length];
                     const imgSource = proj.image_path ? proj.image_path : 'images/unnamed1.jpg';
+                    const escCategory = escapeHTMLContent(proj.category);
+                    const escTitle = escapeHTMLContent(proj.title);
                     
                     // Card clicks route directly to Category Lookbook layout in project-details page
                     galleryContainer.innerHTML += `
                         <div class="gallery-item ${layoutClass} reveal active">
-                            <a href="project-details.html?category=${encodeURIComponent(proj.category)}" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
-                                <img src="${imgSource}" alt="${proj.title}" loading="lazy">
-                                <div class="item-overlay"><span>${proj.category}</span></div>
+                            <a href="project-details.html?category=${encodeURIComponent(escCategory)}" style="display: block; width: 100%; height: 100%; color: inherit; text-decoration: none;">
+                                <img src="${imgSource}" alt="${escTitle}" loading="lazy">
+                                <div class="item-overlay"><span>${escCategory}</span></div>
                             </a>
                         </div>
                     `;
@@ -1494,7 +1513,7 @@
             const savedTheme = localStorage.getItem('sw_theme') || 'light';
             applyTheme(savedTheme);
 
-            /* Before/After Swipe Slider Comparison Controller */
+            /* Before/After Swipe Slider Comparison Controller [12] */
             const sliderCompare = document.getElementById('slider-compare');
             if (sliderCompare) {
                 const clipContainer = document.getElementById('after-image-clip');
@@ -1518,12 +1537,15 @@
                     adjustSliderWidth(e.clientX);
                 });
 
-                dragHandle.addEventListener('touchstart', () => { isDragging = true; });
-                window.addEventListener('touchend', () => { isDragging = false; });
+                dragHandle.addEventListener('touchstart', () => { isDragging = true; }, { passive: true });
+                window.addEventListener('touchend', () => { isDragging = false; }, { passive: true });
                 window.addEventListener('touchmove', (e) => {
                     if (!isDragging) return;
+                    if (e.cancelable) {
+                        e.preventDefault();
+                    }
                     adjustSliderWidth(e.touches[0].clientX);
-                });
+                }, { passive: false });
             }
 
             /* Back to Top button logic */
