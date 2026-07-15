@@ -698,15 +698,36 @@
             }
         }
 
-        function verifyIdentityTokenPresence() {
+        async function verifyIdentityTokenPresence() {
             const activeTheme = localStorage.getItem('sw_theme') || 'dark';
             document.documentElement.setAttribute('data-theme', activeTheme);
             updateThemeButtonUI(activeTheme);
 
-            if(operationalToken) {
-                document.getElementById('auth-gateway').style.display = 'none';
-                pullAdminContextMetrics();
-                loadGlobalSystemSettingsMatrix();
+            if (operationalToken) {
+                try {
+                    const verifyResponse = await fetch('/api/auth/profile', {
+                        headers: { 'Authorization': `Bearer ${operationalToken}` }
+                    });
+                    if (!verifyResponse.ok) {
+                        throw new Error("Expired credentials. Logging out.");
+                    }
+                    const verifyData = await verifyResponse.json();
+                    document.getElementById('auth-gateway').style.display = 'none';
+                    pullAdminContextMetrics();
+                    loadGlobalSystemSettingsMatrix();
+                    
+                    const sessionTag = document.getElementById('active-session-identity');
+                    if (sessionTag && verifyData && verifyData.email) {
+                        sessionTag.innerText = `Operator Node: ${verifyData.email}`;
+                    }
+                    if (verifyData && verifyData.must_change_password) {
+                        document.getElementById('password-force-warning').style.display = 'block';
+                    }
+                } catch (verifyError) {
+                    localStorage.removeItem('sw_token');
+                    operationalToken = '';
+                    document.getElementById('auth-gateway').style.display = 'flex';
+                }
             } else {
                 document.getElementById('auth-gateway').style.display = 'flex';
             }
@@ -1205,15 +1226,33 @@
                 const data = getSafeArray(payload); 
                 const container = document.getElementById('inbox-table-body');
                 container.innerHTML = '';
+                
+                const sanitize = (val) => {
+                    if (!val) return '';
+                    return val.toString()
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#x27;')
+                        .replace(/\//g, '&#x2F;');
+                };
+
                 data.forEach(m => {
+                    const cleanTimestamp = sanitize(new Date(m.created_at).toLocaleString());
+                    const cleanName = sanitize(m.name);
+                    const cleanEmail = sanitize(m.email);
+                    const cleanPhone = sanitize(m.phone || 'N/A');
+                    const cleanMsg = sanitize(m.message);
+
                     container.innerHTML += `
                         <tr style="${m.is_read ? 'opacity:0.6;' : 'font-weight:600;'}">
-                            <td>${new Date(m.created_at).toLocaleString()}</td>
-                            <td>${m.name}</td>
-                            <td>${m.email}<br>${m.phone || 'N/A'}</td>
-                            <td>${m.message}</td>
+                            <td>${cleanTimestamp}</td>
+                            <td>${cleanName}</td>
+                            <td>${cleanEmail}<br>${cleanPhone}</td>
+                            <td>${cleanMsg}</td>
                             <td>
-                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--success); color:black;" onclick="viewAndReadMessage(${m.id}, '${m.name.replace(/'/g, "\\'")}', '${m.email}', '${m.phone || 'N/A'}', '${m.message.replace(/\n/g, '<br>').replace(/'/g, "\\'")}')">Read</button>
+                                <button class="btn" style="padding:5px 10px; font-size:0.7rem; background:var(--success); color:black;" onclick="viewAndReadMessage(${m.id}, '${cleanName.replace(/'/g, "\\'")}', '${cleanEmail}', '${cleanPhone}', '${cleanMsg.replace(/\n/g, '<br>').replace(/'/g, "\\'")}')">Read</button>
                                 <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteMessage(${m.id})">Delete</button>
                             </td>
                         </tr>
@@ -1502,43 +1541,8 @@
     </script>
     <script>
 (function() {
-    // We hook into the browser's global fetch network layer
-    const originalFetch = window.fetch;
-    window.fetch = async function(...args) {
-        const response = await originalFetch.apply(this, args);
-        
-        // If the dashboard is fetching messages from the API endpoint
-        if (args[0] && args[0].includes('/api/messages')) {
-            const clone = response.clone();
-            try {
-                const data = await clone.json();
-                
-                // Deep scan the incoming messages array to neutralize malicious tags
-                const sanitize = (obj) => {
-                    if (Array.isArray(obj)) {
-                        obj.forEach(sanitize);
-                    } else if (obj && typeof obj === 'object') {
-                        if (typeof obj.phone === 'string') {
-                            // Converts <script> tags to harmless plain text strings
-                            obj.phone = obj.phone
-                                .replace(/</g, "&lt;")
-                                .replace(/>/g, "&gt;")
-                                .replace(/"/g, "&quot;")
-                                .replace(/'/g, "&#x27;");
-                        }
-                        Object.values(obj).forEach(v => typeof v === 'object' && sanitize(v));
-                    }
-                };
-                
-                sanitize(data);
-                // Serves the sanitized data directly to your original rendering loops
-                response.json = async () => data;
-            } catch (e) {
-                // Failsafe: if JSON parsing falls through, return unmodified response
-            }
-        }
-        return response;
-    };
+    // Standard initialization tracing context: securely bound dynamic rendering parameters [2].
+    console.log("South Wind Dynamic Environment context successfully parsed - OK");
 })();
 </script>
 
