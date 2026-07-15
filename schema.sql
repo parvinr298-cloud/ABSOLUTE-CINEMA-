@@ -1,6 +1,6 @@
--- schema.sql
--- Database schema for South Wind Engineering CMS
+-- Database schema for South Wind Engineering CMS (Consolidated Upgrades & Clean Seeding)
 
+-- 1. BASE SYSTEM SCHEMA CREATIONS
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -62,13 +62,10 @@ CREATE TABLE IF NOT EXISTS media_library (
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS description TEXT;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_path TEXT;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS video_path TEXT;
-
--- Safe non-destructive additions for CMS Status Filters and Google Drive Brochure Redirection
--- Decouples Status (Ongoing, Completed, Upcoming) from Category (Modern Facade, etc.)
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'Ongoing';
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS brochure_url TEXT;
 
--- New Architectural Project Pages Module
+-- Dynamic Architectural Project Pages Modules Table Setup
 CREATE TABLE IF NOT EXISTS project_pages (
     id SERIAL PRIMARY KEY,
     project_id INTEGER REFERENCES projects(id) ON DELETE CASCADE,
@@ -78,7 +75,7 @@ CREATE TABLE IF NOT EXISTS project_pages (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- New Matrix Media Support Module
+-- Core Matrix Media Metadata Support Module Table Setup
 CREATE TABLE IF NOT EXISTS project_media (
     id SERIAL PRIMARY KEY,
     page_id INTEGER REFERENCES project_pages(id) ON DELETE CASCADE,
@@ -90,10 +87,33 @@ CREATE TABLE IF NOT EXISTS project_media (
 
 
 -- =========================================================================
--- LIVE DATABASE CLEAN UP & DEDUPLICATION (PREVENTS MIGRATION ERRORS)
+-- RECONCILIATION FOR RETROACTIVE CASCADE MODES (Highly Important)
+-- =========================================================================
+-- 'CREATE TABLE IF NOT EXISTS' blocks will skip adding relational ON DELETE 
+-- constraints on live setups. We drop and update constraints explicitly.
+
+-- Explicit CASCADE addition on target pages constraint links:
+ALTER TABLE IF EXISTS project_pages DROP CONSTRAINT IF EXISTS project_pages_project_id_fkey CASCADE;
+ALTER TABLE IF EXISTS project_pages 
+ADD CONSTRAINT fk_projects_relational_relation
+    FOREIGN KEY (project_id) 
+    REFERENCES projects(id) 
+    ON DELETE CASCADE;
+
+-- Explicit CASCADE addition on active project media tracking schemas constraints:
+ALTER TABLE IF EXISTS project_media DROP CONSTRAINT IF EXISTS project_media_page_id_fkey CASCADE;
+ALTER TABLE IF EXISTS project_media DROP CONSTRAINT IF EXISTS fk_project_page CASCADE;
+ALTER TABLE IF EXISTS project_media 
+ADD CONSTRAINT fk_page_cascade_rule
+    FOREIGN KEY (page_id) 
+    REFERENCES project_pages(id) 
+    ON DELETE CASCADE;
+
+
+-- =========================================================================
+-- LIVE DATABASE CLEAN UP & DEDUPLICATION (PREVENTS UNIQUE VIOLATIONS)
 -- =========================================================================
 
--- 1. Delete existing duplicates so they do not block the Unique Constraints
 DELETE FROM services a 
 USING services b 
 WHERE a.id > b.id AND a.title = b.title;
@@ -102,7 +122,6 @@ DELETE FROM projects a
 USING projects b 
 WHERE a.id > b.id AND a.title = b.title;
 
--- 2. Safely apply Unique constraints to existing live tables
 ALTER TABLE projects DROP CONSTRAINT IF EXISTS unique_project_title;
 ALTER TABLE projects ADD CONSTRAINT unique_project_title UNIQUE (title);
 
@@ -111,10 +130,10 @@ ALTER TABLE services ADD CONSTRAINT unique_service_title UNIQUE (title);
 
 
 -- =========================================================================
--- SEED DATA (ON CONFLICT DO NOTHING IS NOW ACTIVE AND WORKING)
+-- COMPLETE ENGINE CONTEXT CORE SEED MATRIX INTEGRATIONS
 -- =========================================================================
 
--- Seed Data for Core Content Layers
+-- Seed Data for Core Configuration Options content maps
 INSERT INTO site_settings (key, value) VALUES
 ('hero_title', 'Architectural Excellence. Structural Integrity.'),
 ('hero_subtitle', 'Engineering the Future of Dhaka'),
@@ -145,7 +164,16 @@ INSERT INTO site_settings (key, value) VALUES
 ('seo_og_description', 'Professional Civil Engineering, Architecture & Construction Services in Dhaka North.')
 ON CONFLICT (key) DO NOTHING;
 
--- Seed Default Services matching current design
+-- Initial core users authentication node seeding profile:
+INSERT INTO users (email, password_hash, must_change_password) 
+VALUES (
+    'southwindengineering43@gmail.com',
+    '$2y$12$R.P1C8/YlQzEqXEnPZuN8u3eM9CqRByMLe7v08V.KeR5u/NWeNWea', -- Matches password reset alert triggers on admin systems profiles configuration 
+    TRUE
+)
+ON CONFLICT (email) DO NOTHING;
+
+-- Dynamic service blocks context rendering keys insertions
 INSERT INTO services (title, description, icon_class, display_order) VALUES
 ('Architectural Design', 'Custom residential and commercial plans that maximize space, light, and modern functionality.', 'fas fa-drafting-compass', 1),
 ('Structural Engineering', 'Advanced structural analysis ensuring safety and longevity using the latest construction tech.', 'fas fa-building', 2),
@@ -155,7 +183,7 @@ INSERT INTO services (title, description, icon_class, display_order) VALUES
 ('Urban Planning', 'Sustainable development strategies for modern urban environments in Bangladesh.', 'fas fa-city', 6)
 ON CONFLICT (title) DO NOTHING;
 
--- Seed Default Projects matching layout classes
+-- Safe insertion arrays mapping parameters baseline values
 INSERT INTO projects (title, category, is_featured, display_order, images) VALUES
 ('South Wind Project 1', 'Residential Elite', true, 1, '["images/unnamed1.jpg"]'::jsonb),
 ('South Wind Project 2', 'Modern Facade', true, 2, '["images/unnamed2.jpg"]'::jsonb),
