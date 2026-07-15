@@ -22,23 +22,9 @@ router.post('/login', [
         const validPass = await bcrypt.compare(password, user.password_hash);
         if (!validPass) return res.status(400).json({ error: 'Invalid systemic access credentials.' });
 
-        // FIXED: Added unified fallback secret
-        if (!process.env.JWT_SECRET) {
-throw new Error('JWT_SECRET is missing in .env');
-}
-const JWT_SECRET = process.env.JWT_SECRET;
-        
-        // Tracks state validations sequence for the assigned target operator record in system
-        const activeTokenSessionKeyVal = user.token_version || 0;
-        
         const token = jwt.sign(
-            { 
-                id: user.id, 
-                email: user.email, 
-                must_change_password: user.must_change_password,
-                token_version: activeTokenSessionKeyVal 
-            },
-            secret,
+            { id: user.id, email: user.email, must_change_password: user.must_change_password },
+            process.env.JWT_SECRET,
             { expiresIn: '8h' }
         );
 
@@ -77,63 +63,6 @@ router.get('/profile', auth, async (req, res) => {
     try {
         const user = await db.query('SELECT id, email, must_change_password FROM users WHERE id = $1', [req.user.id]);
         res.json(user.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-router.put('/change-email', [
-    auth,
-    body('newEmail').isEmail().normalizeEmail()
-], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ error: 'Invalid email formatting parameters.' });
-
-    const db = req.app.get('db');
-    const { newEmail } = req.body;
-
-    try {
-        const existing = await db.query('SELECT id FROM users WHERE email = $1', [newEmail]);
-        if (existing.rows.length > 0) return res.status(400).json({ error: 'Email identity already reserved by architecture.' });
-
-        await db.query('UPDATE users SET email = $1 WHERE id = $2', [newEmail, req.user.id]);
-        res.json({ success: 'Operational comm identity successfully updated.' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// ==========================================
-// KICK OUT SESSION OVERRIDES ENDPOINT [2]
-// ==========================================
-router.post('/kick-others', auth, async (req, res) => {
-    const db = req.app.get('db');
-    try {
-        // Instantly increment our dynamic token tracker matrix internally 
-        const updatedTargetMetaRecordSet = await db.query(
-            'UPDATE users SET token_version = COALESCE(token_version, 0) + 1 WHERE id = $1 RETURNING token_version, email',
-            [req.user.id]
-        );
-        
-        const freshUserReferenceResult = updatedTargetMetaRecordSet.rows[0];
-        
-        // Re-authenticate system state configuration matrix exclusively back onto requesting controller view.
-        if (!process.env.JWT_SECRET) {
-throw new Error('JWT_SECRET is missing in .env');
-}
-const JWT_SECRET = process.env.JWT_SECRET;
-        const validatedUniqueAuthorizationFreshJWT = jwt.sign(
-            { 
-                id: req.user.id, 
-                email: freshUserReferenceResult.email, 
-                must_change_password: false,
-                token_version: freshUserReferenceResult.token_version
-            },
-            secret,
-            { expiresIn: '8h' }
-        );
-
-        res.json({ success: 'Session termination successful across alternative platforms.', token: validatedUniqueAuthorizationFreshJWT });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
