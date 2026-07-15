@@ -21,7 +21,12 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet({
     contentSecurityPolicy: false, 
 }));
-app.use(cors({ origin: '*' }));
+const allowedOrigins = ['
+;
+app.use(cors({
+origin: allowedOrigins,
+credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
