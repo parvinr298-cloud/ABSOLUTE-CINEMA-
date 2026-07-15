@@ -23,7 +23,10 @@ router.post('/login', [
         if (!validPass) return res.status(400).json({ error: 'Invalid systemic access credentials.' });
 
         // FIXED: Added unified fallback secret
-        const secret = process.env.JWT_SECRET || 'super_secret_fallback_key_123!';
+        if (!process.env.JWT_SECRET) {
+throw new Error('JWT_SECRET is missing in .env');
+}
+const JWT_SECRET = process.env.JWT_SECRET;
         
         // Tracks state validations sequence for the assigned target operator record in system
         const activeTokenSessionKeyVal = user.token_version || 0;
@@ -115,7 +118,10 @@ router.post('/kick-others', auth, async (req, res) => {
         const freshUserReferenceResult = updatedTargetMetaRecordSet.rows[0];
         
         // Re-authenticate system state configuration matrix exclusively back onto requesting controller view.
-        const secret = process.env.JWT_SECRET || 'super_secret_fallback_key_123!';
+        if (!process.env.JWT_SECRET) {
+throw new Error('JWT_SECRET is missing in .env');
+}
+const JWT_SECRET = process.env.JWT_SECRET;
         const validatedUniqueAuthorizationFreshJWT = jwt.sign(
             { 
                 id: req.user.id, 
