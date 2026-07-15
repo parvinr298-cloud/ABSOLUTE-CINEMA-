@@ -21,11 +21,17 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet({
     contentSecurityPolicy: false, 
 }));
-const allowedOrigins = ['
-;
+
+// Add your frontend domain(s) to this array
+const allowedOrigins = [
+    'http://localhost:3000', // React default
+    'http://localhost:5173', // Vite default
+    // 'https://your-frontend-site.onrender.com' <-- Add your live frontend link here later!
+];
+
 app.use(cors({
-origin: allowedOrigins,
-credentials: true
+    origin: allowedOrigins,
+    credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
