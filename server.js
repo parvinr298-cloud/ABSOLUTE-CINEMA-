@@ -26,7 +26,7 @@ app.use(helmet({
 const allowedOrigins = [
     'http://localhost:3000', // React default
     'http://localhost:5173', // Vite default
-    // 'https://your-frontend-site.onrender.com' <-- Add your live frontend link here later!
+    // 'https://southwind.onrender.com/' <-- Add your live frontend link here later!
 ];
 
 app.use(cors({
