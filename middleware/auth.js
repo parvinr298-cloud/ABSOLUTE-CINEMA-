@@ -13,7 +13,10 @@ module.exports = async function(req, res, next) {
 
     try {
         // FIXED: Added fallback secret to match server.js and prevent Render crash/corruption
-        const secret = process.env.JWT_SECRET || 'super_secret_fallback_key_123!';
+        const secret = if (!process.env.JWT_SECRET) {
+throw new Error('JWT_SECRET is missing in .env');
+}
+const JWT_SECRET = process.env.JWT_SECRET;
         const verified = jwt.verify(token, secret);
         
         // Dynamic Token Integrity check validating key mismatch sequences to track forced logs logout events
