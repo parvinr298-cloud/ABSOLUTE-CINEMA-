@@ -93,15 +93,6 @@ CREATE TABLE IF NOT EXISTS project_media (
 -- LIVE DATABASE CLEAN UP & DEDUPLICATION (PREVENTS MIGRATION ERRORS)
 -- =========================================================================
 
--- 1. Delete existing duplicates so they do not block the Unique Constraints
-DELETE FROM services a 
-USING services b 
-WHERE a.id > b.id AND a.title = b.title;
-
-DELETE FROM projects a 
-USING projects b 
-WHERE a.id > b.id AND a.title = b.title;
-
 -- 2. Safely apply Unique constraints to existing live tables
 ALTER TABLE projects DROP CONSTRAINT IF EXISTS unique_project_title;
 ALTER TABLE projects ADD CONSTRAINT unique_project_title UNIQUE (title);
