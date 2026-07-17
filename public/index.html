@@ -113,7 +113,58 @@
         .loader-content {
             text-align: center;
         }
+        
+        /* New Custom Image Logo container replacing the spinning compass */
+        .sw-logo-wrapper {
+            margin: 0 auto 30px auto;
+            width: 110px; /* Adjust if you want the image bigger/smaller */
+            height: auto;
+            display: flex;
+            justify-content: center;
+        }
 
+        .sw-img-animated {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            /* Auto-remove the white background of the image! */
+            mix-blend-mode: darken; 
+            
+            /* The downward reveal wave + continuous gentle floating wave */
+            animation: waveRevealDown 1.2s ease-out forwards, floatingWave 3s ease-in-out infinite;
+        }
+
+        /* Auto-inverts the black logo and removes background for Dark / Blueprint themes */
+        [data-theme="dark"] .sw-img-animated {
+            filter: invert(1);
+            mix-blend-mode: screen;
+        }
+        [data-theme="blueprint"] .sw-img-animated {
+            filter: invert(1) drop-shadow(0 0 10px rgba(0, 240, 255, 0.4));
+            mix-blend-mode: screen;
+        }
+
+        /* 1) Downward Mask Reveal */
+        @keyframes waveRevealDown {
+            0% {
+                clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); /* starts fully hidden at top */
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* reveals flowing downwards */
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 2) Bobbing Wave Animation after it lands */
+        @keyframes floatingWave {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(8px); }
+        }
+
+        /* KEEP THESE AS THEY WERE ALREADY IN YOUR FILE: */
         .loader-logo {
             font-family: var(--font-serif);
             font-size: 2.5rem;
@@ -122,12 +173,12 @@
             margin-bottom: 20px;
             overflow: hidden;
         }
-
         .loader-logo span {
             display: block;
             transform: translateY(100%);
             animation: revealUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+        /* ... Keep the remaining .loader-bar classes exactly as they were ... */
 
         @keyframes revealUp {
             to { transform: translateY(0); }
@@ -932,10 +983,25 @@
 
     <div id="premium-loader">
         <div class="loader-content">
-            <div class="loading-compass"></div>
+            
+            <!-- Custom Image Loading Node replaces spinning ring -->
+            <div class="sw-logo-wrapper">
+                <!-- Change src to the location where you uploaded your SW Logo image -->
+                <img src="images/sw-logo.jpg" alt="South Wind Custom Logo" class="sw-img-animated">
+            </div>
+
+            <!-- Main 'SOUTH WIND' wordmark -->
             <div class="loader-logo">
                 <span>SOUTH WIND</span>
             </div>
+
+            <!-- The Loading trackbar -->
+            <div class="loader-bar-bg">
+                <div class="loader-bar-fill" id="loader-bar"></div>
+            </div>
+
+        </div>
+    </div>
             <div class="loader-bar-bg">
                 <div class="loader-bar-fill" id="loader-bar"></div>
             </div>
