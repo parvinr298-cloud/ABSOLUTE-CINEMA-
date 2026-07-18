@@ -22,8 +22,14 @@ router.post('/login', [
         const validPass = await bcrypt.compare(password, user.password_hash);
         if (!validPass) return res.status(400).json({ error: 'Invalid systemic access credentials.' });
 
+        // Sign token version into JWT
         const token = jwt.sign(
-            { id: user.id, email: user.email, must_change_password: user.must_change_password },
+            { 
+                id: user.id, 
+                email: user.email, 
+                must_change_password: user.must_change_password,
+                token_version: user.token_version || 0 
+            },
             process.env.JWT_SECRET,
             { expiresIn: '8h' }
         );
@@ -58,10 +64,42 @@ router.post('/change-password', [
     }
 });
 
+router.post('/kick-others', auth, async (req, res) => {
+    const db = req.app.get('db');
+    try {
+        // Increment token version in database
+        const result = await db.query(
+            'UPDATE users SET token_version = COALESCE(token_version, 0) + 1 WHERE id = $1 RETURNING token_version, email',
+            [req.user.id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Associated user account record not located.' });
+        }
+        const updatedUser = result.rows[0];
+        
+        // Re-sign token for active browser with the updated token version
+        const token = jwt.sign(
+            { 
+                id: req.user.id, 
+                email: updatedUser.email, 
+                must_change_password: req.user.must_change_password, 
+                token_version: updatedUser.token_version 
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '8h' }
+        );
+        
+        res.json({ success: true, token });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 router.get('/profile', auth, async (req, res) => {
     const db = req.app.get('db');
     try {
-        const user = await db.query('SELECT id, email, must_change_password FROM users WHERE id = $1', [req.user.id]);
+        const user = await db.query('SELECT id, email, must_change_password, token_version FROM users WHERE id = $1', [req.user.id]);
         res.json(user.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
