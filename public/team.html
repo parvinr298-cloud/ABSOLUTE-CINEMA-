@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Team - South Wind Engineering</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#f8fafc;color:#111}
+header{background:#fff;padding:20px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center}
+.container{max-width:1200px;margin:0 auto;padding:40px 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+.card img{width:100%;height:280px;object-fit:cover}
+.card-content{padding:20px}
+.position{color:#0f766e;font-weight:700;margin-bottom:10px}
+.btn{padding:10px 18px;border-radius:999px;border:none;background:#111;color:#fff;cursor:pointer}
+</style>
+</head>
+<body>
+<header>
+    <h2>South Wind Engineering</h2>
+    <div>
+        <button class="btn" onclick="toggleLanguage()">বাংলা / EN</button>
+        <a href="/" class="btn" style="text-decoration:none;margin-left:10px">Home</a>
+    </div>
+</header>
+
+<div class="container">
+    <h1 id="pageTitle">Our Team</h1>
+    <div id="teamGrid" class="grid"></div>
+</div>
+
+<script>
+let currentLang = localStorage.getItem('siteLanguage') || 'en';
+
+function toggleLanguage(){
+    currentLang = currentLang === 'en' ? 'bn' : 'en';
+    localStorage.setItem('siteLanguage', currentLang);
+    document.getElementById('pageTitle').textContent = currentLang === 'bn' ? 'আমাদের টিম' : 'Our Team';
+    loadTeam();
+}
+
+async function loadTeam(){
+    try{
+        const res = await fetch('/api/team');
+        const data = await res.json();
+        const grid = document.getElementById('teamGrid');
+        grid.innerHTML = data.map(m => `
+            <div class="card">
+                <img src="${m.image_path}" alt="">
+                <div class="card-content">
+                    <h3>${currentLang === 'bn' ? (m.name_bn || m.name || '') : (m.name_en || m.name || '')}</h3>
+                    <div class="position">${currentLang === 'bn' ? (m.position_bn || m.position || '') : (m.position_en || m.position || '')}</div>
+                    <p>${currentLang === 'bn' ? (m.description_bn || m.description || '') : (m.description_en || m.description || '')}</p>
+                </div>
+            </div>
+        `).join('');
+    }catch(e){
+        document.getElementById('teamGrid').innerHTML = '<p>Unable to load team members.</p>';
+    }
+}
+
+document.getElementById('pageTitle').textContent = currentLang === 'bn' ? 'আমাদের টিম' : 'Our Team';
+loadTeam();
+</script>
+</body>
+</html>
