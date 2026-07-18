@@ -121,7 +121,6 @@
             height: auto;
             display: flex;
             justify-content: center;
-            /* FIX 1: We moved the floating animation here to the outer wrapper so they don't fight */
             animation: floatingWave 3s ease-in-out infinite;
         }
 
@@ -130,7 +129,6 @@
             height: auto;
             object-fit: contain;
             mix-blend-mode: darken; 
-            /* FIX 2: Only run the Downward Wave Reveal on the image itself */
             animation: waveRevealDown 1.2s ease-out forwards;
         }
 
@@ -144,7 +142,7 @@
             mix-blend-mode: screen;
         }
 
-        /* FIX 3: Added -webkit- prefixes so the image doesn't glitch invisible on Mobile/Safari browsers */
+        /* Added -webkit- prefixes so the image doesn't glitch invisible on Mobile/Safari browsers */
         @keyframes waveRevealDown {
             0% {
                 -webkit-clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
@@ -164,6 +162,7 @@
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(8px); }
         }
+
         /* KEEP THESE AS THEY WERE ALREADY IN YOUR FILE: */
         .loader-logo {
             font-family: var(--font-serif);
@@ -178,7 +177,6 @@
             transform: translateY(100%);
             animation: revealUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        /* ... Keep the remaining .loader-bar classes exactly as they were ... */
 
         @keyframes revealUp {
             to { transform: translateY(0); }
@@ -249,12 +247,32 @@
 
         .logo {
             font-family: var(--font-serif);
-            font-size: 1.6rem;
+            font-size: 1.4rem; /* Scaled slightly so icon and text match beautifully */
             font-weight: 700;
             text-decoration: none;
             color: var(--color-text);
             letter-spacing: -0.5px;
             z-index: 1100;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* The Custom Header Logo styles! */
+        .nav-brand-icon {
+            height: 38px;
+            width: auto;
+            object-fit: contain;
+            mix-blend-mode: darken; 
+            transition: all 0.3s ease;
+        }
+        [data-theme="dark"] .nav-brand-icon {
+            filter: invert(1);
+            mix-blend-mode: screen;
+        }
+        [data-theme="blueprint"] .nav-brand-icon {
+            filter: invert(1) drop-shadow(0 0 5px rgba(0, 240, 255, 0.4));
+            mix-blend-mode: screen;
         }
 
         .nav-links {
@@ -1002,18 +1020,19 @@
 
         </div>
     </div>
-            <div class="loader-bar-bg">
-                <div class="loader-bar-fill" id="loader-bar"></div>
-            </div>
-        </div>
-    </div>
 
     <header id="main-header">
         <div class="nav-inner">
-            <a href="#" class="logo">SOUTH WIND</a>
+            <a href="#" class="logo">
+                <!-- Inserted Logo Right Here -->
+                <img src="images/sw-logo.png" alt="SW Icon" class="nav-brand-icon">
+                SOUTH WIND
+            </a>
+            
             <nav class="nav-links">
                 <a href="#about">The Studio</a>
                 <a href="#services">Services</a>
+                <!-- Points directly to dedicated projects status filtering page -->
                 <a href="projects.html">Projects</a>
                 <a href="#contact">Contact</a>
                 
@@ -1604,7 +1623,7 @@
                 });
 
                 dragHandle.addEventListener('touchstart', () => { isDragging = true; }, { passive: true });
-                window.addEventListener('touchend', () => { isDragging = false; }, { passive: true });
+                window.addEventListener('touchmove', () => { isDragging = false; }, { passive: true });
                 window.addEventListener('touchmove', (e) => {
                     if (!isDragging) return;
                     if (e.cancelable) {
