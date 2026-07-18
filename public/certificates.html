@@ -38,6 +38,8 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 24px;
         }
+        
+        /* Fixed card styling to prevent empty card collapse */
         .card {
             background: #fff;
             border: 1px solid #e5e7eb;
@@ -83,6 +85,23 @@
             text-decoration: none;
             font-size: 0.85rem;
         }
+
+        /* Google Translate Header Frame & Branding Overrides */
+        .goog-te-banner-frame.skiptranslate, .goog-te-banner-frame {
+            display: none !important;
+        }
+        body {
+            top: 0px !important;
+        }
+        .goog-tooltip, .goog-tooltip:hover {
+            display: none !important;
+            box-shadow: none !important;
+        }
+        .goog-text-highlight {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
     </style>
 </head>
 <body>
@@ -99,56 +118,74 @@
         <div id="certGrid" class="grid"></div>
     </div>
 
+    <!-- Google Translate Loader Element -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
+    }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <script>
     let currentLang = localStorage.getItem('siteLanguage') || 'en';
 
-    function toggleLanguage(){
+    function applyLanguage(lang) {
+        currentLang = lang;
+        if (lang === 'bn') {
+            document.getElementById('pageTitle').textContent = 'কোম্পানির সনদপত্র';
+            if (window.location.hash !== '#googtrans(en|bn)') {
+                window.location.hash = '#googtrans(en|bn)';
+                location.reload();
+            }
+        } else {
+            document.getElementById('pageTitle').textContent = 'Company Certifications';
+            if (window.location.hash && window.location.hash !== '#googtrans(en|en)') {
+                window.location.hash = '#googtrans(en|en)';
+                location.reload();
+            }
+        }
+    }
+
+    function toggleLanguage() {
         currentLang = currentLang === 'en' ? 'bn' : 'en';
         localStorage.setItem('siteLanguage', currentLang);
-        document.getElementById('pageTitle').textContent = currentLang === 'bn' ? 'কোম্পানির সনদপত্র' : 'Company Certifications';
-        loadCertificates();
+        applyLanguage(currentLang);
+    }
+
+    function getSafeArray(payload) {
+        if (Array.isArray(payload)) return payload;
+        if (payload && typeof payload === 'object') {
+            return payload.data || payload.certificates || [];
+        }
+        return [];
     }
 
     async function loadCertificates(){
         try{
             const res = await fetch('/api/certificates');
             const data = await res.json();
-            
-            function getSafeArray(payload) {
-                if (Array.isArray(payload)) return payload;
-                if (payload && typeof payload === 'object') {
-                    return payload.data || payload.certificates || [];
-                }
-                return [];
-            }
             const list = getSafeArray(data);
-
             const grid = document.getElementById('certGrid');
             if (list.length === 0) {
                 grid.innerHTML = '<p style="color:#666;">No certificates available yet.</p>';
                 return;
             }
-
-            grid.innerHTML = list.map(c => {
-                const imgPath = c.image_path ? c.image_path : 'images/unnamed1.jpg';
-                const title = currentLang === 'bn' ? (c.title_bn || c.title || '') : (c.title_en || c.title || '');
-                const desc = currentLang === 'bn' ? (c.description_bn || c.description || '') : (c.description_en || c.description || '');
-                return `
-                    <div class="card">
-                        <img src="${imgPath}" alt="" onerror="this.src='images/unnamed1.jpg'">
-                        <div class="card-content">
-                            <h3>${title}</h3>
-                            <p>${desc}</p>
-                        </div>
+            grid.innerHTML = list.map(c => `
+                <div class="card">
+                    <img src="${c.image_path ? c.image_path : 'images/unnamed1.jpg'}" alt="" onerror="this.src='images/unnamed1.jpg'">
+                    <div class="card-content">
+                        <h3>${c.title_en || c.title || ''}</h3>
+                        <p>${c.description_en || c.description || ''}</p>
                     </div>
-                `;
-            }).join('');
+                </div>
+            `).join('');
         }catch(e){
             document.getElementById('certGrid').innerHTML = '<p>Unable to load certificates.</p>';
         }
     }
 
-    document.getElementById('pageTitle').textContent = currentLang === 'bn' ? 'কোম্পানির সনদপত্র' : 'Company Certifications';
+    applyLanguage(currentLang);
     loadCertificates();
     </script>
 </body>
