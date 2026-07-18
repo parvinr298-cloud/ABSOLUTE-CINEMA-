@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS site_settings (
 
 CREATE TABLE IF NOT EXISTS services (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(255) UNIQUE NOT NULL,
     description TEXT NOT NULL,
     icon_class VARCHAR(100) NOT NULL,
     display_order INT DEFAULT 0,
@@ -27,8 +27,13 @@ CREATE TABLE IF NOT EXISTS services (
 
 CREATE TABLE IF NOT EXISTS projects (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(255) UNIQUE NOT NULL,
     category VARCHAR(100) NOT NULL,
+    description TEXT,
+    image_path TEXT,
+    video_path TEXT,
+    status VARCHAR(50) DEFAULT 'Ongoing',
+    brochure_url TEXT,
     is_featured BOOLEAN DEFAULT FALSE,
     display_order INT DEFAULT 0,
     images JSONB NOT NULL DEFAULT '[]'::jsonb,
@@ -54,17 +59,6 @@ CREATE TABLE IF NOT EXISTS media_library (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- =========================================================================
--- APPENDED ENGINE UPGRADES: DEEP PROJECT SPECIFICATIONS & MEDIA SUPPORT
--- =========================================================================
-
--- Safe non-destructive column additions for original tables
-ALTER TABLE projects ADD COLUMN IF NOT EXISTS description TEXT;
-ALTER TABLE projects ADD COLUMN IF NOT EXISTS image_path TEXT;
-ALTER TABLE projects ADD COLUMN IF NOT EXISTS video_path TEXT;
-ALTER TABLE projects ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'Ongoing';
-ALTER TABLE projects ADD COLUMN IF NOT EXISTS brochure_url TEXT;
-
 -- Dynamic Architectural Project Pages Modules Table Setup
 CREATE TABLE IF NOT EXISTS project_pages (
     id SERIAL PRIMARY KEY,
@@ -82,6 +76,37 @@ CREATE TABLE IF NOT EXISTS project_media (
     media_path TEXT NOT NULL,
     media_type VARCHAR(50) DEFAULT 'image',
     display_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Optimized Certificates Table (Accepts legacy nullable values)
+CREATE TABLE IF NOT EXISTS certificates (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255),
+    title_en VARCHAR(255) UNIQUE,
+    title_bn VARCHAR(255),
+    description TEXT,
+    description_en TEXT,
+    description_bn TEXT,
+    image_path TEXT NOT NULL,
+    display_order INT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Optimized Team Members Table (Accepts legacy nullable values)
+CREATE TABLE IF NOT EXISTS team_members (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    name_en VARCHAR(255) UNIQUE,
+    name_bn VARCHAR(255),
+    position VARCHAR(255),
+    position_en VARCHAR(255),
+    position_bn VARCHAR(255),
+    description TEXT,
+    description_en TEXT,
+    description_bn TEXT,
+    image_path TEXT NOT NULL,
+    display_order INT DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -108,25 +133,6 @@ ADD CONSTRAINT fk_page_cascade_rule
     FOREIGN KEY (page_id) 
     REFERENCES project_pages(id) 
     ON DELETE CASCADE;
-
-
--- =========================================================================
--- LIVE DATABASE CLEAN UP & DEDUPLICATION (PREVENTS UNIQUE VIOLATIONS)
--- =========================================================================
-
-DELETE FROM services a 
-USING services b 
-WHERE a.id > b.id AND a.title = b.title;
-
-DELETE FROM projects a 
-USING projects b 
-WHERE a.id > b.id AND a.title = b.title;
-
-ALTER TABLE projects DROP CONSTRAINT IF EXISTS unique_project_title;
-ALTER TABLE projects ADD CONSTRAINT unique_project_title UNIQUE (title);
-
-ALTER TABLE services DROP CONSTRAINT IF EXISTS unique_service_title;
-ALTER TABLE services ADD CONSTRAINT unique_service_title UNIQUE (title);
 
 
 -- =========================================================================
@@ -195,47 +201,6 @@ INSERT INTO projects (title, category, is_featured, display_order, images) VALUE
 ('South Wind Project 8', 'Urban Landmark', true, 8, '["images/unnamed10.jpg"]'::jsonb)
 ON CONFLICT (title) DO NOTHING;
 
-
--- =========================================================================
--- SELLABLE ENTERPRISE UPGRADE: CERTIFICATES & TEAM MANAGEMENT
--- =========================================================================
-
-CREATE TABLE IF NOT EXISTS certificates (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    title_en VARCHAR(255),
-    title_bn VARCHAR(255),
-    description TEXT,
-    description_en TEXT,
-    description_bn TEXT,
-    image_path TEXT NOT NULL,
-    display_order INT DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS team_members (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    name_en VARCHAR(255),
-    name_bn VARCHAR(255),
-    position VARCHAR(255) NOT NULL,
-    position_en VARCHAR(255),
-    position_bn VARCHAR(255),
-    description TEXT,
-    description_en TEXT,
-    description_bn TEXT,
-    image_path TEXT NOT NULL,
-    display_order INT DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- Protect against duplicates on successive server restarts
-ALTER TABLE certificates DROP CONSTRAINT IF EXISTS unique_certificate_title;
-ALTER TABLE certificates ADD CONSTRAINT unique_certificate_title UNIQUE (title);
-
-ALTER TABLE team_members DROP CONSTRAINT IF EXISTS unique_worker_name;
-ALTER TABLE team_members ADD CONSTRAINT unique_worker_name UNIQUE (name);
-
 -- Seed Certificate details securely
 INSERT INTO certificates (title, title_en, title_bn, description, description_en, description_bn, image_path, display_order)
 VALUES
@@ -259,7 +224,7 @@ VALUES
   'images/unnamed8.jpg', 
   2
 )
-ON CONFLICT (title) DO NOTHING;
+ON CONFLICT (title_en) DO NOTHING;
 
 -- Seed Team details securely
 INSERT INTO team_members (name, name_en, name_bn, position, position_en, position_bn, description, description_en, description_bn, image_path, display_order)
@@ -303,4 +268,4 @@ VALUES
   'images/unnamed3.jpg', 
   3
 )
-ON CONFLICT (name) DO NOTHING;
+ON CONFLICT (name_en) DO NOTHING;
