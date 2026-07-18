@@ -1,23 +1,56 @@
-const router = require('express').Router();
-const auth = require('../middleware/auth');
+const express = require('express');
+const router = express.Router();
+const jwt = require('jsonwebtoken');
 
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'Missing token' });
+    jwt.verify(token, process.env.JWT_SECRET || 'super_secret_fallback_key_123!', (err, user) => {
+        if (err) return res.status(403).json({ error: 'Invalid token' });
+        req.user = user;
+        next();
+    });
+}
+
+// GET all team members
 router.get('/', async (req, res) => {
-    const db = req.app.get('db');
+    const pool = req.app.get('db');
     try {
-        const result = await db.query('SELECT * FROM team_members ORDER BY display_order ASC, id ASC');
+        const result = await pool.query('SELECT * FROM team_members ORDER BY display_order ASC, id ASC');
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-router.post('/', auth, async (req, res) => {
-    const db = req.app.get('db');
-    const { name, position, description, image_path, display_order } = req.body;
+// POST new team member
+router.post('/', authenticateToken, async (req, res) => {
+    const pool = req.app.get('db');
+    const { 
+        name, name_en, name_bn, 
+        position, position_en, position_bn, 
+        description, description_en, description_bn, 
+        image_path, display_order 
+    } = req.body;
+
+    // Map fallbacks to ensure no null parameters
+    const finalName = name || name_en || '';
+    const finalNameEn = name_en || name || '';
+    const finalNameBn = name_bn || '';
+    const finalPos = position || position_en || '';
+    const finalPosEn = position_en || position || '';
+    const finalPosBn = position_bn || '';
+    const finalDesc = description || description_en || '';
+    const finalDescEn = description_en || description || '';
+    const finalDescBn = description_bn || '';
+
     try {
-        const result = await db.query(
-            'INSERT INTO team_members (name, position, description, image_path, display_order) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [name, position, description || '', image_path, display_order || 0]
+        const result = await pool.query(
+            `INSERT INTO team_members 
+            (name, name_en, name_bn, position, position_en, position_bn, description, description_en, description_bn, image_path, display_order) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
+            [finalName, finalNameEn, finalNameBn, finalPos, finalPosEn, finalPosBn, finalDesc, finalDescEn, finalDescBn, image_path, display_order || 0]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -25,24 +58,15 @@ router.post('/', auth, async (req, res) => {
     }
 });
 
-router.put('/:id', auth, async (req, res) => {
-    const db = req.app.get('db');
-    const { name, position, description, image_path, display_order } = req.body;
+// DELETE team member
+router.delete('/:id', authenticateToken, async (req, res) => {
+    const pool = req.app.get('db');
+    const { id } = req.params;
     try {
-        const result = await db.query(
-            'UPDATE team_members SET name=$1, position=$2, description=$3, image_path=$4, display_order=$5 WHERE id=$6 RETURNING *',
-            [name, position, description || '', image_path, display_order || 0, req.params.id]
-        );
-        res.json(result.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-router.delete('/:id', auth, async (req, res) => {
-    const db = req.app.get('db');
-    try {
-        await db.query('DELETE FROM team_members WHERE id=$1', [req.params.id]);
+        const result = await pool.query('DELETE FROM team_members WHERE id = $1', [id]);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Team member not found' });
+        }
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
