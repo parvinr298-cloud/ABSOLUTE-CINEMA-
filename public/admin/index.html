@@ -198,6 +198,11 @@
             <button class="menu-btn" onclick="switchControlView('inbox-panel', this)"><i class="fas fa-envelope"></i> Communications</button>
             <button class="menu-btn" onclick="switchControlView('media-panel', this)"><i class="fas fa-folder-open"></i> Media Vault</button>
             <button class="menu-btn" onclick="switchControlView('security-panel', this)"><i class="fas fa-shield-alt"></i> Security Gate</button>
+            
+            <div style="border-top: 1px solid var(--border); margin: 5px 0; padding-top: 5px;"></div>
+            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); padding: 5px 12px; display: block; text-transform: uppercase;">Trust & Operations</span>
+            <button class="menu-btn" onclick="switchControlView('certificates-panel', this)"><i class="fas fa-certificate"></i> Certificates</button>
+            <button class="menu-btn" onclick="switchControlView('team-panel', this)"><i class="fas fa-users"></i> Workers & Team</button>
         </div>
 
         <div class="main-workspace-view">
@@ -283,7 +288,6 @@
                 </table>
             </div>
 
-            <!-- Lookbooks Section (Front Page Lookbooks categories ONLY) -->
             <div id="projects-panel" class="panel">
                 <h2>Manage Front Categories (Home Page Cards)</h2>
                 
@@ -358,7 +362,6 @@
                 </table>
             </div>
 
-            <!-- Status Projects Section -->
             <div id="signature-projects-panel" class="panel">
                 <h2>Manage Signature Status Projects (Projects Page)</h2>
                 
@@ -482,11 +485,9 @@
                 <div class="media-grid" id="media-catalog-box"></div>
             </div>
 
-            <!-- SECURITY PANEL INTERFACES -->
             <div id="security-panel" class="panel">
                 <h2>Reinforce Access Cryptography Authentication Controls</h2>
                 
-                <!-- PASSWORD CHANGER -->
                 <form id="password-reinforce-form">
                     <div class="form-row">
                         <label>Target Security Access Passkey Alteration Metric</label>
@@ -495,7 +496,6 @@
                     <button type="submit" class="btn">Re-encrypt Verification Pipeline</button>
                 </form>
 
-                <!-- NEW: SYSTEM REGISTERED ADMINISTRATIVE CORRESPONDENT OVERRIDE FORM [1] -->
                 <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border);">
                     <h3>Change Operational Identity Contact Coordinate</h3>
                     <form id="email-change-form" style="margin-top: 15px;">
@@ -507,12 +507,140 @@
                     </form>
                 </div>
 
-                <!-- NEW: RE-ENCRYPT KEYRING REVOCATIONS TO SYSTEM DEVICE HANDLES [2] -->
                 <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border);">
                     <h3>Alternative Browser Controls (Session Termination Area)</h3>
                     <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px; line-height: 1.6;">If there are other devices currently logged into this admin identity, click the toggle below to immediately cancel and sign out those operators across all platforms. Your active browser interface session will safely remain connected.</p>
                     <button type="button" class="btn btn-danger" style="background:var(--danger);" onclick="kickAllAlternativeSystemsActiveLogins()">Kick and invalidate parallel credentials devices</button>
                 </div>
+            </div>
+
+            <!-- CERTIFICATES PANEL -->
+            <div id="certificates-panel" class="panel">
+                <h2>Manage Company Certifications</h2>
+                <div style="background: var(--surface-accent); border: 1px solid var(--border); padding: 30px; margin-bottom: 40px; border-radius: 4px;">
+                    <form id="certificates-form">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Certificate Title (English)</label>
+                                <input type="text" id="cert-title-en" placeholder="e.g. RAJUK Approved Contractor" required>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Certificate Title (Bangla)</label>
+                                <input type="text" id="cert-title-bn" placeholder="যেমন: রাজউক অনুমোদিত ঠিকাদার" required>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Description (English)</label>
+                                <textarea id="cert-desc-en" rows="3" placeholder="Certificate context specifications..."></textarea>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Description (Bangla)</label>
+                                <textarea id="cert-desc-bn" rows="3" placeholder="সনদপত্রের বিবরণ..."></textarea>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; align-items: end;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Certificate Image URL</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="cert-image-path" placeholder="media/uploads/cert.jpg" required>
+                                    <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('cert-image-path')">Browse</button>
+                                </div>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Display Order Weight</label>
+                                <input type="number" id="cert-order" value="0" min="0" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn" style="background: var(--success); color: black; margin-top: 25px;">Save Certification</button>
+                    </form>
+                </div>
+
+                <table id="certificates-data-table">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Title (EN)</th>
+                            <th>Title (BN)</th>
+                            <th>Asset Image</th>
+                            <th>Action Nodes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="certificates-table-body"></tbody>
+                </table>
+            </div>
+
+            <!-- WORKERS & TEAM PANEL -->
+            <div id="team-panel" class="panel">
+                <h2>Manage Workers & Team Members</h2>
+                <div style="background: var(--surface-accent); border: 1px solid var(--border); padding: 30px; margin-bottom: 40px; border-radius: 4px;">
+                    <form id="team-form">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Worker Name (English)</label>
+                                <input type="text" id="worker-name-en" placeholder="e.g. MD Mohim" required>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Worker Name (Bangla)</label>
+                                <input type="text" id="worker-name-bn" placeholder="যেমন: এমডি মহিম" required>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Worker Position (English)</label>
+                                <input type="text" id="worker-position-en" placeholder="e.g. General Manager" required>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Worker Position (Bangla)</label>
+                                <input type="text" id="worker-position-bn" placeholder="যেমন: মহাব্যবস্থাপক" required>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Description (English)</label>
+                                <textarea id="worker-desc-en" rows="3" placeholder="Staff duties specifications..."></textarea>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Description (Bangla)</label>
+                                <textarea id="worker-desc-bn" rows="3" placeholder="কর্মীদের দায়িত্ব বিবরণ..."></textarea>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; align-items: end;">
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Staff Image URL</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="worker-image-path" placeholder="media/uploads/staff.jpg" required>
+                                    <button type="button" class="btn" style="background: var(--border); color: white; padding: 14px 20px;" onclick="launchMediaPicker('worker-image-path')">Browse</button>
+                                </div>
+                            </div>
+                            <div class="form-row" style="margin-bottom: 0;">
+                                <label>Display Order Weight</label>
+                                <input type="number" id="worker-order" value="0" min="0" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn" style="background: var(--success); color: black; margin-top: 25px;">Save Staff Member</button>
+                    </form>
+                </div>
+
+                <table id="team-data-table">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Name (EN)</th>
+                            <th>Position (EN)</th>
+                            <th>Asset Image</th>
+                            <th>Action Nodes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="team-table-body"></tbody>
+                </table>
             </div>
 
         </div>
@@ -773,6 +901,8 @@
             if(panelId === 'signature-projects-panel') synchronizeSignaturePortfolioTable();
             if(panelId === 'inbox-panel') synchronizeInboxTable();
             if(panelId === 'media-panel') synchronizeMediaGridEngine();
+            if(panelId === 'certificates-panel') synchronizeCertificatesTable();
+            if(panelId === 'team-panel') synchronizeTeamTable();
 
             if(panelId === 'facade-panel') loadCategoryPortfolio('Modern Facade', 'facade-container');
             if(panelId === 'residential-panel') loadCategoryPortfolio('Residential Elite', 'residential-container');
@@ -827,7 +957,6 @@
             } catch(err) { alert("Password shift failed: " + err.message); }
         });
 
-        // --- NEW IMPLEMENTATION HANDLER: CORRESPONDING ADRESSED CHANGE OVERRIDES ---
         document.getElementById('email-change-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const newEmail = document.getElementById('new-sys-email').value;
@@ -846,7 +975,6 @@
             }
         });
 
-        // --- NEW IMPLEMENTATION HANDLER: FORCED PARALLEL SESSIONS KILL INTERCEPT ---
         async function kickAllAlternativeSystemsActiveLogins() {
             if (!confirm('Kick off alternative operational configurations signed into database architecture currently?')) return;
             try {
@@ -915,7 +1043,6 @@
             }
         }
 
-        // --- LOOKBOOK PROJECTS (Home Page Categories ONLY) ---
         async function synchronizePortfolioTable() {
             try {
                 const payload = await safeFetchJson('/api/projects');
@@ -923,9 +1050,7 @@
                 const container = document.getElementById('projects-table-body');
                 container.innerHTML = '';
                 
-                // Filter out 'Signature' projects to keep lookbook clean
                 const filteredData = data.filter(p => p.category !== 'Signature');
-                
                 filteredData.sort((a, b) => a.category.localeCompare(b.category) || a.display_order - b.display_order);
                 
                 filteredData.forEach(p => {
@@ -980,7 +1105,6 @@
             } catch(err) { alert("Add Lookbook failed: " + err.message); }
         });
 
-        // --- SIGNATURE PROJECTS (Status Page Categories ONLY) ---
         async function synchronizeSignaturePortfolioTable() {
             try {
                 const payload = await safeFetchJson('/api/projects');
@@ -988,9 +1112,7 @@
                 const container = document.getElementById('sig-projects-table-body');
                 container.innerHTML = '';
                 
-                // Filters by 'Signature' category to cleanly separate them
                 const filteredData = data.filter(p => p.category === 'Signature');
-                
                 filteredData.sort((a, b) => a.display_order - b.display_order);
                 
                 filteredData.forEach(p => {
@@ -1070,7 +1192,6 @@
                 document.getElementById('edit-proj-status').value = proj.status || 'Ongoing';
                 document.getElementById('edit-proj-brochure-url').value = proj.brochure_url || '';
                 
-                // Dynamically toggle fields based on context type
                 const statusBrochureWrapper = document.getElementById('status-brochure-fields');
                 if (type === 'master') {
                     statusBrochureWrapper.style.display = 'none';
@@ -1201,7 +1322,7 @@
                     await safeFetchJson(`/api/project-pages/${pageId}/media`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                        body: JSON.stringify({ media_path: path, media_type: type, display_order: document.getElementById('project-media-list').children.length + attachedCount })
+                        body: JSON.stringify({ media_path: path, media_type: type, display_order: document.getElementById('project-media-list').length + attachedCount })
                     });
                     attachedCount++;
                 }
@@ -1537,32 +1658,131 @@
             } catch (e) {}
         }
 
+        // CERTIFICATES CONTROL LOGIC
+        async function synchronizeCertificatesTable() {
+            try {
+                const data = await safeFetchJson('/api/certificates');
+                const list = getSafeArray(data);
+                const container = document.getElementById('certificates-table-body');
+                container.innerHTML = '';
+                list.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+                list.forEach(c => {
+                    const safeImg = getSafeImagePath(c.image_path);
+                    container.innerHTML += `
+                        <tr>
+                            <td><code>[${c.display_order || 0}]</code></td>
+                            <td><strong>${c.title_en || c.title || ''}</strong></td>
+                            <td><strong>${c.title_bn || ''}</strong></td>
+                            <td><img src="${safeImg}" style="width: 50px; height: 35px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border);" onerror="this.src='../images/unnamed1.jpg'"></td>
+                            <td>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteCertificate(${c.id})">Purge</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch(e) { console.error("Error updating certificates list:", e); }
+        }
+
+        document.getElementById('certificates-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                title_en: document.getElementById('cert-title-en').value,
+                title_bn: document.getElementById('cert-title-bn').value,
+                description_en: document.getElementById('cert-desc-en').value,
+                description_bn: document.getElementById('cert-desc-bn').value,
+                image_path: document.getElementById('cert-image-path').value,
+                display_order: parseInt(document.getElementById('cert-order').value) || 0
+            };
+
+            try {
+                const res = await safeFetchJson('/api/certificates', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                    body: JSON.stringify(payload)
+                });
+                if(res) {
+                    alert('Certification registered successfully.');
+                    document.getElementById('certificates-form').reset();
+                    synchronizeCertificatesTable();
+                }
+            } catch(err) { alert("Action block: " + err.message); }
+        });
+
+        async function executeDeleteCertificate(id) {
+            if(!confirm('Purge certificate from system records?')) return;
+            try {
+                await safeFetchJson(`/api/certificates/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${operationalToken}` }
+                });
+                synchronizeCertificatesTable();
+            } catch(e) { alert("Delete failed: " + e.message); }
+        }
+
+        // WORKERS & TEAM CONTROL LOGIC
+        async function synchronizeTeamTable() {
+            try {
+                const data = await safeFetchJson('/api/team');
+                const list = getSafeArray(data);
+                const container = document.getElementById('team-table-body');
+                container.innerHTML = '';
+                list.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+                list.forEach(m => {
+                    const safeImg = getSafeImagePath(m.image_path);
+                    container.innerHTML += `
+                        <tr>
+                            <td><code>[${m.display_order || 0}]</code></td>
+                            <td><strong>${m.name_en || m.name || ''}</strong></td>
+                            <td><span style="color:var(--text-muted); font-size:0.85rem;">${m.position_en || m.position || ''}</span></td>
+                            <td><img src="${safeImg}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 1px solid var(--border);" onerror="this.src='../images/unnamed1.jpg'"></td>
+                            <td>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.7rem;" onclick="executeDeleteTeamMember(${m.id})">Purge</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch(e) { console.error("Error updating team members list:", e); }
+        }
+
+        document.getElementById('team-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                name_en: document.getElementById('worker-name-en').value,
+                name_bn: document.getElementById('worker-name-bn').value,
+                position_en: document.getElementById('worker-position-en').value,
+                position_bn: document.getElementById('worker-position-bn').value,
+                description_en: document.getElementById('worker-desc-en').value,
+                description_bn: document.getElementById('worker-desc-bn').value,
+                image_path: document.getElementById('worker-image-path').value,
+                display_order: parseInt(document.getElementById('worker-order').value) || 0
+            };
+
+            try {
+                const res = await safeFetchJson('/api/team', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                    body: JSON.stringify(payload)
+                });
+                if(res) {
+                    alert('Worker registered successfully.');
+                    document.getElementById('team-form').reset();
+                    synchronizeTeamTable();
+                }
+            } catch(err) { alert("Action block: " + err.message); }
+        });
+
+        async function executeDeleteTeamMember(id) {
+            if(!confirm('Purge worker from system records?')) return;
+            try {
+                await safeFetchJson(`/api/team/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${operationalToken}` }
+                });
+                synchronizeTeamTable();
+            } catch(e) { alert("Delete failed: " + e.message); }
+        }
+
         verifyIdentityTokenPresence();
     </script>
-    <script>
-(function() {
-    // Standard initialization tracing context: securely bound dynamic rendering parameters [2].
-    console.log("South Wind Dynamic Environment context successfully parsed - OK");
-})();
-</script>
-
-
-<div style="margin-top:30px;padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#ffffff">
-    <h2 style="margin-top:0">Certificates Management</h2>
-    <p>Use the <code>/api/certificates</code> endpoints to add, edit, and remove company certifications. Fields: title, description, image_path, display_order.</p>
-</div>
-
-<div style="margin-top:20px;padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#ffffff">
-    <h2 style="margin-top:0">Workers & Team Management</h2>
-    <p>Use the <code>/api/team</code> endpoints to manage staff photos, positions, and descriptions. Fields: name, position, description, image_path, display_order.</p>
-</div>
-
 </body>
 </html>
-
-<div style="margin-top:30px;padding:20px;border:1px solid #e5e7eb;border-radius:12px;background:#ffffff">
-    <h2>Bilingual CMS Support</h2>
-    <p>Certificates: title_en, title_bn, description_en, description_bn</p>
-    <p>Team: name_en, name_bn, position_en, position_bn, description_en, description_bn</p>
-    <p>When the website language is switched to Bangla, the *_bn fields will be displayed automatically.</p>
-</div>
