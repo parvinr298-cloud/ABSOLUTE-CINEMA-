@@ -117,24 +117,24 @@
         /* New Custom Image Logo container replacing the spinning compass */
         .sw-logo-wrapper {
             margin: 0 auto 30px auto;
-            width: 110px; /* Adjust if you want the image bigger/smaller */
+            width: 110px;
             height: auto;
             display: flex;
             justify-content: center;
+            /* FIX 1: We moved the floating animation here to the outer wrapper so they don't fight */
+            animation: floatingWave 3s ease-in-out infinite;
         }
 
         .sw-img-animated {
             width: 100%;
             height: auto;
             object-fit: contain;
-            /* Auto-remove the white background of the image! */
             mix-blend-mode: darken; 
-            
-            /* The downward reveal wave + continuous gentle floating wave */
-            animation: waveRevealDown 1.2s ease-out forwards, floatingWave 3s ease-in-out infinite;
+            /* FIX 2: Only run the Downward Wave Reveal on the image itself */
+            animation: waveRevealDown 1.2s ease-out forwards;
         }
 
-        /* Auto-inverts the black logo and removes background for Dark / Blueprint themes */
+        /* Auto-inverts the black logo for Dark / Blueprint themes */
         [data-theme="dark"] .sw-img-animated {
             filter: invert(1);
             mix-blend-mode: screen;
@@ -144,26 +144,26 @@
             mix-blend-mode: screen;
         }
 
-        /* 1) Downward Mask Reveal */
+        /* FIX 3: Added -webkit- prefixes so the image doesn't glitch invisible on Mobile/Safari browsers */
         @keyframes waveRevealDown {
             0% {
-                clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); /* starts fully hidden at top */
+                -webkit-clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+                clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); 
                 opacity: 0;
                 transform: translateY(-20px);
             }
             100% {
-                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* reveals flowing downwards */
+                -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); 
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        /* 2) Bobbing Wave Animation after it lands */
         @keyframes floatingWave {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(8px); }
         }
-
         /* KEEP THESE AS THEY WERE ALREADY IN YOUR FILE: */
         .loader-logo {
             font-family: var(--font-serif);
