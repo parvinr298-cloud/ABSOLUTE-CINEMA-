@@ -218,6 +218,8 @@ app.use('/api/auth', require('./controllers/authController'));
 app.use('/api/content', require('./controllers/contentController'));
 app.use('/api/services', require('./controllers/serviceController'));
 app.use('/api/projects', require('./controllers/projectController'));
+app.use('/api/certificates', require('./controllers/certificateController'));
+app.use('/api/team', require('./controllers/teamController'));
 app.use('/api/messages', require('./controllers/messageController'));
 app.use('/api/media', require('./controllers/mediaController'));
 
