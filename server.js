@@ -5,8 +5,8 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
-const fs = require('fs'); // Added to read your schema.sql file
-const jwt = require('jsonwebtoken'); // Added for inline authentication
+const fs = require('fs');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 // 🛡️ SECURITY SHIELD ADDITION 1: Import the shield framework at boot
@@ -28,14 +28,14 @@ app.use(express.urlencoded({ extended: true }));
 // 🛡️ SECURITY SHIELD ADDITION 2: Inject the phone payload protection filter
 app.use(securityShield);
 
-// 🔥 CRITICAL FIX FOR RENDER: Tells Express to look past Render's reverse proxy [1].
-// This prevents one user's loop from blocking everyone or locking you out completely.
+// Tells Express to look past the hosting provider's reverse proxy.
+// This prevents rate limit blockages on external deployment configurations.
 app.set('trust proxy', 1);
 
 // Relaxed rate-limiter threshold for dashboards that execute multiple API fetches on load.
 const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 2000, // Increased from 300 to 2000 to safely allow heavy internal dashboard traffic
+    max: 2000, 
     message: { error: 'Traffic overload from this IP. Please try again in 15 minutes.' }
 });
 app.use('/api/', globalLimiter);
@@ -49,10 +49,20 @@ const pool = new Pool({
 });
 app.set('db', pool);
 
-// Automatically creates your tables and admin account on startup [2]
+// Automatically creates your tables and admin account on startup
 async function initializeDatabaseAdmin() {
     try {
-        // 1. Find and run schema.sql to build the tables first [1, 2]
+        // 🛡️ CRITICAL PRODUCTION FIX: Run isolated alterations first to prevent transaction rollbacks
+        try {
+            await pool.query('ALTER TABLE IF EXISTS certificates ALTER COLUMN title DROP NOT NULL;');
+            await pool.query('ALTER TABLE IF EXISTS team_members ALTER COLUMN name DROP NOT NULL;');
+            await pool.query('ALTER TABLE IF EXISTS team_members ALTER COLUMN position DROP NOT NULL;');
+            console.log('>>> DB: Successfully committed dropping NOT NULL constraints on legacy columns.');
+        } catch(alterErr) {
+            console.warn('>>> DB Alteration Bypassed (Normal on fresh setups):', alterErr.message);
+        }
+
+        // 1. Find and run schema.sql to build the tables first
         const schemaPath = path.join(__dirname, 'schema.sql');
         if (fs.existsSync(schemaPath)) {
             const schemaSql = fs.readFileSync(schemaPath, 'utf8');
@@ -70,7 +80,7 @@ async function initializeDatabaseAdmin() {
             console.warn('>>> DB Version Verification Bypassed.');
         }
 
-        // 2. Now check if the admin user exists [2]
+        // 2. Now check if the admin user exists
         const checkUser = await pool.query('SELECT * FROM users LIMIT 1');
         if (checkUser.rows.length === 0) {
             const defaultEmail = 'admin@example.com';
@@ -95,17 +105,17 @@ async function initializeDatabaseAdmin() {
 initializeDatabaseAdmin();
 
 // ==========================================
-// 3. STATIC FILES & STORAGE [2]
+// 3. STATIC FILES & STORAGE
 // ==========================================
 app.use('/admin', express.static(path.join(__dirname, 'public/admin')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ==========================================
-// 4. API ROUTING [1, 2]
+// 4. API ROUTING
 // ==========================================
 
-// Inline Authentication Middleware to protect deep management operations [1]
+// Inline Authentication Middleware to protect deep management operations
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -123,7 +133,7 @@ function authenticateToken(req, res, next) {
     });
 }
 
-// A. POST ROUTE: Add Media Asset to Page [1, 2]
+// A. POST ROUTE: Add Media Asset to Page
 app.post('/api/project-pages/:pageId/media', authenticateToken, async (req, res) => {
     const { pageId } = req.params;
     const { media_path, media_type, display_order } = req.body;
@@ -139,7 +149,7 @@ app.post('/api/project-pages/:pageId/media', authenticateToken, async (req, res)
     }
 });
 
-// B1. DECK 1 ROUTE EXCLUSIVE CORRECTION candidate matching url 1 [2]:
+// B1. DECK 1 ROUTE EXCLUSIVE CORRECTION candidate matching url 1
 app.delete('/api/project-pages/:id', authenticateToken, async (req, res) => {
     const rawIdVal = req.params.id;
     const pageId = parseInt(rawIdVal, 10);
@@ -151,10 +161,10 @@ app.delete('/api/project-pages/:id', authenticateToken, async (req, res) => {
     try {
         console.log(`>>> CMS Routing Intercept: Page ${pageId} deletion operation authorized.`);
         
-        // Remove nested/linked project-media entities dynamically inside PG schemas [1, 2]:
+        // Remove nested/linked project-media entities dynamically inside PG schemas
         await pool.query('DELETE FROM project_media WHERE page_id = $1', [pageId]);
         
-        // Purge parent page node context directly [2]:
+        // Purge parent page node context directly
         const result = await pool.query('DELETE FROM project_pages WHERE id = $1', [pageId]);
         
         if (result.rowCount === 0) {
@@ -171,7 +181,7 @@ app.delete('/api/project-pages/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// B2. DECK 2 ROUTE EXCLUSIVE CORRECTION matching secondary endpoint checks candidate checks: [2]
+// B2. DECK 2 ROUTE EXCLUSIVE CORRECTION matching secondary endpoint checks candidate checks
 app.delete('/api/projects/pages/:id', authenticateToken, async (req, res) => {
     const rawIdVal = req.params.id;
     const pageId = parseInt(rawIdVal, 10);
@@ -198,7 +208,7 @@ app.delete('/api/projects/pages/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// C. DELETE ROUTE: Delete Individual Page Media [1, 2]
+// C. DELETE ROUTE: Delete Individual Page Media
 app.delete('/api/project-media/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     try {
@@ -213,7 +223,7 @@ app.delete('/api/project-media/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Controller Routings [1, 2]
+// Controller Routings
 app.use('/api/auth', require('./controllers/authController'));
 app.use('/api/content', require('./controllers/contentController'));
 app.use('/api/services', require('./controllers/serviceController'));
@@ -224,7 +234,7 @@ app.use('/api/messages', require('./controllers/messageController'));
 app.use('/api/media', require('./controllers/mediaController'));
 
 // ==========================================
-// 5. THE FALLBACK [2]
+// 5. THE FALLBACK
 // ==========================================
 app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/admin/index.html'));
@@ -235,7 +245,7 @@ app.get('*', (req, res) => {
 });
 
 // ==========================================
-// 6. ENGINE START [2]
+// 6. ENGINE START
 // ==========================================
 app.listen(PORT, () => {
     console.log(`\x1b[32m%s\x1b[0m`, `>>> South Wind System Active on Port: ${PORT}`);
