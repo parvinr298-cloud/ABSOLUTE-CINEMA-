@@ -38,7 +38,7 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 24px;
         }
-        
+
         /* Fixed card styling to prevent empty card collapse */
         .card {
             background: #fff;
@@ -86,9 +86,20 @@
             font-size: 0.85rem;
         }
 
-        /* Google Translate Header Frame & Branding Overrides */
-        .goog-te-banner-frame.skiptranslate, .goog-te-banner-frame {
+        /* Completely hide Google Translate widgets, dropdowns, and frames */
+        #google_translate_element, 
+        .skiptranslate, 
+        .goog-te-banner-frame, 
+        .goog-te-gadget, 
+        .goog-te-balloon-frame {
             display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            position: absolute !important;
+            top: -9999px !important;
+            left: -9999px !important;
         }
         body {
             top: 0px !important;
@@ -118,8 +129,8 @@
         <div id="certGrid" class="grid"></div>
     </div>
 
-    <!-- Google Translate Loader Element -->
-    <div id="google_translate_element" style="display:none;"></div>
+    <!-- Invisible Google Translate Init Element -->
+    <div id="google_translate_element" style="display:none !important;"></div>
     <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
@@ -128,22 +139,26 @@
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <script>
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            let date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
     let currentLang = localStorage.getItem('siteLanguage') || 'en';
 
     function applyLanguage(lang) {
         currentLang = lang;
         if (lang === 'bn') {
             document.getElementById('pageTitle').textContent = 'কোম্পানির সনদপত্র';
-            if (window.location.hash !== '#googtrans(en|bn)') {
-                window.location.hash = '#googtrans(en|bn)';
-                location.reload();
-            }
+            setCookie('googtrans', '/en/bn', 30);
         } else {
             document.getElementById('pageTitle').textContent = 'Company Certifications';
-            if (window.location.hash && window.location.hash !== '#googtrans(en|en)') {
-                window.location.hash = '#googtrans(en|en)';
-                location.reload();
-            }
+            setCookie('googtrans', '/en/en', 30);
         }
     }
 
@@ -151,6 +166,7 @@
         currentLang = currentLang === 'en' ? 'bn' : 'en';
         localStorage.setItem('siteLanguage', currentLang);
         applyLanguage(currentLang);
+        location.reload(); 
     }
 
     function getSafeArray(payload) {
