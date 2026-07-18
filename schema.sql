@@ -194,3 +194,58 @@ INSERT INTO projects (title, category, is_featured, display_order, images) VALUE
 ('South Wind Project 7', 'Architectural Detail', true, 7, '["images/unnamed9.jpg"]'::jsonb),
 ('South Wind Project 8', 'Urban Landmark', true, 8, '["images/unnamed10.jpg"]'::jsonb)
 ON CONFLICT (title) DO NOTHING;
+
+
+
+-- =========================================================================
+-- SELLABLE ENTERPRISE UPGRADE: CERTIFICATES & TEAM MANAGEMENT
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS certificates (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_path TEXT NOT NULL,
+    display_order INT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS team_members (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    position VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_path TEXT NOT NULL,
+    display_order INT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO certificates (title, description, image_path, display_order)
+VALUES
+('RAJUK Approved Contractor', 'Certified contractor for residential and commercial construction projects.', 'images/unnamed7.jpg', 1),
+('ISO Quality Compliance', 'Quality management and project execution standards compliance certificate.', 'images/unnamed8.jpg', 2)
+ON CONFLICT DO NOTHING;
+
+INSERT INTO team_members (name, position, description, image_path, display_order)
+VALUES
+('MD Mohim', 'General Manager', 'Oversees daily construction operations, site coordination, and project delivery.', 'images/unnamed1.jpg', 1),
+('Engr. Rahim', 'Senior Structural Engineer', 'Leads structural analysis and ensures engineering compliance for all projects.', 'images/unnamed2.jpg', 2),
+('Architect Sumaia', 'Lead Architect', 'Responsible for modern architectural planning and design development.', 'images/unnamed3.jpg', 3)
+ON CONFLICT DO NOTHING;
+
+
+-- Bilingual support for certificates
+ALTER TABLE certificates
+ADD COLUMN IF NOT EXISTS title_en VARCHAR(255),
+ADD COLUMN IF NOT EXISTS title_bn VARCHAR(255),
+ADD COLUMN IF NOT EXISTS description_en TEXT,
+ADD COLUMN IF NOT EXISTS description_bn TEXT;
+
+-- Bilingual support for team members
+ALTER TABLE team_members
+ADD COLUMN IF NOT EXISTS name_en VARCHAR(255),
+ADD COLUMN IF NOT EXISTS name_bn VARCHAR(255),
+ADD COLUMN IF NOT EXISTS position_en VARCHAR(255),
+ADD COLUMN IF NOT EXISTS position_bn VARCHAR(255),
+ADD COLUMN IF NOT EXISTS description_en TEXT,
+ADD COLUMN IF NOT EXISTS description_bn TEXT;
