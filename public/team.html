@@ -39,6 +39,8 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 24px;
         }
+
+        /* Fixed card styling to prevent empty card collapse */
         .card {
             background: #fff;
             border: 1px solid #e5e7eb;
@@ -90,6 +92,23 @@
             text-decoration: none;
             font-size: 0.85rem;
         }
+
+        /* Google Translate Header Frame & Branding Overrides */
+        .goog-te-banner-frame.skiptranslate, .goog-te-banner-frame {
+            display: none !important;
+        }
+        body {
+            top: 0px !important;
+        }
+        .goog-tooltip, .goog-tooltip:hover {
+            display: none !important;
+            box-shadow: none !important;
+        }
+        .goog-text-highlight {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
     </style>
 </head>
 <body>
@@ -106,58 +125,75 @@
         <div id="teamGrid" class="grid"></div>
     </div>
 
+    <!-- Google Translate Loader Element -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
+    }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <script>
     let currentLang = localStorage.getItem('siteLanguage') || 'en';
 
-    function toggleLanguage(){
+    function applyLanguage(lang) {
+        currentLang = lang;
+        if (lang === 'bn') {
+            document.getElementById('pageTitle').textContent = 'আমাদের টিম';
+            if (window.location.hash !== '#googtrans(en|bn)') {
+                window.location.hash = '#googtrans(en|bn)';
+                location.reload();
+            }
+        } else {
+            document.getElementById('pageTitle').textContent = 'Our Team';
+            if (window.location.hash && window.location.hash !== '#googtrans(en|en)') {
+                window.location.hash = '#googtrans(en|en)';
+                location.reload();
+            }
+        }
+    }
+
+    function toggleLanguage() {
         currentLang = currentLang === 'en' ? 'bn' : 'en';
         localStorage.setItem('siteLanguage', currentLang);
-        document.getElementById('pageTitle').textContent = currentLang === 'bn' ? 'আমাদের টিম' : 'Our Team';
-        loadTeam();
+        applyLanguage(currentLang);
+    }
+
+    function getSafeArray(payload) {
+        if (Array.isArray(payload)) return payload;
+        if (payload && typeof payload === 'object') {
+            return payload.data || payload.team || [];
+        }
+        return [];
     }
 
     async function loadTeam(){
         try{
             const res = await fetch('/api/team');
             const data = await res.json();
-            
-            function getSafeArray(payload) {
-                if (Array.isArray(payload)) return payload;
-                if (payload && typeof payload === 'object') {
-                    return payload.data || payload.team || [];
-                }
-                return [];
-            }
             const list = getSafeArray(data);
-
             const grid = document.getElementById('teamGrid');
             if (list.length === 0) {
                 grid.innerHTML = '<p style="color:#666;">No team members available yet.</p>';
                 return;
             }
-
-            grid.innerHTML = list.map(m => {
-                const imgPath = m.image_path ? m.image_path : 'images/unnamed1.jpg';
-                const name = currentLang === 'bn' ? (m.name_bn || m.name || '') : (m.name_en || m.name || '');
-                const position = currentLang === 'bn' ? (m.position_bn || m.position || '') : (m.position_en || m.position || '');
-                const desc = currentLang === 'bn' ? (m.description_bn || m.description || '') : (m.description_en || m.description || '');
-                return `
-                    <div class="card">
-                        <img src="${imgPath}" alt="" onerror="this.src='images/unnamed1.jpg'">
-                        <div class="card-content">
-                            <h3>${name}</h3>
-                            <div class="position">${position}</div>
-                            <p>${desc}</p>
-                        </div>
+            grid.innerHTML = list.map(m => `
+                <div class="card">
+                    <img src="${m.image_path ? m.image_path : 'images/unnamed1.jpg'}" alt="" onerror="this.src='images/unnamed1.jpg'">
+                    <div class="card-content">
+                        <h3>${m.name_en || m.name || ''}</h3>
+                        <div class="position">${m.position_en || m.position || ''}</div>
+                        <p>${m.description_en || m.description || ''}</p>
                     </div>
-                `;
-            }).join('');
+                </div>
+            `).join('');
         }catch(e){
             document.getElementById('teamGrid').innerHTML = '<p>Unable to load team members.</p>';
         }
     }
 
-    document.getElementById('pageTitle').textContent = currentLang === 'bn' ? 'আমাদের টিম' : 'Our Team';
+    applyLanguage(currentLang);
     loadTeam();
     </script>
 </body>
