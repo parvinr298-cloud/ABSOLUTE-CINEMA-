@@ -128,18 +128,15 @@
             width: 100%;
             height: auto;
             object-fit: contain;
-            mix-blend-mode: darken; 
             animation: waveRevealDown 1.2s ease-out forwards;
         }
 
         /* Auto-inverts the black logo for Dark / Blueprint themes */
         [data-theme="dark"] .sw-img-animated {
             filter: invert(1);
-            mix-blend-mode: screen;
         }
         [data-theme="blueprint"] .sw-img-animated {
             filter: invert(1) drop-shadow(0 0 10px rgba(0, 240, 255, 0.4));
-            mix-blend-mode: screen;
         }
 
         /* Added -webkit- prefixes so the image doesn't glitch invisible on Mobile/Safari browsers */
@@ -247,7 +244,7 @@
 
         .logo {
             font-family: var(--font-serif);
-            font-size: 1.4rem; /* Scaled slightly so icon and text match beautifully */
+            font-size: 1.6rem;
             font-weight: 700;
             text-decoration: none;
             color: var(--color-text);
@@ -258,21 +255,18 @@
             gap: 12px;
         }
 
-        /* The Custom Header Logo styles! */
         .nav-brand-icon {
             height: 38px;
             width: auto;
             object-fit: contain;
-            mix-blend-mode: darken; 
             transition: all 0.3s ease;
         }
+
         [data-theme="dark"] .nav-brand-icon {
             filter: invert(1);
-            mix-blend-mode: screen;
         }
         [data-theme="blueprint"] .nav-brand-icon {
             filter: invert(1) drop-shadow(0 0 5px rgba(0, 240, 255, 0.4));
-            mix-blend-mode: screen;
         }
 
         .nav-links {
@@ -1005,7 +999,7 @@
             <!-- Custom Image Loading Node replaces spinning ring -->
             <div class="sw-logo-wrapper">
                 <!-- Change src to the location where you uploaded your SW Logo image -->
-                <img src="images/sw-logo.png" alt="South Wind Custom Logo" class="sw-img-animated">
+                <img src="images/TEXT.png" alt="South Wind Custom Logo" class="sw-img-animated">
             </div>
 
             <!-- Main 'SOUTH WIND' wordmark -->
@@ -1024,15 +1018,12 @@
     <header id="main-header">
         <div class="nav-inner">
             <a href="#" class="logo">
-                <!-- Inserted Logo Right Here -->
-                <img src="images/sw-logo.png" alt="SW Icon" class="nav-brand-icon">
+                <img src="images/TEXT.png" alt="SW Icon" class="nav-brand-icon">
                 SOUTH WIND
             </a>
-            
             <nav class="nav-links">
                 <a href="#about">The Studio</a>
                 <a href="#services">Services</a>
-                <!-- Points directly to dedicated projects status filtering page -->
                 <a href="projects.html">Projects</a>
                 <a href="#contact">Contact</a>
                 
@@ -1623,7 +1614,7 @@
                 });
 
                 dragHandle.addEventListener('touchstart', () => { isDragging = true; }, { passive: true });
-                window.addEventListener('touchmove', () => { isDragging = false; }, { passive: true });
+                window.addEventListener('touchend', () => { isDragging = false; }, { passive: true });
                 window.addEventListener('touchmove', (e) => {
                     if (!isDragging) return;
                     if (e.cancelable) {
