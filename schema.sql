@@ -68,7 +68,7 @@ ALTER TABLE projects ADD COLUMN IF NOT EXISTS brochure_url TEXT;
 -- Dynamic Architectural Project Pages Modules Table Setup
 CREATE TABLE IF NOT EXISTS project_pages (
     id SERIAL PRIMARY KEY,
-    project_id INTEGER REFERENCES projects(id) ON DELETE CASCADE,
+    project_id INTEGER,
     page_number INTEGER DEFAULT 1,
     title VARCHAR(255),
     description TEXT,
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS project_pages (
 -- Core Matrix Media Metadata Support Module Table Setup
 CREATE TABLE IF NOT EXISTS project_media (
     id SERIAL PRIMARY KEY,
-    page_id INTEGER REFERENCES project_pages(id) ON DELETE CASCADE,
+    page_id INTEGER,
     media_path TEXT NOT NULL,
     media_type VARCHAR(50) DEFAULT 'image',
     display_order INTEGER DEFAULT 0,
@@ -87,13 +87,12 @@ CREATE TABLE IF NOT EXISTS project_media (
 
 
 -- =========================================================================
--- RECONCILIATION FOR RETROACTIVE CASCADE MODES (Highly Important)
+-- RECONCILIATION FOR RETROACTIVE CASCADE MODES (Safe Idempotency Patches)
 -- =========================================================================
--- 'CREATE TABLE IF NOT EXISTS' blocks will skip adding relational ON DELETE 
--- constraints on live setups. We drop and update constraints explicitly.
 
 -- Explicit CASCADE addition on target pages constraint links:
 ALTER TABLE IF EXISTS project_pages DROP CONSTRAINT IF EXISTS project_pages_project_id_fkey CASCADE;
+ALTER TABLE IF EXISTS project_pages DROP CONSTRAINT IF EXISTS fk_projects_relational_relation CASCADE;
 ALTER TABLE IF EXISTS project_pages 
 ADD CONSTRAINT fk_projects_relational_relation
     FOREIGN KEY (project_id) 
@@ -103,6 +102,7 @@ ADD CONSTRAINT fk_projects_relational_relation
 -- Explicit CASCADE addition on active project media tracking schemas constraints:
 ALTER TABLE IF EXISTS project_media DROP CONSTRAINT IF EXISTS project_media_page_id_fkey CASCADE;
 ALTER TABLE IF EXISTS project_media DROP CONSTRAINT IF EXISTS fk_project_page CASCADE;
+ALTER TABLE IF EXISTS project_media DROP CONSTRAINT IF EXISTS fk_page_cascade_rule CASCADE;
 ALTER TABLE IF EXISTS project_media 
 ADD CONSTRAINT fk_page_cascade_rule
     FOREIGN KEY (page_id) 
@@ -168,7 +168,7 @@ ON CONFLICT (key) DO NOTHING;
 INSERT INTO users (email, password_hash, must_change_password) 
 VALUES (
     'southwindengineering43@gmail.com',
-    '$2y$12$R.P1C8/YlQzEqXEnPZuN8u3eM9CqRByMLe7v08V.KeR5u/NWeNWea', -- Matches password reset alert triggers on admin systems profiles configuration 
+    '$2y$12$R.P1C8/YlQzEqXEnPZuN8u3eM9CqRByMLe7v08V.KeR5u/NWeNWea', 
     TRUE
 )
 ON CONFLICT (email) DO NOTHING;
@@ -196,7 +196,6 @@ INSERT INTO projects (title, category, is_featured, display_order, images) VALUE
 ON CONFLICT (title) DO NOTHING;
 
 
-
 -- =========================================================================
 -- SELLABLE ENTERPRISE UPGRADE: CERTIFICATES & TEAM MANAGEMENT
 -- =========================================================================
@@ -204,7 +203,11 @@ ON CONFLICT (title) DO NOTHING;
 CREATE TABLE IF NOT EXISTS certificates (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
+    title_en VARCHAR(255),
+    title_bn VARCHAR(255),
     description TEXT,
+    description_en TEXT,
+    description_bn TEXT,
     image_path TEXT NOT NULL,
     display_order INT DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -213,39 +216,91 @@ CREATE TABLE IF NOT EXISTS certificates (
 CREATE TABLE IF NOT EXISTS team_members (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    name_en VARCHAR(255),
+    name_bn VARCHAR(255),
     position VARCHAR(255) NOT NULL,
+    position_en VARCHAR(255),
+    position_bn VARCHAR(255),
     description TEXT,
+    description_en TEXT,
+    description_bn TEXT,
     image_path TEXT NOT NULL,
     display_order INT DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO certificates (title, description, image_path, display_order)
+-- Protect against duplicates on successive server restarts
+ALTER TABLE certificates DROP CONSTRAINT IF EXISTS unique_certificate_title;
+ALTER TABLE certificates ADD CONSTRAINT unique_certificate_title UNIQUE (title);
+
+ALTER TABLE team_members DROP CONSTRAINT IF EXISTS unique_worker_name;
+ALTER TABLE team_members ADD CONSTRAINT unique_worker_name UNIQUE (name);
+
+-- Seed Certificate details securely
+INSERT INTO certificates (title, title_en, title_bn, description, description_en, description_bn, image_path, display_order)
 VALUES
-('RAJUK Approved Contractor', 'Certified contractor for residential and commercial construction projects.', 'images/unnamed7.jpg', 1),
-('ISO Quality Compliance', 'Quality management and project execution standards compliance certificate.', 'images/unnamed8.jpg', 2)
-ON CONFLICT DO NOTHING;
+(
+  'RAJUK Approved Contractor', 
+  'RAJUK Approved Contractor', 
+  'রাজউক অনুমোদিত ঠিকাদার',
+  'Certified contractor for residential and commercial construction projects.',
+  'Certified contractor for residential and commercial construction projects.',
+  'আবাসিক ও বাণিজ্যিক নির্মাণ প্রকল্পের জন্য অনুমোদিত ঠিকাদার।',
+  'images/unnamed7.jpg', 
+  1
+),
+(
+  'ISO Quality Compliance', 
+  'ISO Quality Compliance', 
+  'আইএসও গুণমান সম্মতি',
+  'Quality management and project execution standards compliance certificate.',
+  'Quality management and project execution standards compliance certificate.',
+  'গুণমান ব্যবস্থাপনা এবং প্রকল্প বাস্তবায়ন মান সম্মতি শংসাপত্র।',
+  'images/unnamed8.jpg', 
+  2
+)
+ON CONFLICT (title) DO NOTHING;
 
-INSERT INTO team_members (name, position, description, image_path, display_order)
+-- Seed Team details securely
+INSERT INTO team_members (name, name_en, name_bn, position, position_en, position_bn, description, description_en, description_bn, image_path, display_order)
 VALUES
-('MD Mohim', 'General Manager', 'Oversees daily construction operations, site coordination, and project delivery.', 'images/unnamed1.jpg', 1),
-('Engr. Rahim', 'Senior Structural Engineer', 'Leads structural analysis and ensures engineering compliance for all projects.', 'images/unnamed2.jpg', 2),
-('Architect Sumaia', 'Lead Architect', 'Responsible for modern architectural planning and design development.', 'images/unnamed3.jpg', 3)
-ON CONFLICT DO NOTHING;
-
-
--- Bilingual support for certificates
-ALTER TABLE certificates
-ADD COLUMN IF NOT EXISTS title_en VARCHAR(255),
-ADD COLUMN IF NOT EXISTS title_bn VARCHAR(255),
-ADD COLUMN IF NOT EXISTS description_en TEXT,
-ADD COLUMN IF NOT EXISTS description_bn TEXT;
-
--- Bilingual support for team members
-ALTER TABLE team_members
-ADD COLUMN IF NOT EXISTS name_en VARCHAR(255),
-ADD COLUMN IF NOT EXISTS name_bn VARCHAR(255),
-ADD COLUMN IF NOT EXISTS position_en VARCHAR(255),
-ADD COLUMN IF NOT EXISTS position_bn VARCHAR(255),
-ADD COLUMN IF NOT EXISTS description_en TEXT,
-ADD COLUMN IF NOT EXISTS description_bn TEXT;
+(
+  'MD Mohim', 
+  'MD Mohim', 
+  'মোঃ মহিম',
+  'General Manager', 
+  'General Manager', 
+  'মহাব্যবস্থাপক',
+  'Oversees daily construction operations, site coordination, and project delivery.',
+  'Oversees daily construction operations, site coordination, and project delivery.',
+  'দৈনিক নির্মাণ কার্যক্রম, সাইট সমন্বয় এবং প্রকল্প সরবরাহ তদারকি করেন।',
+  'images/unnamed1.jpg', 
+  1
+),
+(
+  'Engr. Rahim', 
+  'Engr. Rahim', 
+  'ইঞ্জিঃ রহিম',
+  'Senior Structural Engineer', 
+  'Senior Structural Engineer', 
+  'সিনিয়র স্ট্রাকচারাল ইঞ্জিনিয়ার',
+  'Leads structural analysis and ensures engineering compliance for all projects.',
+  'Leads structural analysis and ensures engineering compliance for all projects.',
+  'কাঠামোগত বিশ্লেষণ পরিচালনা করেন এবং প্রকৌশল সম্মতি নিশ্চিত করেন।',
+  'images/unnamed2.jpg', 
+  2
+),
+(
+  'Architect Sumaia', 
+  'Architect Sumaia', 
+  'স্থপতি সুমাইয়া',
+  'Lead Architect', 
+  'Lead Architect', 
+  'প্রধান স্থপতি',
+  'Responsible for modern architectural planning and design development.',
+  'Responsible for modern architectural planning and design development.',
+  'আধুনিক স্থাপত্য পরিকল্পনা এবং নকশা উন্নয়নের জন্য দায়ী।',
+  'images/unnamed3.jpg', 
+  3
+)
+ON CONFLICT (name) DO NOTHING;
