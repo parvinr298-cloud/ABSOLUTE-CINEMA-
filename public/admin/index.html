@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -961,11 +962,27 @@
             e.preventDefault();
             const newEmail = document.getElementById('new-sys-email').value;
             try {
-                const res = await safeFetchJson('/api/auth/change-email', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                    body: JSON.stringify({ newEmail })
-                });
+                let res;
+                let lastError;
+                const methods = ['PUT', 'POST', 'PATCH'];
+                for (const method of methods) {
+                    try {
+                        res = await safeFetchJson('/api/auth/change-email', {
+                            method: method,
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
+                            body: JSON.stringify({ newEmail })
+                        });
+                        break;
+                    } catch (err) {
+                        lastError = err;
+                        if (!err.message.includes('404')) {
+                            throw err;
+                        }
+                    }
+                }
+                if (!res) {
+                    throw lastError;
+                }
                 if(res.success) {
                     alert('Correspondence tracking target mail shifted successfully. Initiating operational lock logout cycle verify verification criteria...');
                     terminateSessionContext();
