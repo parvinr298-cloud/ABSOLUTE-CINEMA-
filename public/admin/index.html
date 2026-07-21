@@ -961,31 +961,50 @@
         document.getElementById('email-change-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const newEmail = document.getElementById('new-sys-email').value;
-            try {
-                let res;
-                let lastError;
-                const methods = ['PUT', 'POST', 'PATCH'];
+            
+            // Adaptive multi-endpoint & parameter auto-probing routine
+            const routes = [
+                { url: '/api/auth/change-email', payload: { newEmail } },
+                { url: '/api/auth/change-email', payload: { email: newEmail } },
+                { url: '/api/auth/profile', payload: { email: newEmail } },
+                { url: '/api/auth/profile', payload: { newEmail } },
+                { url: '/api/auth/update-email', payload: { email: newEmail } },
+                { url: '/api/auth/email', payload: { email: newEmail } }
+            ];
+            const methods = ['PUT', 'POST', 'PATCH'];
+            
+            let successResponse = null;
+            let lastError = new Error('Server response error (HTTP 404).');
+            
+            probeLoop:
+            for (const route of routes) {
                 for (const method of methods) {
                     try {
-                        res = await safeFetchJson('/api/auth/change-email', {
+                        const res = await safeFetchJson(route.url, {
                             method: method,
                             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${operationalToken}` },
-                            body: JSON.stringify({ newEmail })
+                            body: JSON.stringify(route.payload)
                         });
-                        break;
+                        
+                        successResponse = res;
+                        break probeLoop;
                     } catch (err) {
                         lastError = err;
+                        
+                        // Break and immediately throw if the route exists but fails due to validation or authentication (non-404)
                         if (!err.message.includes('404')) {
-                            throw err;
+                            break probeLoop;
                         }
                     }
                 }
-                if (!res) {
-                    throw lastError;
-                }
-                if(res.success) {
+            }
+            
+            try {
+                if (successResponse) {
                     alert('Correspondence tracking target mail shifted successfully. Initiating operational lock logout cycle verify verification criteria...');
                     terminateSessionContext();
+                } else {
+                    throw lastError;
                 }
             } catch(err) {
                 alert('Verification modification validation block detected: ' + err.message);
