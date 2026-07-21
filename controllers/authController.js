@@ -64,6 +64,32 @@ router.post('/change-password', [
     }
 });
 
+// Added secure email change handling compatible with PUT, POST, and PATCH methods
+router.route('/change-email')
+    .all(auth)
+    .post(changeEmailHandler)
+    .put(changeEmailHandler)
+    .patch(changeEmailHandler);
+
+async function changeEmailHandler(req, res) {
+    const db = req.app.get('db');
+    const { newEmail } = req.body;
+
+    if (!newEmail || !newEmail.includes('@')) {
+        return res.status(400).json({ error: 'Please enter a valid email address.' });
+    }
+
+    try {
+        const result = await db.query(
+            'UPDATE users SET email = $1 WHERE id = $2',
+            [newEmail, req.user.id]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+
 router.post('/kick-others', auth, async (req, res) => {
     const db = req.app.get('db');
     try {
